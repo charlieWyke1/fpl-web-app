@@ -1,0 +1,136 @@
+.headerCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+.topRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}
+
+.topRow > div {
+  flex: 1;
+  width: 100%;
+  align-items: center;
+  /* border: pink solid 2px; */
+}
+.topRow select {
+  width: 75%;
+  font-size: 1rem;
+  height: 1.7rem;
+  text-align: center;
+  margin-left: 12.5%;
+}
+.topRow .nextFixture h4 {
+  font-size: 1.3rem !important;
+  font-weight: 500;
+  text-align: center;
+}
+
+.resultsRow {
+  width: 95%;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  border-collapse: collapse;
+  padding: 1rem;
+  margin-top: 2rem;
+  border-top: lightgray 2px solid;
+}
+.resultsRow form {
+  width: 80%;
+  margin-left: 10%;
+}
+.teamsheetForm label {
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding-top: 1rem;
+  padding-bottom: 0.2rem;
+  font-family: Andale Mono, monospace !important;
+}
+.teamsheetForm .multiSelect {
+  height: 2rem;
+  text-align: center !important;
+}
+
+.statsRow {
+  width: 95%;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  border-collapse: collapse;
+  padding: 1rem;
+  margin-top: 2rem;
+  border-top: lightgray 2px solid;
+}
+.statsRow form {
+  width: 80%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+#goalsRow {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+#goalsRow label {
+  width: auto;
+  font-size: 1.2rem;
+  font-family: Andale Mono, monospace !important;
+  font-weight: 300 !important;
+  padding: 0rem !important;
+}
+#goalsRow input {
+  width: 3rem;
+  font-size: 1rem;
+}
+
+.matchDetailsForm label {
+  font-size: 1.2rem;
+  font-weight: 400;
+  padding-top: 1rem;
+  padding-bottom: 0.2rem;
+  font-family: Andale Mono, monospace !important;
+}
+
+.teamsheetForm button,
+.matchDetailsForm button {
+  width: 50%;
+  display: block;
+  margin: 1.8rem auto 0;
+  height: 2rem;
+  background-color: #00b4d8;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-family: Andale Mono, monospace !important;
+  transition: transform 0.5s;
+}
+
+.teamsheetForm button:hover,
+.matchDetailsForm button:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.teamsheetForm button:disabled,
+.matchDetailsForm button:disabled {
+  /* background-color: gray; */
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .topRow {
+    flex-direction: column; /* stack vertically */
+    align-items: center; /* center horizontally */
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

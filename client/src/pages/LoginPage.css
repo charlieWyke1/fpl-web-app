@@ -1,0 +1,43 @@
+#loginBox {
+  background-color: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loginForm {
+  background-color: #6c3082 !important;
+  padding: 3rem;
+  width: max-content;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  border-radius: 30px;
+  text-align: center;
+}
+#passwordLabel,
+#emailLabel {
+  font-weight: 600;
+  color: #f1f1f1;
+  font-size: 1.3rem;
+}
+#loginButton {
+  background-color: white;
+  border: none;
+  width: 80%;
+  font-weight: 600;
+  color: black;
+  margin-top: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+#loginButton:hover {
+  transform: scale(1.05);
+}
+#inputPassword,
+#inputEmail {
+  width: 100%;
+  align-items: center;
+}

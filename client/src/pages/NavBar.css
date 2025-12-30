@@ -1,0 +1,35 @@
+.topBar {
+  position: sticky; /* Keeps it visible when scrolling */
+  top: 0;
+  width: 100%;
+  background-color: #0077b6;
+  text-align: center;
+  padding: 0.75rem;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-around;
+  /* height: 10vh; */
+}
+
+.topBar button {
+  background: none;
+  border: none;
+  width: 20%;
+  pointer-events: none;
+}
+
+.topBar a {
+  color: white;
+  text-decoration: none;
+  font-weight: 400;
+  font-family: Andale Mono, monospace !important;
+  font-size: 1.2rem;
+  display: inline-block;
+  transition: transform 0.5s;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.topBar a:hover {
+  transform: scale(1.15);
+}

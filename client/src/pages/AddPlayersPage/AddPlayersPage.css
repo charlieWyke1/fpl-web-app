@@ -1,0 +1,135 @@
+.enterRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+.addPlayerForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 1rem;
+}
+.enterTopRow {
+  display: flex;
+  flex: 1;
+  margin-left: 5%;
+  margin-right: 5%;
+  gap: 1rem;
+  justify-content: center;
+}
+.enterTopRow .topRowForm {
+  flex: 1;
+  width: 80%;
+  align-items: center;
+}
+.enterTopRow .topRowForm label {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-right: 1rem;
+}
+.enterTopRow .topRowForm input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  height: 2rem;
+}
+
+.enterBottomRow {
+  display: flex;
+  flex: 1;
+  margin-left: 5%;
+  margin-right: 5%;
+  gap: 1rem;
+  justify-content: center;
+}
+.enterBottomRow .bottomRowForm {
+  flex: 1;
+  width: 80%;
+  align-items: center;
+}
+.enterBottomRow .bottomRowForm label {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-right: 1rem;
+}
+.enterBottomRow .bottomRowForm input {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  height: 2rem;
+}
+.enterBottomRow .bottomRowForm select {
+  width: 100%;
+  font-size: 1rem;
+  height: 2rem;
+}
+.enterBottomRow .bottomRowForm button {
+  width: 100%;
+  font-size: 1rem;
+  height: 2rem;
+  margin-top: 1.8rem;
+  background-color: none;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  background-color: #00b4d8;
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-family: Andale Mono, monospace !important;
+  transition: transform 0.5s;
+}
+.enterBottomRow .bottomRowForm button:hover {
+  transform: scale(1.05);
+}
+
+.playersTableRow {
+  width: 95%;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  border-collapse: collapse;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  border-top: lightgray 2px solid;
+}
+.playersTableRow h5 {
+  font-size: 1.4rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 1rem;
+  font-family: Andale Mono, monospace !important;
+}
+.playersTable {
+  flex: 1;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  table-layout: fixed;
+}
+.playersTable th {
+  width: 25%;
+  padding: 12px 8px;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 500;
+  font-family: Andale Mono, monospace !important;
+  border-top: none;
+}
+.playersTable tbody tr {
+  border-bottom: 2px solid #e0e0e0;
+  height: 2.5rem;
+  font-size: 1rem;
+}
+
+@media (max-width: 800px) {
+  .enterTopRow,
+  .enterBottomRow {
+    flex-direction: column; /* stack vertically */
+    align-items: center; /* center horizontally */
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

@@ -1,0 +1,57 @@
+import express from "express";
+import { authenticateToken } from "../middleware/authMiddleware.js";
+import { checkTeamExistence } from "../config/firestore.js";
+import { getTeamData } from "../config/firestore.js";
+import { saveFirstTeam } from "../config/firestore.js";
+
+const router = express.Router();
+
+router.post(
+  "/api/team/checkTeamExistence",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const userId = req.body.userId;
+      const teamCheck = await checkTeamExistence(userId); // Assume this function checks team existence
+      if (teamCheck) {
+        res.status(200).json({ exists: true });
+      } else {
+        res.status(200).json({ exists: false });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Failed to check team existence" });
+    }
+  }
+);
+
+router.get("/api/team/getClubData", authenticateToken, async (req, res) => {
+  try {
+    const club = req.query.club;
+    const teamCheck = await getTeamData(club); // Assume this function checks team existence
+    return res.json(teamCheck);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to check team existence" });
+  }
+});
+
+router.post("/api/team/saveTeam", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const teamName = req.body.teamName;
+    const players = req.body.players;
+    const gw = req.body.gw;
+    const budget = req.body.budget;
+    // console.log(userId, teamName, players);
+    const saveTeam = await saveFirstTeam(userId, teamName, players, gw, budget);
+    if (saveTeam) {
+      res
+        .status(200)
+        .json({ success: true, message: "Team saved successfully" });
+      return;
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to save team" });
+  }
+});
+
+export default router;

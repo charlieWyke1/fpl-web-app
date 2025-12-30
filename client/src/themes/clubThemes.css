@@ -1,0 +1,21 @@
+.theme-loughborough-uni .colTitle {
+  background-color: #6c3082 !important;
+  color: white;
+  padding: 0.5rem;
+}
+/* .theme-loughborough-uni .modalHeaderPlayer {
+  background-color: #6c3082;
+  color: white;
+} */
+.theme-loughborough-uni .shirt {
+  color: #6c3082;
+}
+.theme-loughborough-uni .gkShirt {
+  color: #1a7206;
+}
+
+/* Nottingham */
+.theme-nottingham-uni .topBar {
+  background-color: #005ea5;
+  color: white;
+}
