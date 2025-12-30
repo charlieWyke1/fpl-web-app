@@ -67,7 +67,9 @@ function TeamPage() {
   return (
     <div className={themeClass}>
       <NavBar />
-      <p> </p>
+      <p> {user.teamName} </p>
+      <p> current gw points </p>
+      <p> total points </p>
     </div>
   );
 }

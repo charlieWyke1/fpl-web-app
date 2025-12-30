@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth } from "../config/firebase.js";
 import { useUser } from "../context/UserContext.js";
@@ -10,38 +10,53 @@ function NavBar() {
   const navigate = useNavigate();
   const { user } = useUser();
   const { refetchPlayers } = usePlayers(user);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="topBar">
-      <button className="topBarButton">LOGO</button>
+    <nav className="topBar">
+      {/* Hamburger */}
+      <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+        &#9776;
+      </div>
 
-      {user.admin === true && (
-        <button className="topBarButton" onClick={refetchPlayers}>
-          <Link to="/admin"> Dashboard </Link>
+      {/* Navigation links */}
+      <div className={`navLinks ${menuOpen ? "active" : ""}`}>
+        {user.admin && (
+          <button>
+            <Link to="/admin" onClick={() => setMenuOpen(false)}>
+              Dashboard
+            </Link>
+          </button>
+        )}
+        <button>
+          <Link to="#" onClick={() => setMenuOpen(false)}>
+            Matches
+          </Link>
         </button>
-      )}
-      <button className="topBarButton">
-        <Link to="#"> Matches </Link>
-      </button>
-      <button className="topBarButton">
-        <Link to="#"> Leagues </Link>
-      </button>
-      <button className="topBarButton">
-        <Link to="/team"> Team </Link>
-      </button>
-      <button className="topBarButton">
-        <a
-          href=""
-          onClick={() => {
-            auth.signOut();
-            navigate("/?", { replace: true });
-          }}
-        >
-          {" "}
-          Sign Out{" "}
-        </a>
-      </button>
-    </div>
+        <button>
+          <Link to="#" onClick={() => setMenuOpen(false)}>
+            Leagues
+          </Link>
+        </button>
+        <button>
+          <Link to="/team" onClick={() => setMenuOpen(false)}>
+            Team
+          </Link>
+        </button>
+        <button>
+          <a
+            href="#"
+            onClick={() => {
+              auth.signOut();
+              navigate("/?", { replace: true });
+              setMenuOpen(false);
+            }}
+          >
+            Sign Out
+          </a>
+        </button>
+      </div>
+    </nav>
   );
 }
 
