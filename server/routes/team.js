@@ -3,6 +3,7 @@ import { authenticateToken } from "../middleware/authMiddleware.js";
 import { checkTeamExistence } from "../config/firestore.js";
 import { getTeamData } from "../config/firestore.js";
 import { saveFirstTeam } from "../config/firestore.js";
+import { getCurrentGWTeam } from "../config/firestore.js";
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.post(
 router.get("/api/team/getClubData", authenticateToken, async (req, res) => {
   try {
     const club = req.query.club;
-    const teamCheck = await getTeamData(club); // Assume this function checks team existence
+    const teamCheck = await getTeamData(club);
     return res.json(teamCheck);
   } catch (error) {
     res.status(500).json({ error: "Failed to check team existence" });
@@ -53,5 +54,21 @@ router.post("/api/team/saveTeam", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Failed to save team" });
   }
 });
+
+router.post(
+  "/api/team/getCurrentGWTeam",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const userId = req.body.userId;
+      const gw = "gw" + req.body.currentGW;
+
+      const getCurrentTeam = await getCurrentGWTeam(userId, gw);
+      return res.json(getCurrentTeam);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to find current team" });
+    }
+  }
+);
 
 export default router;

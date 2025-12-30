@@ -1,0 +1,44 @@
+// src/hooks/usePlayers.js
+import { useState, useEffect, useCallback } from "react";
+import { auth } from "../config/firebase.js";
+import { useCurrentTeam } from "../context/CurrentTeamContext.js";
+
+// this will get the users current team based on the CURRENT GW
+// used for viewing current team, choosing who is to play and transfers
+
+export const useCurrentGWTeam = (userId, currentGW) => {
+  //   const { currentTeam, setCurrentTeam } = useCurrentTeam();
+  const [loadingTeam, setLoadingTeam] = useState(true);
+
+  useEffect(() => {
+    if (!userId || !currentGW) return;
+    // console.log("here", [userId, currentGW]);
+
+    const fetchCurrentGWTeam = async () => {
+      try {
+        setLoadingTeam(true);
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(
+          `http://localhost:5000/api/team/getCurrentGWTeam`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId: userId, currentGW: currentGW }),
+          }
+        );
+
+        const data = await res.json();
+
+        console.log(data);
+        // hopefully it now returns the team data and we can display the users CURRENT TEAM for the CURRENT GW
+      } catch (error) {
+        console.error("Error fetching team:", error);
+      }
+    };
+
+    fetchCurrentGWTeam();
+  }, []);
+};

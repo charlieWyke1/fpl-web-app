@@ -236,9 +236,6 @@ export async function saveFirstTeam(userId, teamName, players, gw, budget) {
     const teamRef = db.collection("teams").doc(userId);
     const gwKey = `gw${gw}`;
 
-    // save just teamName to the users account not the teams section
-    // rest stays the same
-
     await teamRef.set(
       {
         budget: budget,
@@ -258,6 +255,20 @@ export async function saveFirstTeam(userId, teamName, players, gw, budget) {
     return true;
   } catch (error) {
     console.error("Error saving team:", error);
+    throw error;
+  }
+}
+
+export async function getCurrentGWTeam(userId, gw) {
+  try {
+    const teamRef = db.collection("teams").doc(userId);
+    // now just get the current gameweek
+    // can easily snap all data to get all the gw team data for future
+    const docSnap = await teamRef.get();
+    const teamData = docSnap.data();
+    return teamData.gameweeks[gw];
+  } catch (error) {
+    console.error("Error finding team", error);
     throw error;
   }
 }

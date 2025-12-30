@@ -1,8 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { useUser } from "../../context/UserContext.js";
 import { auth } from "../../config/firebase.js";
+
+import { useUser } from "../../context/UserContext.js";
+
 import { useNavigate } from "react-router-dom";
+
+import { useCurrentGWTeam } from "../../hooks/useCurrentTeam.js";
 
 import NavBar from "../NavBar.js";
 
@@ -62,7 +66,12 @@ function TeamPage() {
   // then display starting in formation with subs below
   // then displays the leagues and ranks the user is in
 
-  console.log(user);
+  // console.log(user);
+
+  // if the currentGW is 1 we send 1 otherwsie we send gw-1
+  // this way if it is gw4 we get the team from gw3 let the user edit it and then save it as GW4
+
+  useCurrentGWTeam(user.id, user.currentGW);
 
   return (
     <div className={themeClass}>
