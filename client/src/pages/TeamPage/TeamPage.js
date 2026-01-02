@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
+import { useClub } from "../../context/ClubContext.js";
 
 import { useNavigate } from "react-router-dom";
 
@@ -15,6 +16,8 @@ import "../../themes/clubThemes.css";
 
 function TeamPage() {
   const { user } = useUser();
+  const { clubData, setClubData } = useClub();
+
   const navigate = useNavigate();
   const userClub = user?.club;
 
@@ -23,6 +26,33 @@ function TeamPage() {
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
+
+  // GET OUR CLUB DATA TO HELP SET UP SQUAD SIZE AND STUFF
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchClubData = async () => {
+      try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(
+          `http://localhost:5000/api/team/getClubData?club=${user.club}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        // console.log(data);
+        setClubData(data);
+      } catch (error) {
+        console.error("Error fetching club data:", error);
+      }
+    };
+
+    fetchClubData();
+  }, []);
 
   // check if a user has a team created yet - if not, redirect to create team page
   useEffect(() => {
@@ -76,6 +106,7 @@ function TeamPage() {
   // this way if it is gw4 we get the team from gw3 let the user edit it and then save it as GW4
 
   useCurrentGWTeam(user.id, user.currentGW);
+  console.log(clubData);
 
   if (!team) return null;
 

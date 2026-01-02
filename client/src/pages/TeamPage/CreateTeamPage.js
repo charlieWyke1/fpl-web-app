@@ -21,7 +21,7 @@ import "../../themes/clubThemes.css";
 function CreateTeamPage() {
   const { setUser, user } = useUser();
   const { players } = usePlayer();
-  const { clubData, setClubData } = useClub();
+  const { clubData } = useClub();
   const [budget, setBudget] = useState(0);
   const navigate = useNavigate();
 
@@ -44,34 +44,6 @@ function CreateTeamPage() {
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
-
-  // console.log(user);
-  // this will only ever run once
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchClubData = async () => {
-      try {
-        const token = await auth.currentUser.getIdToken();
-        const res = await fetch(
-          `http://localhost:5000/api/team/getClubData?club=${user.club}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await res.json();
-        // console.log(data);
-        setClubData(data);
-      } catch (error) {
-        console.error("Error fetching club data:", error);
-      }
-    };
-
-    fetchClubData();
-  }, []);
 
   const gkOptions = (allGk || []).map((g) => ({
     ...g,
