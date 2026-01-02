@@ -18,6 +18,8 @@ function TeamPage() {
   const navigate = useNavigate();
   const userClub = user?.club;
 
+  const [team, setTeam] = useState(false);
+
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
@@ -46,6 +48,8 @@ function TeamPage() {
         if (data.exists === false) {
           //   navigate to create team page
           navigate("/CreateTeam");
+        } else {
+          setTeam(true);
         }
       } catch (error) {
         console.error("Error checking team existence:", error);
@@ -72,6 +76,8 @@ function TeamPage() {
   // this way if it is gw4 we get the team from gw3 let the user edit it and then save it as GW4
 
   useCurrentGWTeam(user.id, user.currentGW);
+
+  if (!team) return null;
 
   return (
     <div className={themeClass}>
