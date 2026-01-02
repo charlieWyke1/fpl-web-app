@@ -7,8 +7,8 @@ import { useCurrentTeam } from "../context/CurrentTeamContext.js";
 // used for viewing current team, choosing who is to play and transfers
 
 export const useCurrentGWTeam = (userId, currentGW) => {
-  //   const { currentTeam, setCurrentTeam } = useCurrentTeam();
   const [loadingTeam, setLoadingTeam] = useState(true);
+  const { setCurrentTeam } = useCurrentTeam();
 
   useEffect(() => {
     if (!userId || !currentGW) return;
@@ -32,7 +32,8 @@ export const useCurrentGWTeam = (userId, currentGW) => {
 
         const data = await res.json();
 
-        console.log(data);
+        setCurrentTeam(data.team);
+
         // hopefully it now returns the team data and we can display the users CURRENT TEAM for the CURRENT GW
       } catch (error) {
         console.error("Error fetching team:", error);
@@ -40,5 +41,5 @@ export const useCurrentGWTeam = (userId, currentGW) => {
     };
 
     fetchCurrentGWTeam();
-  }, []);
+  }, [userId, currentGW, setCurrentTeam]);
 };

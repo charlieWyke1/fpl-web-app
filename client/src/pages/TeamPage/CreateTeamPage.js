@@ -120,7 +120,7 @@ function CreateTeamPage() {
       if (data.success) {
         alert("Team saved successfully!");
         setUser({ ...user, teamName: teamName });
-        navigate("/team");
+        navigate("/Firstteam");
         // CURRENT ERROR WHEN CREATE TEAM THEN WONT LOAD TEAM STRAIGHT IN
         // BUT WORKS FINE FOR SAVING TEAM GOING HOMEPAGE THEN GOING BACK TO TEAM
       } else {

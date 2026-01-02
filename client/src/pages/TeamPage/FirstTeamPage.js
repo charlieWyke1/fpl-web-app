@@ -1,0 +1,170 @@
+import React from "react";
+import { useState, useEffect } from "react";
+import { auth } from "../../config/firebase.js";
+
+import { useUser } from "../../context/UserContext.js";
+import { useClub } from "../../context/ClubContext.js";
+import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
+
+import { useNavigate } from "react-router-dom";
+
+import { useCurrentGWTeam } from "../../hooks/useCurrentTeam.js";
+
+import { SetStartingTeamValues } from "../../utils/SetStartingTeamValues.js";
+
+import NavBar from "../NavBar.js";
+
+import "./FirstTeamPage.css";
+import "../../themes/clubThemes.css";
+
+function FirstTeamPage() {
+  const { user } = useUser();
+  const { clubData, setClubData } = useClub();
+  const { setCurrentTeam, currentTeam } = useCurrentTeam();
+
+  const navigate = useNavigate();
+  const userClub = user?.club;
+
+  const [team, setTeam] = useState(false);
+
+  const themeClass = userClub
+    ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
+    : "theme-default";
+
+  // GET OUR CLUB DATA TO HELP SET UP SQUAD SIZE AND STUFF
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchClubData = async () => {
+      try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(
+          `http://localhost:5000/api/team/getClubData?club=${user.club}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        // console.log(data);
+        setClubData(data);
+      } catch (error) {
+        console.error("Error fetching club data:", error);
+      }
+    };
+
+    fetchClubData();
+  }, []);
+
+  // check if a user has a team created yet - if not, redirect to create team page
+  useEffect(() => {
+    if (!user) return;
+
+    const checkTeam = async () => {
+      try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(
+          "http://localhost:5000/api/team/checkTeamExistence",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ userId: user.id }),
+          }
+        );
+
+        const data = await res.json();
+
+        if (data.exists === false) {
+          //   navigate to create team page
+          navigate("/CreateTeam");
+        } else {
+          setTeam(true);
+        }
+      } catch (error) {
+        console.error("Error checking team existence:", error);
+      }
+    };
+
+    checkTeam();
+  }, []);
+
+  // this is only for GW1 or when the user needs to choose their initial team
+  // will need a new page for when they go to their "original page / team"
+  useCurrentGWTeam(user.id, user.currentGW);
+  const { def, mid, fwd } = SetStartingTeamValues(clubData);
+
+  // this gets our team split back up into position so we can display the current team
+  // clubData stores the numb players etc.. about our club atm
+  const allGk = currentTeam.filter((p) => p.position === "GK");
+  const allDef = currentTeam.filter((p) => p.position === "DEF");
+  const allMid = currentTeam.filter((p) => p.position === "MID");
+  const allFwd = currentTeam.filter((p) => p.position === "FWD");
+
+  const [selectedGk, setSelectedGk] = useState(null);
+  const [selectedDef, setSelectedDef] = useState(Array(def).fill(null));
+  const [selectedMid, setSelectedMid] = useState(Array(mid).fill(null));
+  const [selectedFwd, setSelectedFwd] = useState(Array(fwd).fill(null));
+  const [selectedSubs, setSelectedSubs] = useState(
+    Array(clubData.squadNumber - clubData.startingTeamNumber).fill(null)
+  );
+
+  useEffect(() => {
+    setSelectedGk(allGk[0]);
+    setSelectedDef(allDef.slice(0, def));
+    setSelectedMid(allMid.slice(0, mid));
+    setSelectedFwd(allFwd.slice(0, fwd));
+
+    const starters = [
+      allGk[0],
+      ...allDef.slice(0, def),
+      ...allMid.slice(0, mid),
+      ...allFwd.slice(0, fwd),
+    ];
+
+    const subs = [
+      ...allGk.filter((player) => !starters.includes(player)),
+      ...allDef.filter((player) => !starters.includes(player)),
+      ...allMid.filter((player) => !starters.includes(player)),
+      ...allFwd.filter((player) => !starters.includes(player)),
+    ];
+
+    setSelectedSubs(subs);
+  }, [def]);
+  // keep it as just def ^^ to stop it running too many times
+
+  // WORKS WE NOW HAVE SELECETD PLAYERS
+  // useEffect(() => {
+  //   console.log(selectedGk);
+  //   console.log(selectedDef);
+  //   console.log(selectedMid);
+  //   console.log(selectedFwd);
+  // console.log(selectedSubs);
+  // });
+
+  if (!team) return null;
+
+  // RIGHT where are we :
+  // we go to this page ONLY after choosing our first squad as this auto selects a team
+  // we have auto selected gk def mid fwd and made the rest subs
+
+  // TO DO :
+  // next option is to display the auto selected team and get a save team button - this will save the team for future gw and take us to proper team page
+  // need to make the option for people to be able to swap and change between subs and starters
+  // when we save the team - need to update database with boolean values for all users for starting true or false so we can easily make the team for main team page
+
+  return (
+    <div className={themeClass}>
+      <NavBar />
+      <p> {user.teamName} </p>
+      <p> current gw points </p>
+      <p> total points </p>
+    </div>
+  );
+}
+
+export default FirstTeamPage;

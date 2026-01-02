@@ -1,0 +1,27 @@
+SQUAD SIZE = 7 (1 team)
+starting 5 : 
+ GK
+ DEF x1
+ MID x2
+ FWD x1
+ 
+SQUAD SIZE = 9 (2 teams)
+starting 7 :
+ GK 
+ DEF x2
+ MID x3
+ FWD x1
+
+SQUAD SIZE = 12 (3 teams)
+starting 9 : 
+ GK  
+ DEF x3
+ MID x3
+ FWD x2
+
+SQUAD SIZE = 15 (4+ teams)
+starting 11 :
+ GK
+ DEF x4
+ MID x 4
+ FWD x2

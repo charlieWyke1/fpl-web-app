@@ -39,7 +39,8 @@ function NavBar() {
           </Link>
         </button>
         <button>
-          <Link to="/team" onClick={() => setMenuOpen(false)}>
+          {/* KEEP IT AS FIRST TEAM FOR NOW SO I DONT HAVE TO MAKE A NEW TEAM EVERY TIME BUT WHEN DONW SWITCH TO TEAM */}
+          <Link to="/Firstteam" onClick={() => setMenuOpen(false)}>
             Team
           </Link>
         </button>
