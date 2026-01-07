@@ -13,8 +13,10 @@ import { useCurrentGWTeam } from "../../hooks/useCurrentTeam.js";
 import { SetStartingTeamValues } from "../../utils/SetStartingTeamValues.js";
 
 import NavBar from "../NavBar.js";
+import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
 import "./FirstTeamPage.css";
+import "./CreateTeamPage.js";
 import "../../themes/clubThemes.css";
 
 function FirstTeamPage() {
@@ -96,7 +98,11 @@ function FirstTeamPage() {
   // this is only for GW1 or when the user needs to choose their initial team
   // will need a new page for when they go to their "original page / team"
   useCurrentGWTeam(user.id, user.currentGW);
+  // HOOK FOR TESTING GETTING GW1 TEAM WONT NEED WHEN USER GOES STAROIGHT FORM BUILDING TEAM TO SELECTING TEAM
+  // as then we just use the team set in context no need to go and grab it from the database - plus that started causing errors
+  // so this works as a workaround - comment out when done testing creating team
   const { def, mid, fwd } = SetStartingTeamValues(clubData);
+  const [selectedSubs, setSelectedSubs] = useState([]);
 
   // this gets our team split back up into position so we can display the current team
   // clubData stores the numb players etc.. about our club atm
@@ -109,60 +115,156 @@ function FirstTeamPage() {
   const [selectedDef, setSelectedDef] = useState(Array(def).fill(null));
   const [selectedMid, setSelectedMid] = useState(Array(mid).fill(null));
   const [selectedFwd, setSelectedFwd] = useState(Array(fwd).fill(null));
-  const [selectedSubs, setSelectedSubs] = useState(
-    Array(clubData.squadNumber - clubData.startingTeamNumber).fill(null)
-  );
+
+  // console.log(clubData);
+  // console.log(clubData.squadNumber - clubData.startingTeamNumber);
 
   useEffect(() => {
-    setSelectedGk(allGk[0]);
-    setSelectedDef(allDef.slice(0, def));
-    setSelectedMid(allMid.slice(0, mid));
-    setSelectedFwd(allFwd.slice(0, fwd));
+    if (!currentTeam.length) return;
 
     const starters = [
       allGk[0],
       ...allDef.slice(0, def),
       ...allMid.slice(0, mid),
       ...allFwd.slice(0, fwd),
-    ];
+    ].filter(Boolean);
 
-    const subs = [
-      ...allGk.filter((player) => !starters.includes(player)),
-      ...allDef.filter((player) => !starters.includes(player)),
-      ...allMid.filter((player) => !starters.includes(player)),
-      ...allFwd.filter((player) => !starters.includes(player)),
-    ];
+    setSelectedGk(allGk[0] ?? null);
+    setSelectedDef(allDef.slice(0, def));
+    setSelectedMid(allMid.slice(0, mid));
+    setSelectedFwd(allFwd.slice(0, fwd));
+
+    const subs = currentTeam.filter((player) => !starters.includes(player));
 
     setSelectedSubs(subs);
-  }, [def]);
-  // keep it as just def ^^ to stop it running too many times
-
-  // WORKS WE NOW HAVE SELECETD PLAYERS
-  // useEffect(() => {
-  //   console.log(selectedGk);
-  //   console.log(selectedDef);
-  //   console.log(selectedMid);
-  //   console.log(selectedFwd);
-  // console.log(selectedSubs);
-  // });
+  }, [currentTeam, def, mid, fwd]);
 
   if (!team) return null;
 
-  // RIGHT where are we :
-  // we go to this page ONLY after choosing our first squad as this auto selects a team
-  // we have auto selected gk def mid fwd and made the rest subs
-
   // TO DO :
-  // next option is to display the auto selected team and get a save team button - this will save the team for future gw and take us to proper team page
   // need to make the option for people to be able to swap and change between subs and starters
   // when we save the team - need to update database with boolean values for all users for starting true or false so we can easily make the team for main team page
 
   return (
     <div className={themeClass}>
       <NavBar />
-      <p> {user.teamName} </p>
-      <p> current gw points </p>
-      <p> total points </p>
+
+      <div className="topRow">
+        <div className="teamName">
+          <h4>{user.teamName}</h4>
+        </div>
+        <div className="gameweek">
+          <h4>Gameweek: {user.currentGW}</h4>
+        </div>
+      </div>
+
+      <div className="selectedTeamContainer">
+        <div className="penalty-box top"></div>
+        <div className="six-yard-box top"></div>
+        <div className="penalty-arc top"></div>
+        <div className="halfway-line"></div>
+
+        <div className="gkRow">
+          <div className="shirtRow">
+            {Array.from({ length: 1 }).map((_, index) => (
+              <div key={index} className="shirtContainer">
+                <button className="shirtButton">
+                  <ShirtSvg className={`gkShirt ${themeClass}`} size={120} />
+                </button>
+                <div className="nameTag">
+                  {selectedGk && (
+                    <>
+                      <p>{selectedGk.name}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="defRow">
+          <div className="shirtRow">
+            {Array.from({ length: def }).map((_, index) => (
+              <div key={index} className="shirtContainer">
+                <button className="shirtButton">
+                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
+                </button>
+                <div className="nameTag">
+                  {selectedDef[index] && (
+                    <>
+                      <p>{selectedDef[index].name}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="midRow">
+          <div className="shirtRow">
+            {Array.from({ length: mid }).map((_, index) => (
+              <div key={index} className="shirtContainer">
+                <button className="shirtButton">
+                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
+                </button>
+                <div className="nameTag">
+                  {selectedMid[index] && (
+                    <>
+                      <p>{selectedMid[index].name}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="fwdRow">
+          <div className="shirtRow">
+            {Array.from({ length: fwd }).map((_, index) => (
+              <div key={index} className="shirtContainer">
+                <button className="shirtButton">
+                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
+                </button>
+                <div className="nameTag">
+                  {selectedFwd[index] && (
+                    <>
+                      <p>{selectedFwd[index].name}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="subRow">
+        <div className="shirtRow">
+          {Array.from({ length: selectedSubs.length }).map((_, index) => (
+            <div key={index} className="shirtContainer">
+              <button className="shirtButton">
+                {selectedSubs[index]?.position === "GK" ? (
+                  <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+                ) : (
+                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                )}
+              </button>
+              <div className="nameTag">
+                {selectedSubs[index] && (
+                  <>
+                    <p>{selectedSubs[index].name}</p>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button className="saveFirstTeamButton">Save Starting Team</button>
     </div>
   );
 }

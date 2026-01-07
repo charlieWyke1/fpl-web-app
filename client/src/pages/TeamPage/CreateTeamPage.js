@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext.js";
 import { useClub } from "../../context/ClubContext.js";
 import { usePlayer } from "../../context/PlayerContext.js";
+import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 
 import { auth } from "../../config/firebase.js";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -22,6 +23,8 @@ function CreateTeamPage() {
   const { setUser, user } = useUser();
   const { players } = usePlayer();
   const { clubData } = useClub();
+  const { setCurrentTeam } = useCurrentTeam();
+
   const [budget, setBudget] = useState(0);
   const navigate = useNavigate();
 
@@ -120,7 +123,9 @@ function CreateTeamPage() {
       if (data.success) {
         alert("Team saved successfully!");
         setUser({ ...user, teamName: teamName });
-        navigate("/Firstteam");
+        setCurrentTeam(team);
+
+        navigate("/FirstTeam");
         // CURRENT ERROR WHEN CREATE TEAM THEN WONT LOAD TEAM STRAIGHT IN
         // BUT WORKS FINE FOR SAVING TEAM GOING HOMEPAGE THEN GOING BACK TO TEAM
       } else {
@@ -311,10 +316,10 @@ function CreateTeamPage() {
             setTeamSaved(team);
 
             // now reset options
-            setSelectedGK(Array(clubData.numbGk).fill(null));
-            setSelectedDEF(Array(clubData.numbDef).fill(null));
-            setSelectedMID(Array(clubData.numbMid).fill(null));
-            setSelectedFWD(Array(clubData.numbFwd).fill(null));
+            // setSelectedGK(Array(clubData.numbGk).fill(null));
+            // setSelectedDEF(Array(clubData.numbDef).fill(null));
+            // setSelectedMID(Array(clubData.numbMid).fill(null));
+            // setSelectedFWD(Array(clubData.numbFwd).fill(null));
             setBudget(clubData.budget);
 
             saveTeam(team);
