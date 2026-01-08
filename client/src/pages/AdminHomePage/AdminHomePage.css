@@ -48,7 +48,7 @@ h5 {
 .buttonRows button {
   flex: 1;
   padding: 1rem 2rem;
-  font-size: 1.2rem;
+  font-size: 2rem !important;
   font-weight: 500;
   border: none;
   background-color: white;
@@ -61,7 +61,7 @@ h5 {
   text-decoration: none;
   font-weight: 600;
   font-family: Andale Mono, monospace !important;
-  font-size: 1.2rem;
+  font-size: 2rem !important;
   display: inline-block;
   transition: transform 0.5s;
   cursor: pointer;
@@ -95,6 +95,10 @@ h5 {
   flex-direction: column;
   justify-content: center;
 }
+
+.statsBox h4 {
+  font-size: 1.7rem !important;
+}
 /* .statsBox:first-child {
   border-left: black 1px solid;
 }
@@ -112,7 +116,7 @@ h5 {
   border-top: lightgray 2px solid;
 }
 .positionFilter {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   border-radius: 8px;
   width: 50%;
   box-sizing: border-box;
@@ -137,9 +141,9 @@ h5 {
 }
 .playersTable th {
   width: 25%;
-  padding: 12px 8px;
+  padding: 16px 12px;
   border-bottom: 2px solid #e0e0e0;
-  font-size: 1.5rem;
+  font-size: 2rem !important;
   text-align: center;
   font-weight: 600;
   border-top: none;
@@ -147,7 +151,9 @@ h5 {
 .playersTable tbody tr {
   border-bottom: 2px solid #e0e0e0;
   height: 2.5rem;
-  font-size: 1rem;
+  font-size: 1.5rem !important;
+  font-weight: 300 !important;
+  font-family: Andale Mono, monospace !important;
 }
 .playersTable tbody tr:hover {
   text-decoration: underline;
