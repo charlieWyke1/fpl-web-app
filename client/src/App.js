@@ -13,6 +13,7 @@ import AddPlayersPage from "./pages/AddPlayersPage/AddPlayersPage";
 import ResultsPage from "./pages/ResultsPage/ResultsPage";
 import FirstTeamPage from "./pages/TeamPage/FirstTeamPage.js";
 import CreateTeamPage from "./pages/TeamPage/CreateTeamPage.js";
+import HomePage from "./pages/MainPage/HomePage.js";
 
 function App() {
   return (
@@ -29,7 +30,8 @@ function App() {
                     <Route path="/Players" element={<AddPlayersPage />} />
                     <Route path="/results" element={<ResultsPage />} />
                     <Route path="/FirstTeam" element={<FirstTeamPage />} />
-                    <Route path="CreateTeam" element={<CreateTeamPage />} />
+                    <Route path="/CreateTeam" element={<CreateTeamPage />} />
+                    <Route path="/HomePage" element={<HomePage />} />
                   </Routes>
                 </Router>
               </ClubProvider>

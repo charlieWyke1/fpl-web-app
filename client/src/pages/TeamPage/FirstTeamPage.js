@@ -157,10 +157,6 @@ function FirstTeamPage() {
 
   if (!team) return null;
 
-  // TO DO :
-  // need to make the option for people to be able to swap and change between subs and starters
-  // when we save the team - need to update database with boolean values for all users for starting true or false so we can easily make the team for main team page
-
   const handleStarterClick = (player) => {
     if (activeStarterId === player.id) {
       setActiveStarterId(null);
@@ -221,10 +217,12 @@ function FirstTeamPage() {
     if (starter.position === "GK" && sub.position !== "GK") return;
     if (starter.position !== "GK" && sub.position === "GK") return;
 
-    // --- Swap starter in its array ---
     if (starter.position === "GK") {
       setSelectedGk(sub);
-    } else if (starter.position === "DEF") {
+    }
+    // first removes the starter from their  position
+    // then adds the sub to the list matching their position
+    else if (starter.position === "DEF") {
       removeDef(starter);
       if (sub.position === "DEF") {
         addDef(sub);
@@ -253,6 +251,7 @@ function FirstTeamPage() {
       }
     }
 
+    // rmeoves the sub from our sub list and adds in the starter as they swap
     setSelectedSubs((prevList) => prevList.filter((item) => item !== sub));
     setSelectedSubs((prevList) => [...prevList, starter]);
     setActiveStarterId(null);
@@ -277,6 +276,36 @@ function FirstTeamPage() {
   };
   const addFwd = (sub) => {
     setSelectedFwd((prevList) => [...prevList, sub]);
+  };
+
+  // LAST part - saves squad and takes us to HomePage.js
+  const saveSquad = async (fullSquad) => {
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const res = await fetch("http://localhost:5000/api/team/saveSquad", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          squad: fullSquad,
+          gw: user.currentGW,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Gameweek squad saved succesfully}");
+        setCurrentTeam(fullSquad);
+
+        navigate("/HomePage");
+      } else {
+        alert("Error saving team.");
+      }
+    } catch (error) {
+      console.error("Error saving team", error);
+    }
   };
 
   return (
@@ -429,6 +458,8 @@ function FirstTeamPage() {
           }));
 
           const fullSquad = [...startingTeam, ...subs];
+
+          saveSquad(fullSquad);
 
           // console.log(fullSquad);
           // NOW just have to write this data and currentGW (players first gw) toi firebase and this is all sorted

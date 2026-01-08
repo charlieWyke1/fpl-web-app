@@ -50,25 +50,22 @@ function CreateTeamPage() {
 
   const gkOptions = (allGk || []).map((g) => ({
     ...g,
-    value: g.id,
+    // value: g.cost, removed as dont think does anythign
     label: `${g.name} - (${g.team})`,
   }));
 
   const defOptions = (allDef || []).map((d) => ({
     ...d,
-    value: d.id,
     label: `${d.name} - (${d.team})`,
   }));
 
   const midOptions = (allMid || []).map((m) => ({
     ...m,
-    value: m.id,
     label: `${m.name} - (${m.team})`,
   }));
 
   const fwdOptions = (allFwd || []).map((f) => ({
     ...f,
-    value: f.id,
     label: `${f.name} - (${f.team})`,
   }));
 
@@ -126,8 +123,7 @@ function CreateTeamPage() {
         setCurrentTeam(team);
 
         navigate("/FirstTeam");
-        // CURRENT ERROR WHEN CREATE TEAM THEN WONT LOAD TEAM STRAIGHT IN
-        // BUT WORKS FINE FOR SAVING TEAM GOING HOMEPAGE THEN GOING BACK TO TEAM
+        // solved prev error w team not loading in
       } else {
         alert("Error saving team.");
       }
@@ -314,12 +310,6 @@ function CreateTeamPage() {
               ...selectedFWD,
             ];
             setTeamSaved(team);
-
-            // now reset options
-            // setSelectedGK(Array(clubData.numbGk).fill(null));
-            // setSelectedDEF(Array(clubData.numbDef).fill(null));
-            // setSelectedMID(Array(clubData.numbMid).fill(null));
-            // setSelectedFWD(Array(clubData.numbFwd).fill(null));
             setBudget(clubData.budget);
 
             saveTeam(team);

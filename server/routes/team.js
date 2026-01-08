@@ -4,6 +4,7 @@ import { checkTeamExistence } from "../config/firestore.js";
 import { getTeamData } from "../config/firestore.js";
 import { saveFirstTeam } from "../config/firestore.js";
 import { getCurrentGWTeam } from "../config/firestore.js";
+import { saveFirstSquad } from "../config/firestore.js";
 
 const router = express.Router();
 
@@ -70,5 +71,23 @@ router.post(
     }
   }
 );
+
+router.post("/api/team/saveSquad", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const squad = req.body.squad;
+    const gw = req.body.gw;
+
+    const saveSquad = await saveFirstSquad(userId, squad, gw);
+    if (saveSquad) {
+      res
+        .status(200)
+        .json({ success: true, message: "Squad saved succesfully" });
+      return;
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to save Gameweek squad" });
+  }
+});
 
 export default router;
