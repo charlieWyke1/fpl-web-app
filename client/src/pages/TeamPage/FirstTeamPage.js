@@ -29,6 +29,10 @@ function FirstTeamPage() {
 
   const [team, setTeam] = useState(false);
 
+  // GK swapping
+  const [activeGk, setActiveGk] = useState(null);
+  const [activeSubGkIndex, setActiveSubGkIndex] = useState(null);
+
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
@@ -145,6 +149,46 @@ function FirstTeamPage() {
   // need to make the option for people to be able to swap and change between subs and starters
   // when we save the team - need to update database with boolean values for all users for starting true or false so we can easily make the team for main team page
 
+  // set up for goalkeeper swapping
+  const handleStarterGkClick = () => {
+    if (activeGk === selectedGk) {
+      setActiveGk(null);
+    } else {
+      setActiveGk(selectedGk);
+    }
+    // checks if the other gk has been clicked for swapping
+    if (activeSubGkIndex !== null) {
+      swapGks(activeSubGkIndex);
+    }
+  };
+  const handleSubGkClick = (index) => {
+    if (activeSubGkIndex === index) {
+      setActiveSubGkIndex(null);
+    } else {
+      setActiveSubGkIndex(index);
+    }
+    // checks if the other gk has been clicked for swapping
+    if (activeGk) {
+      swapGks(index);
+    }
+  };
+  // swaps our gks round in the lists and on display
+  const swapGks = (subIndex) => {
+    const newSubs = [...selectedSubs];
+    const subGk = newSubs[subIndex];
+
+    // Swap starter GK into sub list
+    newSubs[subIndex] = selectedGk;
+
+    setSelectedGk(subGk);
+    setSelectedSubs(newSubs);
+
+    setActiveGk(null);
+    setActiveSubGkIndex(null);
+  };
+
+  // GK swapping done
+
   return (
     <div className={themeClass}>
       <NavBar />
@@ -166,20 +210,22 @@ function FirstTeamPage() {
 
         <div className="gkRow">
           <div className="shirtRow">
-            {Array.from({ length: 1 }).map((_, index) => (
-              <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+            {selectedGk && (
+              <div className="shirtContainer">
+                <button
+                  className={`shirtButton gkButton ${
+                    activeGk === selectedGk ? "activeGK" : ""
+                  }`}
+                  onClick={handleStarterGkClick}
+                >
                   <ShirtSvg className={`gkShirt ${themeClass}`} size={120} />
                 </button>
+
                 <div className="nameTag">
-                  {selectedGk && (
-                    <>
-                      <p>{selectedGk.name}</p>
-                    </>
-                  )}
+                  <p>{selectedGk.name}</p>
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
 
@@ -190,6 +236,7 @@ function FirstTeamPage() {
                 <button className="shirtButton">
                   <ShirtSvg className={`shirt ${themeClass}`} size={120} />
                 </button>
+
                 <div className="nameTag">
                   {selectedDef[index] && (
                     <>
@@ -209,6 +256,7 @@ function FirstTeamPage() {
                 <button className="shirtButton">
                   <ShirtSvg className={`shirt ${themeClass}`} size={120} />
                 </button>
+
                 <div className="nameTag">
                   {selectedMid[index] && (
                     <>
@@ -225,9 +273,13 @@ function FirstTeamPage() {
           <div className="shirtRow">
             {Array.from({ length: fwd }).map((_, index) => (
               <div key={index} className="shirtContainer">
+                {/* <button className="shirtButton">
+                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
+                </button> */}
                 <button className="shirtButton">
                   <ShirtSvg className={`shirt ${themeClass}`} size={120} />
                 </button>
+
                 <div className="nameTag">
                   {selectedFwd[index] && (
                     <>
@@ -243,21 +295,25 @@ function FirstTeamPage() {
 
       <div className="subRow">
         <div className="shirtRow">
-          {Array.from({ length: selectedSubs.length }).map((_, index) => (
+          {selectedSubs.map((sub, index) => (
             <div key={index} className="shirtContainer">
-              <button className="shirtButton">
-                {selectedSubs[index]?.position === "GK" ? (
+              {sub.position === "GK" ? (
+                <button
+                  className={`shirtButton gkButton ${
+                    activeSubGkIndex === index ? "activeSubGK" : ""
+                  }`}
+                  onClick={() => handleSubGkClick(index)}
+                >
                   <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
-                ) : (
+                </button>
+              ) : (
+                <button className="shirtButton">
                   <ShirtSvg className={`shirt ${themeClass}`} size={100} />
-                )}
-              </button>
+                </button>
+              )}
+
               <div className="nameTag">
-                {selectedSubs[index] && (
-                  <>
-                    <p>{selectedSubs[index].name}</p>
-                  </>
-                )}
+                <p>{sub.name}</p>
               </div>
             </div>
           ))}
