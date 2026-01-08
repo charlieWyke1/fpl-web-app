@@ -29,9 +29,21 @@ function FirstTeamPage() {
 
   const [team, setTeam] = useState(false);
 
-  // GK swapping
-  const [activeGk, setActiveGk] = useState(null);
-  const [activeSubGkIndex, setActiveSubGkIndex] = useState(null);
+  // // GK swapping
+  // const [activeGk, setActiveGk] = useState(null);
+  // const [activeSubGkIndex, setActiveSubGkIndex] = useState(null);
+
+  // // Outfield starters
+  // const [activeDefIndex, setActiveDefIndex] = useState(null);
+  // const [activeMidIndex, setActiveMidIndex] = useState(null);
+  // const [activeFwdIndex, setActiveFwdIndex] = useState(null);
+  // // Outfield subs (exclude GK)
+  // const [activeSubOutfieldIndex, setActiveSubOutfieldIndex] = useState(null);
+
+  // starter highlight
+  const [activeStarterId, setActiveStarterId] = useState(null);
+  // sub highlight
+  const [activeSubId, setActiveSubId] = useState(null);
 
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
@@ -149,45 +161,123 @@ function FirstTeamPage() {
   // need to make the option for people to be able to swap and change between subs and starters
   // when we save the team - need to update database with boolean values for all users for starting true or false so we can easily make the team for main team page
 
-  // set up for goalkeeper swapping
-  const handleStarterGkClick = () => {
-    if (activeGk === selectedGk) {
-      setActiveGk(null);
-    } else {
-      setActiveGk(selectedGk);
+  const handleStarterClick = (player) => {
+    if (activeStarterId === player.id) {
+      setActiveStarterId(null);
+      return;
     }
-    // checks if the other gk has been clicked for swapping
-    if (activeSubGkIndex !== null) {
-      swapGks(activeSubGkIndex);
-    }
-  };
-  const handleSubGkClick = (index) => {
-    if (activeSubGkIndex === index) {
-      setActiveSubGkIndex(null);
-    } else {
-      setActiveSubGkIndex(index);
-    }
-    // checks if the other gk has been clicked for swapping
-    if (activeGk) {
-      swapGks(index);
-    }
-  };
-  // swaps our gks round in the lists and on display
-  const swapGks = (subIndex) => {
-    const newSubs = [...selectedSubs];
-    const subGk = newSubs[subIndex];
 
-    // Swap starter GK into sub list
-    newSubs[subIndex] = selectedGk;
+    // If a sub is already selected, attempt swap
+    if (activeSubId) {
+      const subPlayer = selectedSubs.find((p) => p.id === activeSubId);
 
-    setSelectedGk(subGk);
-    setSelectedSubs(newSubs);
+      // GK rule: GK can only swap with GK
+      if (
+        (player.position === "GK" && subPlayer.position !== "GK") ||
+        (player.position !== "GK" && subPlayer.position === "GK")
+      ) {
+        return; // invalid swap, do nothing
+      }
 
-    setActiveGk(null);
-    setActiveSubGkIndex(null);
+      swapPlayers(player, subPlayer);
+      return;
+    }
+
+    // Otherwise, select starter
+    setActiveStarterId(player.id);
   };
 
-  // GK swapping done
+  const handleSubClick = (player) => {
+    if (activeSubId === player.id) {
+      setActiveSubId(null);
+      return;
+    }
+
+    if (activeStarterId) {
+      const starterPlayer =
+        selectedGk?.id === activeStarterId
+          ? selectedGk
+          : selectedDef.find((p) => p.id === activeStarterId) ??
+            selectedMid.find((p) => p.id === activeStarterId) ??
+            selectedFwd.find((p) => p.id === activeStarterId);
+
+      // GK rule: GK can only swap with GK
+      if (
+        (player.position === "GK" && starterPlayer.position !== "GK") ||
+        (player.position !== "GK" && starterPlayer.position === "GK")
+      ) {
+        return; // invalid swap, do nothing
+      }
+
+      swapPlayers(starterPlayer, player);
+      return;
+    }
+
+    setActiveSubId(player.id);
+  };
+
+  const swapPlayers = (starter, sub) => {
+    // --- GK rule ---
+    if (starter.position === "GK" && sub.position !== "GK") return;
+    if (starter.position !== "GK" && sub.position === "GK") return;
+
+    // --- Swap starter in its array ---
+    if (starter.position === "GK") {
+      setSelectedGk(sub);
+    } else if (starter.position === "DEF") {
+      removeDef(starter);
+      if (sub.position === "DEF") {
+        addDef(sub);
+      } else if (sub.position === "MID") {
+        addMid(sub);
+      } else if (sub.position === "FWD") {
+        addFwd(sub);
+      }
+    } else if (starter.position === "MID") {
+      removeMid(starter);
+      if (sub.position === "DEF") {
+        addDef(sub);
+      } else if (sub.position === "MID") {
+        addMid(sub);
+      } else if (sub.position === "FWD") {
+        addFwd(sub);
+      }
+    } else if (starter.position === "FWD") {
+      removeFwd(starter);
+      if (sub.position === "DEF") {
+        addDef(sub);
+      } else if (sub.position === "MID") {
+        addMid(sub);
+      } else if (sub.position === "FWD") {
+        addFwd(sub);
+      }
+    }
+
+    setSelectedSubs((prevList) => prevList.filter((item) => item !== sub));
+    setSelectedSubs((prevList) => [...prevList, starter]);
+    setActiveStarterId(null);
+    setActiveSubId(null);
+  };
+
+  const removeDef = (player) => {
+    setSelectedDef((prevList) => prevList.filter((item) => item !== player));
+  };
+  const removeMid = (player) => {
+    setSelectedMid((prevList) => prevList.filter((item) => item != player));
+  };
+  const removeFwd = (player) => {
+    setSelectedFwd((prevList) => prevList.filter((item) => item != player));
+  };
+
+  const addDef = (sub) => {
+    setSelectedDef((prevList) => [...prevList, sub]);
+  };
+  const addMid = (sub) => {
+    setSelectedMid((prevList) => [...prevList, sub]);
+  };
+  const addFwd = (sub) => {
+    setSelectedFwd((prevList) => [...prevList, sub]);
+  };
 
   return (
     <div className={themeClass}>
@@ -214,13 +304,12 @@ function FirstTeamPage() {
               <div className="shirtContainer">
                 <button
                   className={`shirtButton gkButton ${
-                    activeGk === selectedGk ? "activeGK" : ""
+                    activeStarterId === selectedGk.id ? "activeGK" : ""
                   }`}
-                  onClick={handleStarterGkClick}
+                  onClick={() => handleStarterClick(selectedGk)}
                 >
                   <ShirtSvg className={`gkShirt ${themeClass}`} size={120} />
                 </button>
-
                 <div className="nameTag">
                   <p>{selectedGk.name}</p>
                 </div>
@@ -231,18 +320,18 @@ function FirstTeamPage() {
 
         <div className="defRow">
           <div className="shirtRow">
-            {Array.from({ length: def }).map((_, index) => (
-              <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+            {selectedDef.map((player) => (
+              <div key={player.id} className="shirtContainer">
+                <button
+                  className={`shirtButton outfieldButton ${
+                    activeStarterId === player.id ? "activeOutfield" : ""
+                  }`}
+                  onClick={() => handleStarterClick(player)}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} size={120} />
                 </button>
-
                 <div className="nameTag">
-                  {selectedDef[index] && (
-                    <>
-                      <p>{selectedDef[index].name}</p>
-                    </>
-                  )}
+                  <p>{player.name}</p>
                 </div>
               </div>
             ))}
@@ -251,18 +340,18 @@ function FirstTeamPage() {
 
         <div className="midRow">
           <div className="shirtRow">
-            {Array.from({ length: mid }).map((_, index) => (
-              <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+            {selectedMid.map((player) => (
+              <div key={player.id} className="shirtContainer">
+                <button
+                  className={`shirtButton outfieldButton ${
+                    activeStarterId === player.id ? "activeOutfield" : ""
+                  }`}
+                  onClick={() => handleStarterClick(player)}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} size={120} />
                 </button>
-
                 <div className="nameTag">
-                  {selectedMid[index] && (
-                    <>
-                      <p>{selectedMid[index].name}</p>
-                    </>
-                  )}
+                  <p>{player.name}</p>
                 </div>
               </div>
             ))}
@@ -271,21 +360,18 @@ function FirstTeamPage() {
 
         <div className="fwdRow">
           <div className="shirtRow">
-            {Array.from({ length: fwd }).map((_, index) => (
-              <div key={index} className="shirtContainer">
-                {/* <button className="shirtButton">
-                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
-                </button> */}
-                <button className="shirtButton">
+            {selectedFwd.map((player) => (
+              <div key={player.id} className="shirtContainer">
+                <button
+                  className={`shirtButton outfieldButton ${
+                    activeStarterId === player.id ? "activeOutfield" : ""
+                  }`}
+                  onClick={() => handleStarterClick(player)}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} size={120} />
                 </button>
-
                 <div className="nameTag">
-                  {selectedFwd[index] && (
-                    <>
-                      <p>{selectedFwd[index].name}</p>
-                    </>
-                  )}
+                  <p>{player.name}</p>
                 </div>
               </div>
             ))}
@@ -295,23 +381,27 @@ function FirstTeamPage() {
 
       <div className="subRow">
         <div className="shirtRow">
-          {selectedSubs.map((sub, index) => (
-            <div key={index} className="shirtContainer">
+          {selectedSubs.map((sub) => (
+            <div key={sub.id} className="shirtContainer">
               {sub.position === "GK" ? (
                 <button
                   className={`shirtButton gkButton ${
-                    activeSubGkIndex === index ? "activeSubGK" : ""
+                    activeSubId === sub.id ? "activeSubGK" : ""
                   }`}
-                  onClick={() => handleSubGkClick(index)}
+                  onClick={() => handleSubClick(sub)}
                 >
                   <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
                 </button>
               ) : (
-                <button className="shirtButton">
+                <button
+                  className={`shirtButton outfieldButton ${
+                    activeSubId === sub.id ? "activeSubOutfield" : ""
+                  }`}
+                  onClick={() => handleSubClick(sub)}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} size={100} />
                 </button>
               )}
-
               <div className="nameTag">
                 <p>{sub.name}</p>
               </div>
@@ -320,7 +410,33 @@ function FirstTeamPage() {
         </div>
       </div>
 
-      <button className="saveFirstTeamButton">Save Starting Team</button>
+      <button
+        className="saveFirstTeamButton"
+        onClick={() => {
+          const startingTeam = [
+            selectedGk,
+            ...selectedDef,
+            ...selectedMid,
+            ...selectedFwd,
+          ].map((player) => ({
+            ...player,
+            isStarting: true,
+          }));
+
+          const subs = selectedSubs.map((player, index) => ({
+            ...player,
+            isStarting: false,
+          }));
+
+          const fullSquad = [...startingTeam, ...subs];
+
+          // console.log(fullSquad);
+          // NOW just have to write this data and currentGW (players first gw) toi firebase and this is all sorted
+          // FOR FUTURE this is where we wld add captain choice
+        }}
+      >
+        Save Starting Team
+      </button>
     </div>
   );
 }
