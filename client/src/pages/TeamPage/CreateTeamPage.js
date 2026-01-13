@@ -102,7 +102,7 @@ function CreateTeamPage() {
   const saveTeam = async (team) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5000/api/team/saveTeam", {
+      const res = await fetch("http://localhost:5001/api/team/saveTeam", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

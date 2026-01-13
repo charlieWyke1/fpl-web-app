@@ -47,7 +47,7 @@ function AdminHomePage() {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5000/api/admin/squads?club=${user.club}`,
+          `http://localhost:5001/api/admin/squads?club=${user.club}`,
           {
             method: "GET",
             headers: {

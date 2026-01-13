@@ -14,7 +14,7 @@ export const useClubUsers = (user) => {
     const fetchUsers = async () => {
       try {
         const token = await auth.currentUser.getIdToken();
-        const res = await fetch("http://localhost:5000/api/admin/users", {
+        const res = await fetch("http://localhost:5001/api/admin/users", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

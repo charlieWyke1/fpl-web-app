@@ -48,7 +48,7 @@ function AddPlayersPage() {
 
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5000/api/players/addPlayer", {
+      const res = await fetch("http://localhost:5001/api/players/addPlayer", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

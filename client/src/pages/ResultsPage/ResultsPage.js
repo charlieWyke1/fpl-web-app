@@ -179,7 +179,7 @@ function ResultsPage() {
 
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5000/api/results/updateScore", {
+      const res = await fetch("http://localhost:5001/api/results/updateScore", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -215,7 +215,7 @@ function ResultsPage() {
         try {
           const token2 = await auth.currentUser.getIdToken();
           const res2 = await fetch(
-            "http://localhost:5000/api/results/updateCurrentGW",
+            "http://localhost:5001/api/results/updateCurrentGW",
             {
               method: "POST",
               headers: {
@@ -293,7 +293,7 @@ function ResultsPage() {
       try {
         const token3 = await auth.currentUser.getIdToken();
         const res3 = await fetch(
-          "http://localhost:5000/api/results/updatePlayerPoints",
+          "http://localhost:5001/api/results/updatePlayerPoints",
           {
             method: "POST",
             headers: {

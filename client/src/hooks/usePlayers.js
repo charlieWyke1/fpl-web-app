@@ -15,7 +15,7 @@ export const usePlayers = (user) => {
       setLoadingPlayers(true);
 
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5000/api/admin/players", {
+      const res = await fetch("http://localhost:5001/api/admin/players", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

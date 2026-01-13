@@ -14,7 +14,7 @@ export default function useTeamData(isOpen, user) {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5000/api/admin/team?userId=${userId}&currentGW=${currentGW}`,
+          `http://localhost:5001/api/admin/team?userId=${userId}&currentGW=${currentGW}`,
           {
             method: "GET",
             headers: {

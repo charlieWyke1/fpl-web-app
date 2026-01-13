@@ -57,7 +57,7 @@ function FirstTeamPage() {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5000/api/team/getClubData?club=${user.club}`,
+          `http://localhost:5001/api/team/getClubData?club=${user.club}`,
           {
             method: "GET",
             headers: {
@@ -84,7 +84,7 @@ function FirstTeamPage() {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          "http://localhost:5000/api/team/checkTeamExistence",
+          "http://localhost:5001/api/team/checkTeamExistence",
           {
             method: "POST",
             headers: {
@@ -282,7 +282,7 @@ function FirstTeamPage() {
   const saveSquad = async (fullSquad) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5000/api/team/saveSquad", {
+      const res = await fetch("http://localhost:5001/api/team/saveSquad", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

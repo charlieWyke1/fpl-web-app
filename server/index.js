@@ -6,19 +6,24 @@ import resultsRoutes from "./routes/results.js";
 import teamRoutes from "./routes/team.js";
 
 const app = express();
-app.use(express.json());
 
 app.use(
   cors({
     origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.options(/.*/, cors());
+
+app.use(express.json());
 
 app.use(adminRoutes);
 app.use(addPlayerRoutes);
 app.use(resultsRoutes);
 app.use(teamRoutes);
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(5001, () => console.log("Server running on port 5001"));
+
