@@ -68,39 +68,7 @@ function FirstTeamPage() {
 
   // check if a user has a team created yet - if not, redirect to create team page
   // no need for this here - do on the main page
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const checkTeam = async () => {
-  //     try {
-  //       const token = await auth.currentUser.getIdToken();
-  //       const res = await fetch(
-  //         "http://localhost:5001/api/team/checkTeamExistence",
-  //         {
-  //           method: "POST",
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({ userId: user.id }),
-  //         }
-  //       );
-
-  //       const data = await res.json();
-
-  //       if (data.exists === false) {
-  //         //   navigate to create team page
-  //         navigate("/CreateTeam");
-  //       } else {
-  //         setTeam(true);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error checking team existence:", error);
-  //     }
-  //   };
-
-  //   checkTeam();
-  // }, []);
+  
 
   // this is only for GW1 or when the user needs to choose their initial team
   // will need a new page for when they go to their "original page / team"

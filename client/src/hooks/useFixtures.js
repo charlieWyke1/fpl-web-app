@@ -38,5 +38,5 @@ export const useFixtures = (user) => {
     fetchFixtures();
   }, []);
 
-  return { fixtures, loadingFixtures };
+  return { fixtures };
 };

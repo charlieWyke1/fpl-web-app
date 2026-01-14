@@ -8,7 +8,7 @@ import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 
 import { useNavigate } from "react-router-dom";
 
-import { useCurrentGWTeam } from "../../hooks/useCurrentTeam.js";
+import { useFixtures } from "../../hooks/useFixtures.js";
 
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
@@ -28,8 +28,6 @@ function HomePage() {
   const themeClass = userClub
   ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
   : "theme-default";
-
-  console.log(currentTeam)
 
   // now we shld probs check if the user has a team here 
   // if no team goes to create team 
@@ -68,11 +66,17 @@ function HomePage() {
       checkTeam();
     }, []);
 
+    // everything from here only works if we HAVE a team
 
+    const fixtures = useFixtures(user);
+    console.log(fixtures);
 
   return (
     <div className = {themeClass}>
       <NavBar />
+
+      <p>{user.teamName}</p>
+      <p>{user.currentGW}</p>
 
     </div>
   );
