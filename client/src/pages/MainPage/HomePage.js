@@ -14,6 +14,7 @@ import { getApiBase } from "../../config/api.js";
 
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
+import Countdown from "../../utils/Countdown.js";
 
 import "./HomePage.css"
 import "../../themes/clubThemes.css";
@@ -26,7 +27,10 @@ function HomePage() {
   
   const navigate = useNavigate();
   const [team, setTeam] = useState(false);
+
   const userClub = user?.club;
+  const currentGW = `gw${user?.currentGW}`;
+
 
   const themeClass = userClub
   ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
@@ -71,15 +75,47 @@ function HomePage() {
 
     // everything from here only works if we HAVE a team
 
-    const fixtures = useFixtures(user);
-    console.log(fixtures);
+    const fixturesTemp = useFixtures(user);
+    const tsDate = fixturesTemp.fixtures.cutOff[currentGW]
+    const cutOffDate = new Date(tsDate._seconds * 1000);
+    
+    // const cutOffDay = date.toLocaleDateString("en-gb", {
+    //   weekday : "long",
+    //   day : "numeric",
+    //   month : "long",
+    // })
+
+    // const cutOffTime = date.toLocaleTimeString("en-GB", {
+    //   hour: "2-digit",
+    //   minute: "2-digit",
+    // });
+    
+
 
   return (
     <div className = {themeClass}>
       <NavBar />
 
-      <p>{user.teamName}</p>
-      <p>{user.currentGW}</p>
+      <div className="topRow">
+        <div className="teamRow">
+          <div className="teamName">
+            <h4>{user.teamName}</h4>
+          </div>
+          <div className="ptsShow">
+            <div className="gwPoints">
+              <h5>58pts</h5>
+            </div>
+            <div className="totalPoints">
+              <h4>100pts</h4>
+            </div>
+          </div>
+        </div>
+        
+        
+
+      </div>
+
+      <Countdown targetDate={cutOffDate} />
 
     </div>
   );
