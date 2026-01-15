@@ -12,6 +12,8 @@ import { useClubUsers } from "../../hooks/useClubUsers.js";
 
 import { Link } from "react-router-dom";
 
+import { getApiBase } from "../../config/api.js";
+
 import "./AdminHomePage.css";
 import "./LoadingPage.css";
 import "../../themes/clubThemes.css";
@@ -47,7 +49,7 @@ function AdminHomePage() {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5001/api/admin/squads?club=${user.club}`,
+          `${getApiBase()}/api/admin/squads?club=${user.club}`,
           {
             method: "GET",
             headers: {

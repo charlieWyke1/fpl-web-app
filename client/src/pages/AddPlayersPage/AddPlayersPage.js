@@ -4,8 +4,10 @@ import { useUser } from "../../context/UserContext.js";
 import { usePlayer } from "../../context/PlayerContext.js";
 import { useNavigate, Link } from "react-router-dom";
 import { auth } from "../../config/firebase.js";
-// import { collection, addDoc } from "firebase/firestore";
+
 import NavBar from "../NavBar.js";
+
+import { getApiBase } from "../../config/api.js";
 
 import "./AddPlayersPage.css";
 import "../../themes/clubThemes.css";
@@ -48,7 +50,7 @@ function AddPlayersPage() {
 
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5001/api/players/addPlayer", {
+      const res = await fetch(`${getApiBase()}/api/players/addPlayer`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

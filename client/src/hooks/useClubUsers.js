@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { auth } from "../config/firebase.js";
 import { useUser } from "../context/UserContext.js";
 
+import { getApiBase } from "../config/api.js";
+
 export const useClubUsers = (user) => {
   const { users, setUser } = useUser();
   const [club, setClub] = useState(null);
@@ -14,7 +16,7 @@ export const useClubUsers = (user) => {
     const fetchUsers = async () => {
       try {
         const token = await auth.currentUser.getIdToken();
-        const res = await fetch("http://localhost:5001/api/admin/users", {
+        const res = await fetch(`${getApiBase()}/api/admin/users`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

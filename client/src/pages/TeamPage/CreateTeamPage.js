@@ -7,6 +7,9 @@ import { usePlayer } from "../../context/PlayerContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 
 import { auth } from "../../config/firebase.js";
+
+import { getApiBase } from "../../config/api.js";
+
 import { Navigate, useNavigate } from "react-router-dom";
 
 import NavBar from "../NavBar.js";
@@ -102,7 +105,7 @@ function CreateTeamPage() {
   const saveTeam = async (team) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5001/api/team/saveTeam", {
+      const res = await fetch(`${getApiBase()}/api/team/saveTeam`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { auth } from "../config/firebase.js";
 import { useFixture } from "../context/FixtureContext.js";
 
+import { getApiBase } from "../config/api.js";
+
+
 export const useFixtures = (user) => {
   const { fixtures, setFixtures } = useFixture();
   const [loadingFixtures, setLoadingFixtures] = useState(true);
@@ -15,7 +18,7 @@ export const useFixtures = (user) => {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5001/api/admin/fixtures?club=${club}`,
+          `${getApiBase()}/api/admin/fixtures?club=${club}`,
           {
             method: "GET",
             headers: {

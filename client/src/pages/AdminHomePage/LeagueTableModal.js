@@ -4,6 +4,8 @@ import { auth } from "../../config/firebase.js";
 import useTeamData from "./TeamData.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
+import { getApiBase } from "../../config/api.js";
+
 import "./LeagueTableModal.css";
 
 export default function LeagueTableModal({ isOpen, onClose, user, players }) {
@@ -50,7 +52,7 @@ export default function LeagueTableModal({ isOpen, onClose, user, players }) {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5001/api/admin/team?userId=${userId}`,
+          `${getApiBase()}/api/admin/team?userId=${userId}`,
           {
             method: "GET",
             headers: {

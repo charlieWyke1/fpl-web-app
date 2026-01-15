@@ -8,6 +8,8 @@ import { useTeam } from "../../context/TeamContext.js";
 import { useFixture } from "../../context/FixtureContext.js";
 import { auth } from "../../config/firebase.js";
 
+import { getApiBase } from "../../config/api.js";
+
 import "../../themes/clubThemes.css";
 import "./ResultsPage.css";
 
@@ -179,7 +181,7 @@ function ResultsPage() {
 
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5001/api/results/updateScore", {
+      const res = await fetch(`${getApiBase()}/api/results/updateScore`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -215,7 +217,7 @@ function ResultsPage() {
         try {
           const token2 = await auth.currentUser.getIdToken();
           const res2 = await fetch(
-            "http://localhost:5001/api/results/updateCurrentGW",
+            `${getApiBase()}/api/results/updateCurrentGW`,
             {
               method: "POST",
               headers: {
@@ -293,7 +295,7 @@ function ResultsPage() {
       try {
         const token3 = await auth.currentUser.getIdToken();
         const res3 = await fetch(
-          "http://localhost:5001/api/results/updatePlayerPoints",
+          `${getApiBase()}/api/results/updatePlayerPoints`,
           {
             method: "POST",
             headers: {

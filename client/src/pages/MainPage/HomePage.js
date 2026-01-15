@@ -10,11 +10,14 @@ import { useNavigate } from "react-router-dom";
 
 import { useFixtures } from "../../hooks/useFixtures.js";
 
+import { getApiBase } from "../../config/api.js";
+
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
 import "./HomePage.css"
 import "../../themes/clubThemes.css";
+
 
 
 function HomePage() {
@@ -39,7 +42,7 @@ function HomePage() {
         try {
           const token = await auth.currentUser.getIdToken();
           const res = await fetch(
-            "http://localhost:5001/api/team/checkTeamExistence",
+            `${getApiBase()}/api/team/checkTeamExistence`,
             {
               method: "POST",
               headers: {

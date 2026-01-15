@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { auth } from "../../config/firebase.js";
 
+import { getApiBase } from "../../config/api.js";
+
 export default function useTeamData(isOpen, user) {
   const [teamData, setTeamData] = useState(null);
 
@@ -14,7 +16,7 @@ export default function useTeamData(isOpen, user) {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5001/api/admin/team?userId=${userId}&currentGW=${currentGW}`,
+          `${getApiBase()}/api/admin/team?userId=${userId}&currentGW=${currentGW}`,
           {
             method: "GET",
             headers: {

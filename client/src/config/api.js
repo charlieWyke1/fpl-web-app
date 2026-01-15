@@ -1,0 +1,3 @@
+// src/config/api.js
+export const getApiBase = () =>
+  process.env.REACT_APP_API_URL || "http://localhost:5001";

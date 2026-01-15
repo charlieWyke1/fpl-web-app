@@ -12,6 +12,8 @@ import { useCurrentGWTeam } from "../../hooks/useCurrentTeam.js";
 
 import { SetStartingTeamValues } from "../../utils/SetStartingTeamValues.js";
 
+import { getApiBase } from "../../config/api.js";
+
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
@@ -47,7 +49,7 @@ function FirstTeamPage() {
       try {
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5001/api/team/getClubData?club=${user.club}`,
+          `${getApiBase()}/api/team/getClubData?club=${user.club}`,
           {
             method: "GET",
             headers: {
@@ -241,7 +243,7 @@ function FirstTeamPage() {
   const saveSquad = async (fullSquad) => {
     try {
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5001/api/team/saveSquad", {
+      const res = await fetch(`${getApiBase()}/api/team/saveSquad`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

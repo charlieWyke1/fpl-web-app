@@ -3,6 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import { auth } from "../config/firebase.js";
 import { useCurrentTeam } from "../context/CurrentTeamContext.js";
 
+import { getApiBase } from "../config/api.js";
+
+
 // this will get the users current team based on the CURRENT GW
 // used for viewing current team, choosing who is to play and transfers
 
@@ -19,7 +22,7 @@ export const useCurrentGWTeam = (userId, currentGW) => {
         setLoadingTeam(true);
         const token = await auth.currentUser.getIdToken();
         const res = await fetch(
-          `http://localhost:5001/api/team/getCurrentGWTeam`,
+          `${getApiBase()}/api/team/getCurrentGWTeam`,
           {
             method: "POST",
             headers: {

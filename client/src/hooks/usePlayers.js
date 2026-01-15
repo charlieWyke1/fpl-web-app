@@ -3,6 +3,9 @@ import { useState, useEffect, useCallback } from "react";
 import { auth } from "../config/firebase.js";
 import { usePlayer } from "../context/PlayerContext.js";
 
+import { getApiBase } from "../config/api.js";
+
+
 export const usePlayers = (user) => {
   const { players, setPlayers } = usePlayer();
   const [loadingPlayers, setLoadingPlayers] = useState(true);
@@ -15,7 +18,7 @@ export const usePlayers = (user) => {
       setLoadingPlayers(true);
 
       const token = await auth.currentUser.getIdToken();
-      const res = await fetch("http://localhost:5001/api/admin/players", {
+      const res = await fetch(`${getApiBase()}/api/admin/players`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

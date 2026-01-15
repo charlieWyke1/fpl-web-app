@@ -1,9 +1,12 @@
 import React from "react";
 import "./LoginPage.css";
+
 import { auth } from "../services/firebase.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext.js";
+import { getApiBase } from "../config/api.js";
+
 
 function LoginPage() {
   // stores our email and password values
@@ -30,7 +33,7 @@ function LoginPage() {
 
       // now we check if that email/ password combo is valid on our server and we request a token
       // sends it over to our server code - index.js which uses our authMiddleware to check if token is valid
-      const response = await fetch("http://localhost:5001/api/me", {
+      const response = await fetch(`${getApiBase()}/api/me`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
