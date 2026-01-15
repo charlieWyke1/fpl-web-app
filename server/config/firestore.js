@@ -105,22 +105,37 @@ export async function addPlayer(name, cost, position, club, totalPoints, team) {
 
 export async function getFixtures(club) {
   try {
-    const clubFixtures = await db.collection("fixtures").doc(club);
-    const squadCollections = await clubFixtures.listCollections();
-    const result = {};
+    const clubRef =  db.collection("fixtures").doc(club);
+
+    const result = {}; 
+    
+    const squadCollections = await clubRef.listCollections();
     for (const squad of squadCollections) {
+      // skip cutOff for now
+      if (squad.id === "cutOff") continue;
+
       result[squad.id] = {};
       const gwDocRef = squad.doc("gameweeks");
       const gwCollections = await gwDocRef.listCollections(); // gets gw1, gw2, ...
 
       for (const gw of gwCollections) {
         const fixtureSnapshot = await gw.get();
-
         result[squad.id][gw.id] = {};
         fixtureSnapshot.forEach((fixtureDoc) => {
           result[squad.id][gw.id][fixtureDoc.id] = fixtureDoc.data();
         });
       }
+    }
+
+    // now get cutoff data
+    const cutOffDocRef = await clubRef.collection("cutOff").doc("fplCutOffTime");
+    const cutOffDoc = await cutOffDocRef.get();
+
+    if (cutOffDoc.exists) {
+      const gameweeksMap = cutOffDoc.data().gameweeks || {};
+      result.cutOff = gameweeksMap;
+    } else {
+      result.cutOff = {}
     }
 
     return result;
