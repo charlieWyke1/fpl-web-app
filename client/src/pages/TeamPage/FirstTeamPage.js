@@ -1,146 +1,90 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { auth } from "../../config/firebase.js";
-
+import React, { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext.js";
 import { useClub } from "../../context/ClubContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
-
-import { useNavigate } from "react-router-dom";
-
-import { useCurrentGWTeam } from "../../hooks/useCurrentTeam.js";
-
+import { useNavigate, useLocation } from "react-router-dom";
 import { SetStartingTeamValues } from "../../utils/SetStartingTeamValues.js";
-
-import { getApiBase } from "../../config/api.js";
-
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
+import "./CreateTeamPage.css";
 import "./FirstTeamPage.css";
-import "./CreateTeamPage.js";
 import "../../themes/clubThemes.css";
 
 function FirstTeamPage() {
-  const { user } = useUser();
-  const { clubData, setClubData } = useClub();
   const { setCurrentTeam, currentTeam } = useCurrentTeam();
-
+  const { clubData } = useClub();
+  const { user } = useUser();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const displayTeam = location.state?.freshTeam || currentTeam || [];
   const userClub = user?.club;
-
-  const [team, setTeam] = useState(false);
-
-  
-  // starter highlight
-  const [activeStarterId, setActiveStarterId] = useState(null);
-  // sub highlight
-  const [activeSubId, setActiveSubId] = useState(null);
-
-  const themeClass = userClub
-    ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
-    : "theme-default";
-
-  // GET OUR CLUB DATA TO HELP SET UP SQUAD SIZE AND STUFF
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchClubData = async () => {
-      try {
-        const token = await auth.currentUser.getIdToken();
-        const res = await fetch(
-          `${getApiBase()}/api/team/getClubData?club=${user.club}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await res.json();
-        // console.log(data);
-        setClubData(data);
-      } catch (error) {
-        console.error("Error fetching club data:", error);
-      }
-    };
-
-    fetchClubData();
-  }, []);
-
-  // check if a user has a team created yet - if not, redirect to create team page
-  // no need for this here - do on the main page
-  
-
-  // this is only for GW1 or when the user needs to choose their initial team
-  // will need a new page for when they go to their "original page / team"
-  useCurrentGWTeam(user.id, user.currentGW);
-  // HOOK FOR TESTING GETTING GW1 TEAM WONT NEED WHEN USER GOES STAROIGHT FORM BUILDING TEAM TO SELECTING TEAM
-  // as then we just use the team set in context no need to go and grab it from the database - plus that started causing errors
-  // so this works as a workaround - comment out when done testing creating team
+  const themeClass = userClub ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}` : "theme-default";
   const { def, mid, fwd } = SetStartingTeamValues(clubData);
-  const [selectedSubs, setSelectedSubs] = useState([]);
-
-  // this gets our team split back up into position so we can display the current team
-  // clubData stores the numb players etc.. about our club atm
-  const allGk = currentTeam.filter((p) => p.position === "GK");
-  const allDef = currentTeam.filter((p) => p.position === "DEF");
-  const allMid = currentTeam.filter((p) => p.position === "MID");
-  const allFwd = currentTeam.filter((p) => p.position === "FWD");
 
   const [selectedGk, setSelectedGk] = useState(null);
-  const [selectedDef, setSelectedDef] = useState(Array(def).fill(null));
-  const [selectedMid, setSelectedMid] = useState(Array(mid).fill(null));
-  const [selectedFwd, setSelectedFwd] = useState(Array(fwd).fill(null));
+  const [selectedDef, setSelectedDef] = useState([]);
+  const [selectedMid, setSelectedMid] = useState([]);
+  const [selectedFwd, setSelectedFwd] = useState([]);
+  const [selectedSubs, setSelectedSubs] = useState([]);
+  
+  const [activeStarterId, setActiveStarterId] = useState(null);
+  const [activeSubId, setActiveSubId] = useState(null);
 
-  // console.log(clubData);
-  // console.log(clubData.squadNumber - clubData.startingTeamNumber);
-
+  // makes use of either the team passed from the last page or the context
+  // most of the time the location state as context is a bit iffy
   useEffect(() => {
-    if (!currentTeam.length) return;
+    if (displayTeam && displayTeam.length > 0) {
+      if (!currentTeam || currentTeam.length === 0) {
+        setCurrentTeam(displayTeam);
+      }
 
-    const starters = [
-      allGk[0],
-      ...allDef.slice(0, def),
-      ...allMid.slice(0, mid),
-      ...allFwd.slice(0, fwd),
-    ].filter(Boolean);
+      const allGk = displayTeam.filter((p) => p.position === "GK");
+      const allDef = displayTeam.filter((p) => p.position === "DEF");
+      const allMid = displayTeam.filter((p) => p.position === "MID");
+      const allFwd = displayTeam.filter((p) => p.position === "FWD");
 
-    setSelectedGk(allGk[0] ?? null);
-    setSelectedDef(allDef.slice(0, def));
-    setSelectedMid(allMid.slice(0, mid));
-    setSelectedFwd(allFwd.slice(0, fwd));
+      const starters = [
+        allGk[0],
+        ...allDef.slice(0, def),
+        ...allMid.slice(0, mid),
+        ...allFwd.slice(0, fwd),
+      ].filter(Boolean);
 
-    const subs = currentTeam.filter((player) => !starters.includes(player));
+      setSelectedGk(allGk[0] ?? null);
+      setSelectedDef(allDef.slice(0, def));
+      setSelectedMid(allMid.slice(0, mid));
+      setSelectedFwd(allFwd.slice(0, fwd));
 
-    setSelectedSubs(subs);
-  }, [currentTeam, def, mid, fwd]);
+      const starterIds = starters.map(s => s.id);
+      const subs = displayTeam.filter((player) => !starterIds.includes(player.id));
+      setSelectedSubs(subs);
+    }
+  }, [displayTeam, def, mid, fwd, setCurrentTeam]);
 
-  if (!team) return null;
+  if (!displayTeam || displayTeam.length === 0) {
+    return (
+      <div className={themeClass}>
+        <NavBar />
+        <div style={{ color: "white", textAlign: "center", marginTop: "50px" }}>
+          <h2>Loading your squad...</h2>
+        </div>
+      </div>
+    );
+  }
 
   const handleStarterClick = (player) => {
     if (activeStarterId === player.id) {
       setActiveStarterId(null);
       return;
     }
-
-    // If a sub is already selected, attempt swap
     if (activeSubId) {
       const subPlayer = selectedSubs.find((p) => p.id === activeSubId);
-
-      // GK rule: GK can only swap with GK
-      if (
-        (player.position === "GK" && subPlayer.position !== "GK") ||
-        (player.position !== "GK" && subPlayer.position === "GK")
-      ) {
-        return; // invalid swap, do nothing
-      }
-
+      if ((player.position === "GK" && subPlayer.position !== "GK") || (player.position !== "GK" && subPlayer.position === "GK")) return;
       swapPlayers(player, subPlayer);
       return;
     }
-
-    // Otherwise, select starter
     setActiveStarterId(player.id);
   };
 
@@ -149,137 +93,43 @@ function FirstTeamPage() {
       setActiveSubId(null);
       return;
     }
-
     if (activeStarterId) {
-      const starterPlayer =
-        selectedGk?.id === activeStarterId
-          ? selectedGk
-          : selectedDef.find((p) => p.id === activeStarterId) ??
-            selectedMid.find((p) => p.id === activeStarterId) ??
-            selectedFwd.find((p) => p.id === activeStarterId);
-
-      // GK rule: GK can only swap with GK
-      if (
-        (player.position === "GK" && starterPlayer.position !== "GK") ||
-        (player.position !== "GK" && starterPlayer.position === "GK")
-      ) {
-        return; // invalid swap, do nothing
-      }
-
+      const starterPlayer = [selectedGk, ...selectedDef, ...selectedMid, ...selectedFwd].find(p => p?.id === activeStarterId);
+      if (!starterPlayer) return;
+      if ((player.position === "GK" && starterPlayer.position !== "GK") || (player.position !== "GK" && starterPlayer.position === "GK")) return;
       swapPlayers(starterPlayer, player);
       return;
     }
-
     setActiveSubId(player.id);
   };
 
   const swapPlayers = (starter, sub) => {
-    // --- GK rule ---
-    if (starter.position === "GK" && sub.position !== "GK") return;
-    if (starter.position !== "GK" && sub.position === "GK") return;
-
     if (starter.position === "GK") {
       setSelectedGk(sub);
-    }
-    // first removes the starter from their  position
-    // then adds the sub to the list matching their position
-    else if (starter.position === "DEF") {
-      removeDef(starter);
-      if (sub.position === "DEF") {
-        addDef(sub);
-      } else if (sub.position === "MID") {
-        addMid(sub);
-      } else if (sub.position === "FWD") {
-        addFwd(sub);
-      }
-    } else if (starter.position === "MID") {
-      removeMid(starter);
-      if (sub.position === "DEF") {
-        addDef(sub);
-      } else if (sub.position === "MID") {
-        addMid(sub);
-      } else if (sub.position === "FWD") {
-        addFwd(sub);
-      }
-    } else if (starter.position === "FWD") {
-      removeFwd(starter);
-      if (sub.position === "DEF") {
-        addDef(sub);
-      } else if (sub.position === "MID") {
-        addMid(sub);
-      } else if (sub.position === "FWD") {
-        addFwd(sub);
-      }
-    }
+    } else {
+      if (starter.position === "DEF") setSelectedDef(prev => prev.filter(p => p.id !== starter.id));
+      if (starter.position === "MID") setSelectedMid(prev => prev.filter(p => p.id !== starter.id));
+      if (starter.position === "FWD") setSelectedFwd(prev => prev.filter(p => p.id !== starter.id));
 
-    // rmeoves the sub from our sub list and adds in the starter as they swap
-    setSelectedSubs((prevList) => prevList.filter((item) => item !== sub));
-    setSelectedSubs((prevList) => [...prevList, starter]);
+      if (sub.position === "DEF") setSelectedDef(prev => [...prev, sub]);
+      if (sub.position === "MID") setSelectedMid(prev => [...prev, sub]);
+      if (sub.position === "FWD") setSelectedFwd(prev => [...prev, sub]);
+    }
+    setSelectedSubs(prev => [...prev.filter(p => p.id !== sub.id), starter]);
     setActiveStarterId(null);
     setActiveSubId(null);
   };
 
-  const removeDef = (player) => {
-    setSelectedDef((prevList) => prevList.filter((item) => item !== player));
-  };
-  const removeMid = (player) => {
-    setSelectedMid((prevList) => prevList.filter((item) => item != player));
-  };
-  const removeFwd = (player) => {
-    setSelectedFwd((prevList) => prevList.filter((item) => item != player));
-  };
-
-  const addDef = (sub) => {
-    setSelectedDef((prevList) => [...prevList, sub]);
-  };
-  const addMid = (sub) => {
-    setSelectedMid((prevList) => [...prevList, sub]);
-  };
-  const addFwd = (sub) => {
-    setSelectedFwd((prevList) => [...prevList, sub]);
-  };
-
-  // LAST part - saves squad and takes us to HomePage.js
   const saveSquad = async (fullSquad) => {
-    try {
-      const token = await auth.currentUser.getIdToken();
-      const res = await fetch(`${getApiBase()}/api/team/saveSquad`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          squad: fullSquad,
-          gw: user.currentGW,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert("Gameweek squad saved succesfully}");
-        setCurrentTeam(fullSquad);
-
-        navigate("/HomePage");
-      } else {
-        alert("Error saving team.");
-      }
-    } catch (error) {
-      console.error("Error saving team", error);
-    }
+    console.log("Saving squad...", fullSquad);
   };
 
   return (
     <div className={themeClass}>
       <NavBar />
-
       <div className="topRow">
-        <div className="teamName">
-          <h4>{user.teamName}</h4>
-        </div>
-        <div className="gameweek">
-          <h4>Gameweek: {user.currentGW}</h4>
-        </div>
+        <div className="teamName"><h4>{user.teamName}</h4></div>
+        <div className="gameweek"><h4>Gameweek: {user.currentGW}</h4></div>
       </div>
 
       <div className="selectedTeamContainer">
@@ -289,146 +139,99 @@ function FirstTeamPage() {
         <div className="halfway-line"></div>
 
         <div className="gkRow">
-          <div className="shirtRow">
-            {selectedGk && (
-              <div className="shirtContainer">
-                <button
-                  className={`shirtButton gkButton ${
-                    activeStarterId === selectedGk.id ? "activeGK" : ""
-                  }`}
-                  onClick={() => handleStarterClick(selectedGk)}
-                >
-                  <ShirtSvg className={`gkShirt ${themeClass}`} size={120} />
-                </button>
-                <div className="nameTag">
-                  <p>{selectedGk.name}</p>
-                </div>
-              </div>
-            )}
-          </div>
+            <div className="shirtRow">
+                {selectedGk && (
+                  <PlayerIcon 
+                    player={selectedGk} 
+                    isActive={activeStarterId === selectedGk.id} 
+                    onClick={handleStarterClick} 
+                    isGk={true} 
+                    type="starter"
+                    themeClass={themeClass} 
+                  />
+                )}
+            </div>
         </div>
 
         <div className="defRow">
-          <div className="shirtRow">
-            {selectedDef.map((player) => (
-              <div key={player.id} className="shirtContainer">
-                <button
-                  className={`shirtButton outfieldButton ${
-                    activeStarterId === player.id ? "activeOutfield" : ""
-                  }`}
-                  onClick={() => handleStarterClick(player)}
-                >
-                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
-                </button>
-                <div className="nameTag">
-                  <p>{player.name}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="shirtRow">
+                {selectedDef.map(p => (
+                  <PlayerIcon key={p.id} player={p} isActive={activeStarterId === p.id} onClick={handleStarterClick} type="starter" themeClass={themeClass} />
+                ))}
+            </div>
         </div>
 
         <div className="midRow">
-          <div className="shirtRow">
-            {selectedMid.map((player) => (
-              <div key={player.id} className="shirtContainer">
-                <button
-                  className={`shirtButton outfieldButton ${
-                    activeStarterId === player.id ? "activeOutfield" : ""
-                  }`}
-                  onClick={() => handleStarterClick(player)}
-                >
-                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
-                </button>
-                <div className="nameTag">
-                  <p>{player.name}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="shirtRow">
+                {selectedMid.map(p => (
+                  <PlayerIcon key={p.id} player={p} isActive={activeStarterId === p.id} onClick={handleStarterClick} type="starter" themeClass={themeClass} />
+                ))}
+            </div>
         </div>
 
         <div className="fwdRow">
-          <div className="shirtRow">
-            {selectedFwd.map((player) => (
-              <div key={player.id} className="shirtContainer">
-                <button
-                  className={`shirtButton outfieldButton ${
-                    activeStarterId === player.id ? "activeOutfield" : ""
-                  }`}
-                  onClick={() => handleStarterClick(player)}
-                >
-                  <ShirtSvg className={`shirt ${themeClass}`} size={120} />
-                </button>
-                <div className="nameTag">
-                  <p>{player.name}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+            <div className="shirtRow">
+                {selectedFwd.map(p => (
+                  <PlayerIcon key={p.id} player={p} isActive={activeStarterId === p.id} onClick={handleStarterClick} type="starter" themeClass={themeClass} />
+                ))}
+            </div>
         </div>
       </div>
 
       <div className="subRow">
         <div className="shirtRow">
-          {selectedSubs.map((sub) => (
-            <div key={sub.id} className="shirtContainer">
-              {sub.position === "GK" ? (
-                <button
-                  className={`shirtButton gkButton ${
-                    activeSubId === sub.id ? "activeSubGK" : ""
-                  }`}
-                  onClick={() => handleSubClick(sub)}
-                >
-                  <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
-                </button>
-              ) : (
-                <button
-                  className={`shirtButton outfieldButton ${
-                    activeSubId === sub.id ? "activeSubOutfield" : ""
-                  }`}
-                  onClick={() => handleSubClick(sub)}
-                >
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
-                </button>
-              )}
-              <div className="nameTagSub">
-                <p>{sub.name}</p>
-              </div>
-            </div>
+          {selectedSubs.map(p => (
+            <PlayerIcon 
+                key={p.id} 
+                player={p} 
+                isActive={activeSubId === p.id} 
+                onClick={handleSubClick} 
+                type="sub"
+                isGk={p.position === "GK"} 
+                themeClass={themeClass} 
+            />
           ))}
         </div>
       </div>
 
-      <button
-        className="saveFirstTeamButton"
-        onClick={() => {
-          const startingTeam = [
-            selectedGk,
-            ...selectedDef,
-            ...selectedMid,
-            ...selectedFwd,
-          ].map((player) => ({
-            ...player,
-            isStarting: true,
-          }));
-
-          const subs = selectedSubs.map((player, index) => ({
-            ...player,
-            isStarting: false,
-          }));
-
-          const fullSquad = [...startingTeam, ...subs];
-
+      <button className="saveFirstTeamButton" onClick={() => {
+          const fullSquad = [selectedGk, ...selectedDef, ...selectedMid, ...selectedFwd].map(p => ({ ...p, isStarting: true }))
+                            .concat(selectedSubs.map(p => ({ ...p, isStarting: false })));
           saveSquad(fullSquad);
-
-          // FOR FUTURE this is where we wld add captain choice
-        }}
-      >
+      }}>
         Save Starting Team
       </button>
     </div>
   );
 }
+
+const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
+    let highlightClass = "";
+  
+  if (isActive) {
+    if (type === "starter") {
+      highlightClass = isGk ? "activeGK" : "activeOutfield";
+    } else {
+      highlightClass = isGk ? "activeSubGK" : "activeSubOutfield";
+    }
+  }
+
+  return (
+    <div className="shirtContainer">
+      <button
+        className={`shirtButton ${isGk ? 'gkButton' : 'outfieldButton'} ${highlightClass}`}
+        onClick={() => onClick(player)}
+      >
+        <ShirtSvg 
+          className={isGk ? `gkShirt ${themeClass}` : `shirt ${themeClass}`} 
+          size={type === "sub" ? 100 : 120} 
+        />
+      </button>
+      <div className={type === "sub" ? "nameTagSub" : "nameTag"}>
+        <p>{player?.name}</p>
+      </div>
+    </div>
+  );
+};
 
 export default FirstTeamPage;

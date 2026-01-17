@@ -40,8 +40,9 @@ function HomePage() {
   // if no team goes to create team 
   // if there is a team we can move on
   useEffect(() => {
-      if (!user) return;
-  
+      if (!user) {
+        console.log("hi")
+      };
       const checkTeam = async () => {
         try {
           const token = await auth.currentUser.getIdToken();
@@ -71,8 +72,9 @@ function HomePage() {
       };
   
       checkTeam();
-    }, []);
+    }, [user]);
 
+    console.log(currentTeam);
     // everything from here only works if we HAVE a team
 
     const fixturesTemp = useFixtures(user);

@@ -25,8 +25,8 @@ import "../../themes/clubThemes.css";
 function CreateTeamPage() {
   const { setUser, user } = useUser();
   const { players } = usePlayer();
-  const { clubData } = useClub();
-  const { setCurrentTeam } = useCurrentTeam();
+  const { setClubData, clubData } = useClub();
+  const { setCurrentTeam, currentTeam } = useCurrentTeam();
 
   const [budget, setBudget] = useState(0);
   const navigate = useNavigate();
@@ -46,6 +46,32 @@ function CreateTeamPage() {
   const [showFwdModal, setShowFwdModal] = useState(false);
 
   const [teamSaved, setTeamSaved] = useState([]);
+
+    useEffect(() => {
+    if (!user) return;
+
+    const fetchClubData = async () => {
+      try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(
+          `${getApiBase()}/api/team/getClubData?club=${userClub}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = await res.json();
+        // console.log(data);
+        setClubData(data);
+      } catch (error) {
+        console.error("Error fetching club data:", error);
+      }
+    };
+
+    fetchClubData();
+  }, []);
 
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
@@ -102,37 +128,16 @@ function CreateTeamPage() {
   // way tod display how many players from each squad have been selected (??)
   // save and check buttons
 
+  // need to save teamName at a seperate time so uin firstTeam
   const saveTeam = async (team) => {
-    try {
-      const token = await auth.currentUser.getIdToken();
-      const res = await fetch(`${getApiBase()}/api/team/saveTeam`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          teamName: teamName, // save this to the user not team
-          players: team,
-          gw: user.currentGW,
-          budget: budget,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert("Team saved successfully!");
-        setUser({ ...user, teamName: teamName });
-        setCurrentTeam(team);
+    alert("Team saved successfully!");
+    setUser({ ...user, teamName: teamName });
+    setCurrentTeam(team);
 
-        navigate("/FirstTeam");
-        // solved prev error w team not loading in
-      } else {
-        alert("Error saving team.");
-      }
-    } catch (error) {
-      console.error("Error saving team:", error);
-    }
+    if (team.length > 0) {
+      navigate("/FirstTeam", {state: {freshTeam: team}});
+
+    } 
   };
 
   return (
