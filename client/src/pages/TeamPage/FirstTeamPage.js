@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { auth } from "../../config/firebase.js";
+
 import { useUser } from "../../context/UserContext.js";
 import { useClub } from "../../context/ClubContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
@@ -10,6 +12,7 @@ import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 import "./CreateTeamPage.css";
 import "./FirstTeamPage.css";
 import "../../themes/clubThemes.css";
+import { getApiBase } from "../../config/api.js";
 
 function FirstTeamPage() {
   const { setCurrentTeam, currentTeam } = useCurrentTeam();
@@ -20,7 +23,9 @@ function FirstTeamPage() {
 
   const displayTeam = location.state?.freshTeam || currentTeam || [];
   const userClub = user?.club;
-  const themeClass = userClub ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}` : "theme-default";
+  const themeClass = userClub
+    ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
+    : "theme-default";
   const { def, mid, fwd } = SetStartingTeamValues(clubData);
 
   const [selectedGk, setSelectedGk] = useState(null);
@@ -28,7 +33,7 @@ function FirstTeamPage() {
   const [selectedMid, setSelectedMid] = useState([]);
   const [selectedFwd, setSelectedFwd] = useState([]);
   const [selectedSubs, setSelectedSubs] = useState([]);
-  
+
   const [activeStarterId, setActiveStarterId] = useState(null);
   const [activeSubId, setActiveSubId] = useState(null);
 
@@ -57,8 +62,10 @@ function FirstTeamPage() {
       setSelectedMid(allMid.slice(0, mid));
       setSelectedFwd(allFwd.slice(0, fwd));
 
-      const starterIds = starters.map(s => s.id);
-      const subs = displayTeam.filter((player) => !starterIds.includes(player.id));
+      const starterIds = starters.map((s) => s.id);
+      const subs = displayTeam.filter(
+        (player) => !starterIds.includes(player.id),
+      );
       setSelectedSubs(subs);
     }
   }, [displayTeam, def, mid, fwd, setCurrentTeam]);
@@ -81,7 +88,11 @@ function FirstTeamPage() {
     }
     if (activeSubId) {
       const subPlayer = selectedSubs.find((p) => p.id === activeSubId);
-      if ((player.position === "GK" && subPlayer.position !== "GK") || (player.position !== "GK" && subPlayer.position === "GK")) return;
+      if (
+        (player.position === "GK" && subPlayer.position !== "GK") ||
+        (player.position !== "GK" && subPlayer.position === "GK")
+      )
+        return;
       swapPlayers(player, subPlayer);
       return;
     }
@@ -94,9 +105,18 @@ function FirstTeamPage() {
       return;
     }
     if (activeStarterId) {
-      const starterPlayer = [selectedGk, ...selectedDef, ...selectedMid, ...selectedFwd].find(p => p?.id === activeStarterId);
+      const starterPlayer = [
+        selectedGk,
+        ...selectedDef,
+        ...selectedMid,
+        ...selectedFwd,
+      ].find((p) => p?.id === activeStarterId);
       if (!starterPlayer) return;
-      if ((player.position === "GK" && starterPlayer.position !== "GK") || (player.position !== "GK" && starterPlayer.position === "GK")) return;
+      if (
+        (player.position === "GK" && starterPlayer.position !== "GK") ||
+        (player.position !== "GK" && starterPlayer.position === "GK")
+      )
+        return;
       swapPlayers(starterPlayer, player);
       return;
     }
@@ -107,29 +127,76 @@ function FirstTeamPage() {
     if (starter.position === "GK") {
       setSelectedGk(sub);
     } else {
-      if (starter.position === "DEF") setSelectedDef(prev => prev.filter(p => p.id !== starter.id));
-      if (starter.position === "MID") setSelectedMid(prev => prev.filter(p => p.id !== starter.id));
-      if (starter.position === "FWD") setSelectedFwd(prev => prev.filter(p => p.id !== starter.id));
+      if (starter.position === "DEF")
+        setSelectedDef((prev) => prev.filter((p) => p.id !== starter.id));
+      if (starter.position === "MID")
+        setSelectedMid((prev) => prev.filter((p) => p.id !== starter.id));
+      if (starter.position === "FWD")
+        setSelectedFwd((prev) => prev.filter((p) => p.id !== starter.id));
 
-      if (sub.position === "DEF") setSelectedDef(prev => [...prev, sub]);
-      if (sub.position === "MID") setSelectedMid(prev => [...prev, sub]);
-      if (sub.position === "FWD") setSelectedFwd(prev => [...prev, sub]);
+      if (sub.position === "DEF") setSelectedDef((prev) => [...prev, sub]);
+      if (sub.position === "MID") setSelectedMid((prev) => [...prev, sub]);
+      if (sub.position === "FWD") setSelectedFwd((prev) => [...prev, sub]);
     }
-    setSelectedSubs(prev => [...prev.filter(p => p.id !== sub.id), starter]);
+    setSelectedSubs((prev) => [
+      ...prev.filter((p) => p.id !== sub.id),
+      starter,
+    ]);
     setActiveStarterId(null);
     setActiveSubId(null);
   };
 
   const saveSquad = async (fullSquad) => {
-    console.log("Saving squad...", fullSquad);
+    setCurrentTeam(fullSquad);
+    console.log("Full details squad...", currentTeam);
+    // right now need to save the team to database
+    // need to decide what we store either just id and starting or full details
+    // i think just id and starting and then we keep the currentTeam locally
+    const saveSquad = fullSquad.map((player) => ({
+      id: player.id,
+      isStarting: player.isStarting,
+    }));
+
+    console.log(user.budget);
+
+    console.log("database squad ...", saveSquad);
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const res = await fetch(`${getApiBase()}/api/team/saveTeam`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          teamName: user.teamName,
+          gw: user.currentGW,
+          team: saveSquad,
+          budget: user.budget,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success === true) {
+        //   navigate to create team page
+        navigate("/HomePage"); }
+     } catch (error) {
+      console.error("Error saving team :", error);
+    }
   };
 
   return (
     <div className={themeClass}>
       <NavBar />
       <div className="topRow">
-        <div className="teamName"><h4>{user.teamName}</h4></div>
-        <div className="gameweek"><h4>Gameweek: {user.currentGW}</h4></div>
+        <div className="teamName">
+          <h4>{user.teamName}</h4>
+        </div>
+        <div className="gameweek">
+          <h4>Gameweek: {user.currentGW}</h4>
+        </div>
       </div>
 
       <div className="selectedTeamContainer">
@@ -139,66 +206,96 @@ function FirstTeamPage() {
         <div className="halfway-line"></div>
 
         <div className="gkRow">
-            <div className="shirtRow">
-                {selectedGk && (
-                  <PlayerIcon 
-                    player={selectedGk} 
-                    isActive={activeStarterId === selectedGk.id} 
-                    onClick={handleStarterClick} 
-                    isGk={true} 
-                    type="starter"
-                    themeClass={themeClass} 
-                  />
-                )}
-            </div>
+          <div className="shirtRow">
+            {selectedGk && (
+              <PlayerIcon
+                player={selectedGk}
+                isActive={activeStarterId === selectedGk.id}
+                onClick={handleStarterClick}
+                isGk={true}
+                type="starter"
+                themeClass={themeClass}
+              />
+            )}
+          </div>
         </div>
 
         <div className="defRow">
-            <div className="shirtRow">
-                {selectedDef.map(p => (
-                  <PlayerIcon key={p.id} player={p} isActive={activeStarterId === p.id} onClick={handleStarterClick} type="starter" themeClass={themeClass} />
-                ))}
-            </div>
+          <div className="shirtRow">
+            {selectedDef.map((p) => (
+              <PlayerIcon
+                key={p.id}
+                player={p}
+                isActive={activeStarterId === p.id}
+                onClick={handleStarterClick}
+                type="starter"
+                themeClass={themeClass}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="midRow">
-            <div className="shirtRow">
-                {selectedMid.map(p => (
-                  <PlayerIcon key={p.id} player={p} isActive={activeStarterId === p.id} onClick={handleStarterClick} type="starter" themeClass={themeClass} />
-                ))}
-            </div>
+          <div className="shirtRow">
+            {selectedMid.map((p) => (
+              <PlayerIcon
+                key={p.id}
+                player={p}
+                isActive={activeStarterId === p.id}
+                onClick={handleStarterClick}
+                type="starter"
+                themeClass={themeClass}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="fwdRow">
-            <div className="shirtRow">
-                {selectedFwd.map(p => (
-                  <PlayerIcon key={p.id} player={p} isActive={activeStarterId === p.id} onClick={handleStarterClick} type="starter" themeClass={themeClass} />
-                ))}
-            </div>
+          <div className="shirtRow">
+            {selectedFwd.map((p) => (
+              <PlayerIcon
+                key={p.id}
+                player={p}
+                isActive={activeStarterId === p.id}
+                onClick={handleStarterClick}
+                type="starter"
+                themeClass={themeClass}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="subRow">
         <div className="shirtRow">
-          {selectedSubs.map(p => (
-            <PlayerIcon 
-                key={p.id} 
-                player={p} 
-                isActive={activeSubId === p.id} 
-                onClick={handleSubClick} 
-                type="sub"
-                isGk={p.position === "GK"} 
-                themeClass={themeClass} 
+          {selectedSubs.map((p) => (
+            <PlayerIcon
+              key={p.id}
+              player={p}
+              isActive={activeSubId === p.id}
+              onClick={handleSubClick}
+              type="sub"
+              isGk={p.position === "GK"}
+              themeClass={themeClass}
             />
           ))}
         </div>
       </div>
 
-      <button className="saveFirstTeamButton" onClick={() => {
-          const fullSquad = [selectedGk, ...selectedDef, ...selectedMid, ...selectedFwd].map(p => ({ ...p, isStarting: true }))
-                            .concat(selectedSubs.map(p => ({ ...p, isStarting: false })));
+      <button
+        className="saveFirstTeamButton"
+        onClick={() => {
+          const fullSquad = [
+            selectedGk,
+            ...selectedDef,
+            ...selectedMid,
+            ...selectedFwd,
+          ]
+            .map((p) => ({ ...p, isStarting: true }))
+            .concat(selectedSubs.map((p) => ({ ...p, isStarting: false })));
           saveSquad(fullSquad);
-      }}>
+        }}
+      >
         Save Starting Team
       </button>
     </div>
@@ -206,8 +303,8 @@ function FirstTeamPage() {
 }
 
 const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
-    let highlightClass = "";
-  
+  let highlightClass = "";
+
   if (isActive) {
     if (type === "starter") {
       highlightClass = isGk ? "activeGK" : "activeOutfield";
@@ -219,12 +316,12 @@ const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
   return (
     <div className="shirtContainer">
       <button
-        className={`shirtButton ${isGk ? 'gkButton' : 'outfieldButton'} ${highlightClass}`}
+        className={`shirtButton ${isGk ? "gkButton" : "outfieldButton"} ${highlightClass}`}
         onClick={() => onClick(player)}
       >
-        <ShirtSvg 
-          className={isGk ? `gkShirt ${themeClass}` : `shirt ${themeClass}`} 
-          size={type === "sub" ? 100 : 120} 
+        <ShirtSvg
+          className={isGk ? `gkShirt ${themeClass}` : `shirt ${themeClass}`}
+          size={type === "sub" ? 100 : 120}
         />
       </button>
       <div className={type === "sub" ? "nameTagSub" : "nameTag"}>

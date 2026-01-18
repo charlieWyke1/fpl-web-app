@@ -40,11 +40,11 @@ router.post("/api/team/saveTeam", authenticateToken, async (req, res) => {
   try {
     const userId = req.body.userId;
     const teamName = req.body.teamName;
-    const players = req.body.players;
+    const team = req.body.team;
     const gw = req.body.gw;
     const budget = req.body.budget;
     // console.log(userId, teamName, players);
-    const saveTeam = await saveFirstTeam(userId, teamName, players, gw, budget);
+    const saveTeam = await saveFirstTeam(userId, teamName, team, gw, budget);
     if (saveTeam) {
       res
         .status(200)

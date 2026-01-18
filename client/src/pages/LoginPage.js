@@ -42,15 +42,13 @@ function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
-        // to go to a new webpage - we make use of React Router
-
         setUser(data.user);
         if (data.user.admin) {
           // console.log("admin");
           navigate("/admin");
         } else {
           // navigate to normal user homepage
-          navigate("/team");
+          navigate("/HomePage");
         }
       } else {
         alert("Failed to login - please try again.");
@@ -75,7 +73,6 @@ function LoginPage() {
             type="email"
             className="form-control"
             id="inputEmail"
-            // aria-describedby="emailHelp"
             onChange={(e) => setEmail(e.target.value)}
             required
           />

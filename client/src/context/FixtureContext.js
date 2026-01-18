@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 const FixtureContext = createContext();
 
 export const FixtureProvider = ({ children }) => {
+  // stores all the fixtures for the clubs of our admin / logged in user
   const [fixtures, setFixtures] = useState({});
 
   return (

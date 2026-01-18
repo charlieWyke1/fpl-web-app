@@ -9,6 +9,8 @@ import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 import { useNavigate } from "react-router-dom";
 
 import { useFixtures } from "../../hooks/useFixtures.js";
+import { usePlayers } from "../../hooks/usePlayers.js";
+import { useHasTeamContextFiller } from "../../hooks/useHasTeamContextFiller.js";
 
 import { getApiBase } from "../../config/api.js";
 
@@ -16,86 +18,104 @@ import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 import Countdown from "../../utils/Countdown.js";
 
-import "./HomePage.css"
+import "./HomePage.css";
 import "../../themes/clubThemes.css";
 
+// NEED TO CHECK IF OUR USER IS AN ADMIN HERE 
+// AS IF they're not an admin they will have none of the context data
+// need to check and give them 
+// - fixtures, users, all players, current user ... 
 
+// also if player has akready got their team set up
+// we need to load in all the data as well
 
 function HomePage() {
   const { user } = useUser();
   const { currentTeam } = useCurrentTeam();
-  
+  const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
+
+
   const navigate = useNavigate();
-  const [team, setTeam] = useState(false);
+
+  const [hasTeam, setHasTeam] = useState(false);
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
 
-
   const themeClass = userClub
-  ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
-  : "theme-default";
+    ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
+    : "theme-default";
 
-  // now we shld probs check if the user has a team here 
-  // if no team goes to create team 
-  // if there is a team we can move on
+  // check if our user has a team
   useEffect(() => {
-      if (!user) {
-        console.log("hi")
-      };
-      const checkTeam = async () => {
-        try {
-          const token = await auth.currentUser.getIdToken();
-          const res = await fetch(
-            `${getApiBase()}/api/team/checkTeamExistence`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ userId: user.id }),
-            }
-          );
-  
-          const data = await res.json();
-  
-          if (data.exists === false) {
-            //   navigate to create team page
-            navigate("/CreateTeam");
-          } else {
-            setTeam(true);
-          }
-        } catch (error) {
-          console.error("Error checking team existence:", error);
+    const checkTeam = async () => {
+      try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(`${getApiBase()}/api/team/checkTeamExistence`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: user.id }),
+        });
+
+        const data = await res.json();
+
+        if (data.exists === false) {
+          //   navigate to create team page
+          navigate("/CreateTeam");
+        } else {
+          setHasTeam(true);
+          // need to populate contexts for if user hasnt gone thru their set up of first team
         }
-      };
-  
-      checkTeam();
-    }, [user]);
+      } catch (error) {
+        console.error("Error checking team existence:", error);
+      }
+    };
 
-    console.log(currentTeam);
-    // everything from here only works if we HAVE a team
+    checkTeam();
+  }, [user]);
 
-    const fixturesTemp = useFixtures(user);
-    const tsDate = fixturesTemp.fixtures.cutOff[currentGW]
-    const cutOffDate = new Date(tsDate._seconds * 1000);
-    
-    // const cutOffDay = date.toLocaleDateString("en-gb", {
-    //   weekday : "long",
-    //   day : "numeric",
-    //   month : "long",
-    // })
+  // gets players and the most up to date version of it
+  useHasTeamContextFiller(
+    hasTeam ? user : null,
+    refetchPlayers
+  );
 
-    // const cutOffTime = date.toLocaleTimeString("en-GB", {
-    //   hour: "2-digit",
-    //   minute: "2-digit",
-    // });
-    
+  // everything from here only works if we HAVE a team
 
+  const fixturesTemp = useFixtures(user);
+  const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
+  const cutOffDate = new Date(tsDate._seconds * 1000);
+
+  const startingGk = currentTeam.filter(
+    (p) => p.position === "GK" && p.isStarting === true,
+  );
+  const startingDef = currentTeam.filter(
+    (p) => p.position === "DEF" && p.isStarting === true,
+  );
+  const startingMid = currentTeam.filter(
+    (p) => p.position === "MID" && p.isStarting === true,
+  );
+  const startingFwd = currentTeam.filter(
+    (p) => p.position === "FWD" && p.isStarting === true,
+  );
+
+  const allSubs = currentTeam.filter((p) => p.isStarting === false);
+
+  // all ready to set up the display page for our users Home Page
+  // current team is set and so is players - can cross refrence them now to build the team data 
+  if (!hasTeam) {
+    return (
+      <div className={themeClass}>
+        <NavBar />
+      </div>
+    );
+  }
 
   return (
-    <div className = {themeClass}>
+    <div className={themeClass}>
       <NavBar />
 
       <div className="topRow">
@@ -112,13 +132,9 @@ function HomePage() {
             </div>
           </div>
         </div>
-        
-        
-
       </div>
 
       <Countdown targetDate={cutOffDate} />
-
     </div>
   );
 }

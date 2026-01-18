@@ -14,7 +14,8 @@ const router = express.Router();
 router.get("/api/admin/users", authenticateToken, async (req, res) => {
   try {
     const currentUser = await getUserById(req.user.uid);
-
+    // above does nothing
+    // below gets all the users from same club as our admin
     const users = await getAllUsers();
     res.status(200).json(users);
   } catch (error) {

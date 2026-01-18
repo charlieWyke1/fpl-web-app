@@ -246,7 +246,7 @@ export async function getTeamData(club) {
   }
 }
 
-export async function saveFirstTeam(userId, teamName, players, gw, budget) {
+export async function saveFirstTeam(userId, teamName, team, gw, budget) {
   try {
     const teamRef = db.collection("teams").doc(userId);
     const gwKey = `gw${gw}`;
@@ -256,7 +256,7 @@ export async function saveFirstTeam(userId, teamName, players, gw, budget) {
         budget: budget,
         gameweeks: {
           [gwKey]: {
-            team: players,
+            team: team,
             savedAt: new Date(),
           },
         },
@@ -277,11 +277,10 @@ export async function saveFirstTeam(userId, teamName, players, gw, budget) {
 export async function getCurrentGWTeam(userId, gw) {
   try {
     const teamRef = db.collection("teams").doc(userId);
-    // now just get the current gameweek
-    // can easily snap all data to get all the gw team data for future
     const docSnap = await teamRef.get();
     const teamData = docSnap.data();
-    return teamData.gameweeks[gw];
+
+    return teamData;
   } catch (error) {
     console.error("Error finding team", error);
     throw error;

@@ -26,7 +26,7 @@ function CreateTeamPage() {
   const { setUser, user } = useUser();
   const { players } = usePlayer();
   const { setClubData, clubData } = useClub();
-  const { setCurrentTeam, currentTeam } = useCurrentTeam();
+  const { setCurrentTeam } = useCurrentTeam();
 
   const [budget, setBudget] = useState(0);
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ function CreateTeamPage() {
 
   const [teamSaved, setTeamSaved] = useState([]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (!user) return;
 
     const fetchClubData = async () => {
@@ -60,7 +60,7 @@ function CreateTeamPage() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         const data = await res.json();
         // console.log(data);
@@ -106,22 +106,22 @@ function CreateTeamPage() {
   // click first gk shirt - fills up slot one
 
   const [selectedGK, setSelectedGK] = useState(
-    Array(clubData.numbGk).fill(null)
+    Array(clubData.numbGk).fill(null),
   );
   const [activeGKIndex, setActiveGKIndex] = useState(null);
 
   const [selectedDEF, setSelectedDEF] = useState(
-    Array(clubData.numbDef).fill(null)
+    Array(clubData.numbDef).fill(null),
   );
   const [activeDEFIndex, setActiveDEFIndex] = useState(null);
 
   const [selectedMID, setSelectedMID] = useState(
-    Array(clubData.numbMid).fill(null)
+    Array(clubData.numbMid).fill(null),
   );
   const [activeMIDIndex, setActiveMIDIndex] = useState(null);
 
   const [selectedFWD, setSelectedFWD] = useState(
-    Array(clubData.numbFwd).fill(null)
+    Array(clubData.numbFwd).fill(null),
   );
   const [activeFWDIndex, setActiveFWDIndex] = useState(null);
 
@@ -131,13 +131,13 @@ function CreateTeamPage() {
   // need to save teamName at a seperate time so uin firstTeam
   const saveTeam = async (team) => {
     alert("Team saved successfully!");
-    setUser({ ...user, teamName: teamName });
+    setUser({ ...user, teamName: teamName, budget: budget });
     setCurrentTeam(team);
+    console.log(budget);
 
     if (team.length > 0) {
-      navigate("/FirstTeam", {state: {freshTeam: team}});
-
-    } 
+      navigate("/FirstTeam", { state: { freshTeam: team } });
+    }
   };
 
   return (

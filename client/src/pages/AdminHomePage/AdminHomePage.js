@@ -4,6 +4,7 @@ import { auth } from "../../config/firebase.js";
 // context
 import { useUser } from "../../context/UserContext.js";
 import { useTeam } from "../../context/TeamContext.js";
+import { useAllClub } from "../../context/AllClubUsersContext.js";
 
 // hooks
 import { useFixtures } from "../../hooks/useFixtures.js";
@@ -26,12 +27,11 @@ function AdminHomePage() {
   const { user } = useUser();
   const userClub = user?.club;
 
-  const { team, setTeam } = useTeam();
-  const [selectedSquad, setSelectedSquad] = useState("");
+  const { setTeam } = useTeam();
 
-  const { fixtures, loadingFixtures } = useFixtures(user);
+  const { loadingFixtures } = useFixtures(user);
   const { players, loadingPlayers } = usePlayers(user);
-  const { users, club, loadingUsers } = useClubUsers(user);
+  const { club, loadingUsers } = useClubUsers(user);
 
   const [isLeagueTableModalOpen, setIsLeagueTableModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -55,11 +55,12 @@ function AdminHomePage() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         if (!res.ok) throw new Error("Failed to fetch team");
         const data = await res.json();
         setTeam(data);
+
       } catch (error) {
         console.error("Error fetching team:", error);
       }
@@ -71,7 +72,7 @@ function AdminHomePage() {
   // filter players for top points table
   const filterPlayersByPosition = players
     .filter(
-      (player) => filterPlayers === "all" || player.position === filterPlayers
+      (player) => filterPlayers === "all" || player.position === filterPlayers,
     )
     .slice(0, 10);
 
@@ -98,6 +99,8 @@ function AdminHomePage() {
     setSelectedPlayer(null);
   };
 
+  // allUsers -- THIS stores all of our users who are in the same club of the admin whos logged in
+
   // loading screen
   if (loadingUsers || loadingPlayers || loadingFixtures) {
     return (
@@ -107,8 +110,6 @@ function AdminHomePage() {
       </div>
     );
   }
-
-  // console.log(players[0].totalPoints);
 
   return (
     <div className={themeClass}>

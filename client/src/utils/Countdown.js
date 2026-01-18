@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "./Countdown.css";
 
 export default function Countdown({ targetDate }) {
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
@@ -34,9 +35,14 @@ export default function Countdown({ targetDate }) {
   }
 
   return (
-    <div>
-      {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m{" "}
-      {timeLeft.seconds}s
+    <div className="countDown">
+      <h4>
+        {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {" "}
+        {timeLeft.seconds}s 
+      </h4>
+      <h5>
+        till GameWeek 1 deadline
+      </h5>
     </div>
   );
 }

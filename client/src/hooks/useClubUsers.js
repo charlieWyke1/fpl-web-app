@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { auth } from "../config/firebase.js";
 import { useUser } from "../context/UserContext.js";
+import { useAllClub } from "../context/AllClubUsersContext.js";
 
 import { getApiBase } from "../config/api.js";
 
 export const useClubUsers = (user) => {
   const { users, setUser } = useUser();
+  const { setAllUsers } = useAllClub();
   const [club, setClub] = useState(null);
   const [loadingUsers, setLoadingUsers] = useState(true);
 
@@ -33,10 +35,11 @@ export const useClubUsers = (user) => {
           (u) => u.club?.toLowerCase() === adminClub.toLowerCase()
         );
 
+        setAllUsers(filteredData);
+
         // sort by score descending
         const sortData = filteredData.sort((a, b) => b.score - a.score);
 
-        // setUsers(sortData);
         setClub(adminClub);
       } catch (error) {
         console.error("Error fetching users:", error);

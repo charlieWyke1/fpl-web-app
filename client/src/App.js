@@ -6,6 +6,7 @@ import { TeamProvider } from "./context/TeamContext.js";
 import { FixtureProvider } from "./context/FixtureContext.js";
 import { ClubProvider } from "./context/ClubContext.js";
 import { CurrentTeamProvider } from "./context/CurrentTeamContext.js";
+import { AllClubProvider } from "./context/AllClubUsersContext.js";
 
 import LoginPage from "./pages/LoginPage";
 import AdminHomePage from "./pages/AdminHomePage/AdminHomePage";
@@ -23,17 +24,19 @@ function App() {
           <TeamProvider>
             <FixtureProvider>
               <ClubProvider>
-                <Router>
-                  <Routes>
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/admin" element={<AdminHomePage />} />
-                    <Route path="/Players" element={<AddPlayersPage />} />
-                    <Route path="/results" element={<ResultsPage />} />
-                    <Route path="/FirstTeam" element={<FirstTeamPage />} />
-                    <Route path="/CreateTeam" element={<CreateTeamPage />} />
-                    <Route path="/HomePage" element={<HomePage />} />
-                  </Routes>
-                </Router>
+                <AllClubProvider>
+                  <Router>
+                    <Routes>
+                      <Route path="/" element={<LoginPage />} />
+                      <Route path="/admin" element={<AdminHomePage />} />
+                      <Route path="/Players" element={<AddPlayersPage />} />
+                      <Route path="/results" element={<ResultsPage />} />
+                      <Route path="/FirstTeam" element={<FirstTeamPage />} />
+                      <Route path="/CreateTeam" element={<CreateTeamPage />} />
+                      <Route path="/HomePage" element={<HomePage />} />
+                    </Routes>
+                  </Router>
+                </AllClubProvider>
               </ClubProvider>
             </FixtureProvider>
           </TeamProvider>
