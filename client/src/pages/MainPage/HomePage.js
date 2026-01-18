@@ -21,10 +21,10 @@ import Countdown from "../../utils/Countdown.js";
 import "./HomePage.css";
 import "../../themes/clubThemes.css";
 
-// NEED TO CHECK IF OUR USER IS AN ADMIN HERE 
+// NEED TO CHECK IF OUR USER IS AN ADMIN HERE
 // AS IF they're not an admin they will have none of the context data
-// need to check and give them 
-// - fixtures, users, all players, current user ... 
+// need to check and give them
+// - fixtures, users, all players, current user ...
 
 // also if player has akready got their team set up
 // we need to load in all the data as well
@@ -33,7 +33,6 @@ function HomePage() {
   const { user } = useUser();
   const { currentTeam } = useCurrentTeam();
   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
-
 
   const navigate = useNavigate();
 
@@ -78,10 +77,7 @@ function HomePage() {
   }, [user]);
 
   // gets players and the most up to date version of it
-  useHasTeamContextFiller(
-    hasTeam ? user : null,
-    refetchPlayers
-  );
+  useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
 
   // everything from here only works if we HAVE a team
 
@@ -105,7 +101,7 @@ function HomePage() {
   const allSubs = currentTeam.filter((p) => p.isStarting === false);
 
   // all ready to set up the display page for our users Home Page
-  // current team is set and so is players - can cross refrence them now to build the team data 
+  // current team is set and so is players - can cross refrence them now to build the team data
   if (!hasTeam) {
     return (
       <div className={themeClass}>
