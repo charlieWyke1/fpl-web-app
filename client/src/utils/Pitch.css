@@ -1,0 +1,79 @@
+.selectedTeamContainer {
+  position: relative; /* REQUIRED */
+  border: white 2px solid;
+  background-color: #7bb369;
+  margin-left: 5%;
+  margin-right: 5%;
+  border-radius: 20px;
+  padding: 1rem;
+  min-height: 80vh;
+}
+.selectedTeamContainer::before {
+  content: "";
+  position: absolute;
+  top: 1%;
+  left: 1%;
+  right: 1%;
+  bottom: 1%;
+  border: 2px solid white;
+  border-bottom: none !important ;
+  pointer-events: none;
+  z-index: 1;
+}
+.selectedTeamContainer.HomePage {
+    margin-top: 2rem !important;
+}
+
+/* Top penalty boxes */
+.selectedTeamContainer::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 1%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 18%;
+  border: 2px solid white;
+  border-radius: 0px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.six-yard-box {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 8%;
+  top: 1%;
+  border: 2px solid white;
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
+}
+.penalty-arc.top {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28%;
+  height: 14%;
+  top: 19%;
+  border-top: none !important ;
+  border: 2px solid white;
+  border-radius: 0 0 100% 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.halfway-line {
+  position: absolute;
+  top: 75%;
+  left: 1%;
+  right: 1%;
+  width: 98%;
+  height: 2px;
+  background-color: white;
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
