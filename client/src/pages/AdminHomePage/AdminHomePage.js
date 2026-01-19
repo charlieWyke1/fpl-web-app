@@ -25,13 +25,14 @@ import NavBar from "../NavBar.js";
 
 function AdminHomePage() {
   const { user } = useUser();
+  const { allUsers } = useAllClub();
   const userClub = user?.club;
 
-  const { setTeam } = useTeam();
+  const { team, setTeam } = useTeam();
 
   const { loadingFixtures } = useFixtures(user);
   const { players, loadingPlayers } = usePlayers(user);
-  const { club, loadingUsers } = useClubUsers(user);
+  const { club, loadingUsers } = useClubUsers(user); // does it automatically
 
   const [isLeagueTableModalOpen, setIsLeagueTableModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -60,7 +61,6 @@ function AdminHomePage() {
         if (!res.ok) throw new Error("Failed to fetch team");
         const data = await res.json();
         setTeam(data);
-
       } catch (error) {
         console.error("Error fetching team:", error);
       }
@@ -68,6 +68,32 @@ function AdminHomePage() {
 
     fetchTeam();
   }, [user, setTeam]);
+
+  // fetch ALL the users who are the same club as our admin
+  // useEffect(() => {
+  //   if (!user) return;
+
+  //   const fetchUsers = async () => {
+  //     try {
+  //       const token = await auth.currentUser.getIdToken();
+  //       const res = await fetch(`${getApiBase()}/api/admin/users`, {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({ club: user.clubName }),
+  //       });
+
+  //       const data =  res.json;
+  //       console.log(data);
+  //     } catch (error) {
+  //       console.error("Error fidning users : ", error);
+  //     }
+  //   };
+
+  //   fetchUsers();
+  // }, [user]);
 
   // filter players for top points table
   const filterPlayersByPosition = players
@@ -100,6 +126,7 @@ function AdminHomePage() {
   };
 
   // allUsers -- THIS stores all of our users who are in the same club of the admin whos logged in
+  // console.log(allUsers); -- does work for future notice
 
   // loading screen
   if (loadingUsers || loadingPlayers || loadingFixtures) {

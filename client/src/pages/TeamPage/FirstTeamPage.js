@@ -9,8 +9,8 @@ import { SetStartingTeamValues } from "../../utils/SetStartingTeamValues.js";
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
-import "./CreateTeamPage.css";
 import "./FirstTeamPage.css";
+import "../../utils/Pitch.css";
 import "../../themes/clubThemes.css";
 import { getApiBase } from "../../config/api.js";
 

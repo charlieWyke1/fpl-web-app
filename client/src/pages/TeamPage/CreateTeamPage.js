@@ -20,6 +20,7 @@ import AddMIDModal from "./AddMIDModal.js";
 import AddFWDModal from "./AddFWDModal.js";
 
 import "./CreateTeamPage.css";
+import "../../utils/Pitch.css"
 import "../../themes/clubThemes.css";
 
 function CreateTeamPage() {

@@ -19,12 +19,14 @@ import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 import Countdown from "../../utils/Countdown.js";
 
 import "./HomePage.css";
+import "../../utils/Pitch.css";
+
 import "../../themes/clubThemes.css";
 
 // NEED TO CHECK IF OUR USER IS AN ADMIN HERE
 // AS IF they're not an admin they will have none of the context data
 // need to check and give them
-// - fixtures, users, all players, current user ...
+// - fixtures, allUsers, all players, current user ...
 
 // also if player has akready got their team set up
 // we need to load in all the data as well
@@ -78,18 +80,16 @@ function HomePage() {
 
   // gets players and the most up to date version of it
   useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
-  const joinedTeamList = currentTeam.map(teamPlayer => {
-    const fullPlayerData = players.find(p => p.id === teamPlayer.id);
+  const joinedTeamList = currentTeam.map((teamPlayer) => {
+    const fullPlayerData = players.find((p) => p.id === teamPlayer.id);
 
     return {
-      ...fullPlayerData, 
+      ...fullPlayerData,
       isStarting: teamPlayer.isStarting,
-    }
-  })
+    };
+  });
   // KEEP currentTeam simple, only playerId and starting boolean
   // make use of the joinedTeamList for the data side of stuff
-
-
 
   // everything from here only works if we HAVE a team
 
@@ -114,7 +114,6 @@ function HomePage() {
 
   // all ready to set up the display page for our users Home Page
   // current team is set and so is players - can cross refrence them now to build the team data
-
 
   if (!hasTeam) {
     return (
@@ -145,6 +144,13 @@ function HomePage() {
       </div>
 
       <Countdown targetDate={cutOffDate} />
+
+      <div className="selectedTeamContainer HomePage">
+        <div className="penalty-box top"></div>
+        <div className="six-yard-box top"></div>
+        <div className="penalty-arc top"></div>
+        <div className="halfway-line"></div>
+      </div>
     </div>
   );
 }

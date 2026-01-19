@@ -41,6 +41,7 @@ router.get("/api/admin/players", authenticateToken, async (req, res) => {
   try {
     const players = await getAllPlayers();
     res.status(200).json(players);
+    return players.data;
   } catch (error) {
     console.error("Error fetching players:", error);
     res.status(500).json({ error: "Failed to fetch players" });

@@ -18,13 +18,14 @@ export async function getUserById(userId) {
   }
 }
 
-export async function getAllUsers() {
+export async function getAllUsers(club) {
   try {
     const snapshot = await db.collection("users").get();
     const users = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
+    
     return users;
   } catch (error) {
     console.error("Error getting all users:", error);
