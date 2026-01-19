@@ -31,7 +31,7 @@ import "../../themes/clubThemes.css";
 
 function HomePage() {
   const { user } = useUser();
-  const { currentTeam } = useCurrentTeam();
+  const { currentTeam, setCurrentTeam } = useCurrentTeam();
   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
 
   const navigate = useNavigate();
@@ -78,6 +78,18 @@ function HomePage() {
 
   // gets players and the most up to date version of it
   useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
+  const joinedTeamList = currentTeam.map(teamPlayer => {
+    const fullPlayerData = players.find(p => p.id === teamPlayer.id);
+
+    return {
+      ...fullPlayerData, 
+      isStarting: teamPlayer.isStarting,
+    }
+  })
+  // KEEP currentTeam simple, only playerId and starting boolean
+  // make use of the joinedTeamList for the data side of stuff
+
+
 
   // everything from here only works if we HAVE a team
 
@@ -85,23 +97,25 @@ function HomePage() {
   const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
   const cutOffDate = new Date(tsDate._seconds * 1000);
 
-  const startingGk = currentTeam.filter(
+  const startingGk = joinedTeamList.filter(
     (p) => p.position === "GK" && p.isStarting === true,
   );
-  const startingDef = currentTeam.filter(
+  const startingDef = joinedTeamList.filter(
     (p) => p.position === "DEF" && p.isStarting === true,
   );
-  const startingMid = currentTeam.filter(
+  const startingMid = joinedTeamList.filter(
     (p) => p.position === "MID" && p.isStarting === true,
   );
-  const startingFwd = currentTeam.filter(
+  const startingFwd = joinedTeamList.filter(
     (p) => p.position === "FWD" && p.isStarting === true,
   );
 
-  const allSubs = currentTeam.filter((p) => p.isStarting === false);
+  const allSubs = joinedTeamList.filter((p) => p.isStarting === false);
 
   // all ready to set up the display page for our users Home Page
   // current team is set and so is players - can cross refrence them now to build the team data
+
+
   if (!hasTeam) {
     return (
       <div className={themeClass}>
