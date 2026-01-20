@@ -16,9 +16,16 @@ import "./ResultsPage.css";
 function ResultsPage() {
   const { user } = useUser();
   const { players } = usePlayer();
-  const { team } = useTeam();
+  const { team } = useTeam(); // stores how many teams in the admins club
   const { fixtures } = useFixture();
+
+  const [checked, setChecked] = useState(false);
+  const [currentDataTeamIndex, setCurrentDataTeamIndex] = useState(1);
   const [selectedSquad, setSelectedSquad] = useState("");
+
+  const [selectedSquadTest, setSelectedSquadTest] = useState(null);
+
+  const teamForDataEntry = currentDataTeamIndex; // max it at the number of teams we have in "team"
 
   const userClub = user?.club;
   const allGk = players.filter((p) => p.position === "GK");
@@ -99,7 +106,7 @@ function ResultsPage() {
     if (!last) return;
     // Count how many times this player is already selected
     const count = selectedGoalscorers.filter(
-      (s) => s.playerId === last.playerId
+      (s) => s.playerId === last.playerId,
     ).length;
     // Add a new instance if under the goal limit
     if (selectedGoalscorers.length < userClubGoals) {
@@ -120,7 +127,7 @@ function ResultsPage() {
     const last = option[option.length - 1];
     if (!last) return;
     const count = selectedAssists.filter(
-      (s) => s.playerId === last.playerId
+      (s) => s.playerId === last.playerId,
     ).length;
     if (selectedAssists.length < userClubGoals) {
       setSelectedAssists([
@@ -228,7 +235,7 @@ function ResultsPage() {
                 userId: user.id,
                 newGW: currentGW + 1,
               }),
-            }
+            },
           );
           const data2 = await res2.json();
           if (data2.success) {
@@ -250,7 +257,7 @@ function ResultsPage() {
         assists,
         yellows,
         reds,
-        cleanSheet
+        cleanSheet,
         // started
       ) => {
         return selectedTeamSheet.map((player) => {
@@ -287,7 +294,7 @@ function ResultsPage() {
         selectedAssists,
         selectedYellows,
         selectedReds,
-        cleanSheet
+        cleanSheet,
         // (started = true)
       );
       // console.log("Player Points Data:", playerPoints);
@@ -306,7 +313,7 @@ function ResultsPage() {
               playerData: playerPoints,
               gw: currentGW,
             }),
-          }
+          },
         );
         const data3 = await res3.json();
         if (data3.success) {
@@ -320,318 +327,90 @@ function ResultsPage() {
     }
   };
 
-  // console.log(user.id);
+  const checkKickOff = async (now, newChecked) => {
+    const useFixtures = fixtures[`gw${currentGW}`];
+
+    for (const gwId in useFixtures) {
+      const squads = useFixtures[gwId];
+      const kickOffRaw = squads["kickOff"];
+
+      if (!kickOffRaw) continue;
+
+      const kickOffDate = new Date(kickOffRaw._seconds * 1000);
+
+      if (kickOffDate > now) {
+        const hours = String(kickOffDate.getHours()).padStart(2, "0");
+        const minutes = String(kickOffDate.getMinutes()).padStart(2, "0");
+        const day = String(kickOffDate.getDate()).padStart(2, "0");
+        const month = String(kickOffDate.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
+        const year = String(kickOffDate.getFullYear()).slice(-2); // last two digits
+
+        const formatted = `${hours}:${minutes} ${day}/${month}/${year}`;
+        alert(`The ${gwId} dont kick off until ${formatted}`);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleNextTeam = () => {
+    if (currentDataTeamIndex < team) {
+      setCurrentDataTeamIndex(currentDataTeamIndex + 1);
+      // and write data to the database
+    } else {
+      console.log("All teams Done");
+    }
+  };
+
+  // this gets all the fixture info for our current team we're working with
+  // can surely set squad from this and use all the code and shaboom
+  const teamFixtures = fixtures[`gw${currentGW}`][`${currentDataTeamIndex}s`]; 
 
   return (
     <div className={themeClass}>
       <NavBar />
       {/* okay this is gonna be hardest part yet */}
-      <div className="headerCol">
-        <div className="topRow">
-          <div className="selectTop">
-            <select
-              className="teamSelect"
-              value={selectedSquad}
-              onChange={(e) => {
-                handleSquadChange(e);
-                setSelectedTeamSheet(null);
+      <div className="infoRow">
+        <h4>
+          When entering results, you must wait untill all the games in your
+          clubs gameweek are finished
+        </h4>
+        <div className="checkBoxLine">
+          <h4>
+            Have all {team} teams at {userClub} completed GameWeek{" "}
+            {user.currentGW}?
+          </h4>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={async (e) => {
+                const newChecked = e.target.checked;
+                const now = new Date();
+
+                if (newChecked) {
+                  const ok = await checkKickOff(now, newChecked);
+                  if (ok) {
+                    setChecked(true);
+                  } else {
+                    setChecked(false);
+                  }
+                } else {
+                  setChecked(false);
+                }
               }}
-            >
-              <option value="" disabled>
-                Select Team
-              </option>
-              {Array.from({ length: team }, (_, i) => (
-                <option key={i + 1} value={`${i + 1}s`}>
-                  {i + 1}'s
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="nextFixture">
-            {selectedSquad && (
-              <>
-                {gwFixture == null ? (
-                  <h4>
-                    No Fixture Found for GW{currentGW} for the {selectedSquad}
-                  </h4>
-                ) : (
-                  <h4>
-                    GW{currentGW} - {gwFixture?.home?.club} vs{" "}
-                    {gwFixture?.away?.club}{" "}
-                  </h4>
-                )}
-              </>
-            )}
-          </div>
+            />
+            {"  "}Yes!
+          </label>
         </div>
       </div>
 
-      {selectedSquad && gwFixture && (
-        <div className="resultsRow">
-          <h4>
-            Team Sheet for Game Week {currentGW} - {selectedSquad}
-          </h4>
-
-          <form className="teamsheetForm" onSubmit={handleSubmit}>
-            <div className="formRow">
-              <label> Goalkeeper : </label>
-              {gkOptions && (
-                <Select
-                  name="gk"
-                  className="multiSelect"
-                  options={gkOptions}
-                  value={selectedGK || []}
-                  onChange={(selected) => {
-                    setSelectedGK(selected);
-                    // console.log(selectedGK.length);
-                  }}
-                />
-              )}
-            </div>
-
-            <div className="formRow">
-              <label> Defender : </label>
-              {defOptions && (
-                <Select
-                  isMulti
-                  name="def"
-                  className="multiSelect"
-                  options={defOptions}
-                  value={selectedDef || []}
-                  onChange={(selected) => {
-                    setSelectedDef(selected);
-                    // console.log(selectedDef.length);
-                  }}
-                />
-              )}
-            </div>
-
-            <div className="formRow">
-              <label> Midfielder : </label>
-              {midOptions && (
-                <Select
-                  isMulti
-                  name="mid"
-                  className="multiSelect"
-                  options={midOptions}
-                  value={selectedMid || []}
-                  onChange={(selected) => {
-                    setSelectedMid(selected);
-                    // console.log(
-                    //   selectedMid.length +
-                    //     selectedFwd.length +
-                    //     selectedDef.length +
-                    //   selectedGK.length
-                    // );
-                  }}
-                />
-              )}
-            </div>
-
-            <div className="formRow">
-              <label> Forward : </label>
-              {fwdOptions && (
-                <Select
-                  isMulti
-                  name="fwd"
-                  className="multiSelect"
-                  options={fwdOptions}
-                  value={selectedFwd}
-                  onChange={(selected) => {
-                    setSelectedFwd(selected);
-                    // console.log(selectedFwd.length);
-                  }}
-                />
-              )}
-            </div>
-
-            {/* <div className="formRow">
-              <label> Used Subs : </label>
-              {fwdOptions && ( // sub
-                <Select
-                  isMulti
-                  name="sub"
-                  className="multiSelect"
-                  options={subOptions}
-                  value={selectedSubs}
-                  onChange={(selected) => setSelectedSubs(selected)}
-                />
-              )}
-            </div> */}
-
-            <div className="formRow">
-              <button
-                type="submit"
-                className="submitButton"
-                // disabled={
-                //   selectedGK.length +
-                //     selectedDef.length +
-                //     selectedMid.length +
-                //     selectedFwd.length !==
-                //   8
-
-                //   // selectedGK.length +
-                //   //   selectedDef.length +
-                //   //   selectedMid.length +
-                //   //   selectedFwd.length !==
-                //   // 11
-                // }
-              >
-                Save Team Sheet
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {selectedTeamSheet && (
-        <div className="statsRow">
-          <h4>Match stats for GW{currentGW}</h4>
-          <form className="matchDetailsForm" onSubmit={handleSubmitMatchStats}>
-            <fieldset disabled={!selectedTeamSheet}>
-              <div className="formRow" id="goalsRow">
-                {gwFixture?.home?.club === userClub && (
-                  <>
-                    {/* our goals */}
-                    <label>{gwFixture.home.club} Goals:</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={userClubGoals}
-                      onChange={(e) => {
-                        setUserClubGoals(Number(e.target.value));
-                        setHomeGoals(Number(e.target.value));
-                        setSelectedGoalscorers([]);
-                        setSelectedAssists([]);
-                      }}
-                    />
-                    <label>{gwFixture.away.club} Goals:</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={awayGoals}
-                      onChange={(e) => {
-                        setAwayGoals(Number(e.target.value));
-                      }}
-                    />
-                  </>
-                )}
-
-                {gwFixture?.away?.club === userClub && (
-                  <>
-                    <label>{gwFixture.home.club} Goals:</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={homeGoals}
-                      onChange={(e) => {
-                        setHomeGoals(Number(e.target.value));
-                      }}
-                    />
-                    {/* our goals if away */}
-                    <label>{gwFixture.away.club} Goals:</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={userClubGoals}
-                      onChange={(e) => {
-                        setUserClubGoals(Number(e.target.value));
-                        setAwayGoals(Number(e.target.value));
-                        setSelectedGoalscorers([]);
-                        setSelectedAssists([]);
-                      }}
-                    />
-                  </>
-                )}
-              </div>
-
-              <div className="formRow">
-                <label> Goalscorers: </label>
-                <Select
-                  isMulti
-                  name="goalscorers"
-                  className="multiSelect"
-                  options={goalsOptions}
-                  isDisabled={!selectedTeamSheet || userClubGoals === 0}
-                  value={selectedGoalscorers || []}
-                  // closeMenuOnSelect={false}
-                  hideSelectedOptions={false}
-                  onChange={handleDuplicateScorer}
-                />
-              </div>
-
-              <div className="formRow">
-                <label> Assists: </label>
-                <Select
-                  isMulti
-                  name="assists"
-                  className="multiSelect"
-                  options={assistOptions}
-                  isDisabled={!selectedTeamSheet || userClubGoals === 0}
-                  value={selectedAssists || []}
-                  closeMenuOnSelect={false}
-                  hideSelectedOptions={false}
-                  onChange={handleDuplicateAssist}
-                />
-              </div>
-
-              <div className="formRow">
-                <label> Yellows: </label>
-                <Select
-                  isMulti
-                  name="yellows"
-                  className="multiSelect"
-                  options={selectedTeamSheet}
-                  isDisabled={!selectedTeamSheet}
-                  value={selectedYellows || []}
-                  onChange={(selected) => setSelectedYellows(selected)}
-                />
-              </div>
-
-              <div className="formRow">
-                <label> Reds: </label>
-                <Select
-                  isMulti
-                  name="reds"
-                  className="multiSelect"
-                  options={selectedTeamSheet}
-                  isDisabled={!selectedTeamSheet}
-                  value={selectedReds || []}
-                  onChange={(selected) => setSelectedReds(selected)}
-                />
-              </div>
-
-              {/* <div className="formRow">
-                <label> Pen Saves: </label>
-                only want data from saved teamsheet
-                <Select
-                // name="penSaves"
-                // className="multiSelect"
-                // options={selectedGK}
-                // isDisabled={!selectedTeamSheet}
-                // value={selectedPenSaves || []}
-                // onChange={(selected) => setSelectedPenSaves(selected)}
-                />
-              </div> */}
-
-              <div className="formRow">
-                <button
-                  type="submit"
-                  className="submitButton"
-                  // disabled={
-                  //   selectedGK.length === 0 ||
-                  //   selectedDef.length === 0 ||
-                  //   selectedMid.length === 0 ||
-                  //   selectedFwd.length === 0
-                  //   // selectedDef.length === 0
-                  // }
-                >
-                  Save Team Sheet
-                </button>
-              </div>
-            </fieldset>
-          </form>
-        </div>
+      {checked && (
+        <>
+          {/* now we need all the entering stuff */}
+          <h4> {currentDataTeamIndex} </h4>
+          <button onClick={handleNextTeam}>click me</button>
+        </>
       )}
     </div>
   );

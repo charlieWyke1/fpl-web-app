@@ -174,13 +174,13 @@ function AdminHomePage() {
             <h4> Bob Bob - 168pts</h4>
           </div>
 
-          <div className="statsBox">
+          {/* <div className="statsBox">
             <h4> Top Points : </h4>
             <h4>
-              {" "}
+              
               {players[0].name} - {players[0].totalPoints}pts
             </h4>
-          </div>
+          </div> */}
         </div>
       </div>
 

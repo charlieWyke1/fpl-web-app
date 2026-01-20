@@ -1,6 +1,8 @@
 export const SetStartingTeamValues = (clubData) => {
   const number = clubData.squadNumber;
 
+  console.log(number);
+
   if (number === 7) {
     return {
       def: 1,

@@ -106,30 +106,28 @@ export async function addPlayer(name, cost, position, club, totalPoints, team) {
 
 export async function getFixtures(club) {
   try {
-    const clubRef =  db.collection("fixtures").doc(club);
+    const fixturesRef =  db.collection("fixtures").doc(club);
 
     const result = {}; 
     
-    const squadCollections = await clubRef.listCollections();
-    for (const squad of squadCollections) {
+    const gwCollections = await fixturesRef.listCollections();
+    for (const gw of gwCollections) {
       // skip cutOff for now
-      if (squad.id === "cutOff") continue;
+      if (gw.id === "cutOff") continue;
 
-      result[squad.id] = {};
-      const gwDocRef = squad.doc("gameweeks");
-      const gwCollections = await gwDocRef.listCollections(); // gets gw1, gw2, ...
+      const gwId = gw.id
+      const squadsSnapshot = await gw.get(); 
+      result[gwId] = {};
 
-      for (const gw of gwCollections) {
-        const fixtureSnapshot = await gw.get();
-        result[squad.id][gw.id] = {};
-        fixtureSnapshot.forEach((fixtureDoc) => {
-          result[squad.id][gw.id][fixtureDoc.id] = fixtureDoc.data();
-        });
-      }
+      squadsSnapshot.forEach(squadDoc => {
+        const squadId = squadDoc.id;
+
+        result[gwId][squadId] = squadDoc.data();
+      });
     }
 
     // now get cutoff data
-    const cutOffDocRef = await clubRef.collection("cutOff").doc("fplCutOffTime");
+    const cutOffDocRef =  fixturesRef.collection("cutOff").doc("fplCutOffTime");
     const cutOffDoc = await cutOffDocRef.get();
 
     if (cutOffDoc.exists) {

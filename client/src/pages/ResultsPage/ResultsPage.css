@@ -1,3 +1,34 @@
+.infoRow {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 1rem;
+}
+.infoRow h4 {
+  margin-bottom: 1rem !important;
+  font-size: 1.7rem !important;
+  font-weight: 600 !important;
+}
+.checkBoxLine {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+.checkBoxLine h4 {
+  font-size: 1.5rem !important;
+  font-weight: 500 !important;
+}
+.checkBoxLine label {
+  margin-top: -1.2rem !important;
+  font-size: 1.5rem;
+  font-weight: 500;
+  font-family:
+    Andale Mono,
+    monospace !important;
+}
+
 .headerCol {
   display: flex;
   justify-content: center;
@@ -50,7 +81,9 @@
   font-weight: 600;
   padding-top: 1rem;
   padding-bottom: 0.2rem;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
 }
 .teamsheetForm .multiSelect {
   height: 2rem;
@@ -81,7 +114,9 @@
 #goalsRow label {
   width: auto;
   font-size: 1.2rem;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
   font-weight: 300 !important;
   padding: 0rem !important;
 }
@@ -95,7 +130,9 @@
   font-weight: 400;
   padding-top: 1rem;
   padding-bottom: 0.2rem;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
 }
 
 .teamsheetForm button,
@@ -110,7 +147,9 @@
   color: white;
   font-size: 1.2rem;
   font-weight: 500;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
   transition: transform 0.5s;
 }
 
@@ -126,11 +165,15 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 860px) {
   .topRow {
     flex-direction: column; /* stack vertically */
     align-items: center; /* center horizontally */
     margin-left: 0;
     margin-right: 0;
+  }
+  .checkBoxLine {
+    flex-direction: column;
+    align-items: center;;
   }
 }

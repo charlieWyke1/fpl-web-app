@@ -126,7 +126,9 @@ function CreateTeamPage() {
   );
   const [activeFWDIndex, setActiveFWDIndex] = useState(null);
 
-  // way tod display how many players from each squad have been selected (??)
+  // console.log(selected)
+
+  // way to display how many players from each squad have been selected (??)
   // save and check buttons
 
   // need to save teamName at a seperate time so uin firstTeam
@@ -140,6 +142,7 @@ function CreateTeamPage() {
       navigate("/FirstTeam", { state: { freshTeam: team } });
     }
   };
+
 
   return (
     <div className={themeClass}>

@@ -42,6 +42,7 @@ export default function Countdown({ targetDate }) {
       </h4>
       <h5>
         till GameWeek 1 deadline
+        {/* check and add current gw  */}
       </h5>
     </div>
   );
