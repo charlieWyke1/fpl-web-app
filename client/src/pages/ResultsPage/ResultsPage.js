@@ -13,7 +13,7 @@ import { getApiBase } from "../../config/api.js";
 import "../../themes/clubThemes.css";
 import "./ResultsPage.css";
 
-// WORKS to submit button - have to save team - move onto match details 
+// WORKS to submit button - have to save team - move onto match details
 // then offer the next squad button !!
 
 function ResultsPage() {
@@ -31,7 +31,20 @@ function ResultsPage() {
   const [selectedMid, setSelectedMid] = useState([]);
   const [selectedFwd, setSelectedFwd] = useState([]);
 
-  const teamForDataEntry = currentDataTeamIndex; // max it at the number of teams we have in "team"
+  const [selectedTeamSheet, setSelectedTeamSheet] = useState(null);
+  const [temp, setTemp] = useState(false);
+
+  const [userClubGoals, setUserClubGoals] = useState(0);
+  const [homeGoals, setHomeGoals] = useState(0);
+  const [awayGoals, setAwayGoals] = useState(0);
+  const [oppo, setOppo] = useState("");
+
+  const [selectedGoalscorers, setSelectedGoalscorers] = useState("");
+  const [selectedAssists, setSelectedAssists] = useState([]);
+  const [selectedYellows, setSelectedYellows] = useState([]);
+  const [selectedReds, setSelectedReds] = useState([]);
+
+  // const teamForDataEntry = currentDataTeamIndex; // max it at the number of teams we have in "team"
 
   const userClub = user?.club;
   const currentGW = user?.currentGW;
@@ -97,13 +110,112 @@ function ResultsPage() {
     .filter((f) => f.team === selectedSquad)
     .map((f) => ({ value: f.id, label: `${f.name} - (${f.team})` }));
 
+  // FOR THE TEAMSHEET SUBMISSION
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const teamSheet = [
+      selectedGK,
+      ...selectedDef,
+      ...selectedMid,
+      ...selectedFwd,
+    ];
+    if (teamSheet.length !== 11) {
+      alert("Please select exactly 11 players for the team sheet.");
+      setSelectedTeamSheet(null);
+      return;
+    } else {
+      setSelectedTeamSheet(teamSheet);
+      if (homeTeam === userClub) {
+        setOppo("away");
+      }
+      if (awayTeam === userClub) {
+        setOppo("home");
+      }
+    }
+    setTemp(true);
+  };
+
+  const goalsOptions = selectedTeamSheet?.map((player) => ({
+    value: player.value,
+    label: player.label,
+    // playerId: player.value,
+  }));
+
+  const assistOptions = selectedTeamSheet?.map((player) => ({
+    value: player.value,
+    label: player.label,
+    // playerId: player.value,
+  }));
+
+  // allows us to enter multiple goals by the same player
+  const handleDuplicateScorer = (option) => {
+    if (!option || option.length === 0) {
+      // user cleared all selections
+      setSelectedGoalscorers([]);
+      return;
+    }
+    // Get the last item selected
+    const last = option[option.length - 1];
+    if (!last) return;
+    // Count how many times this player is already selected
+    const count = selectedGoalscorers.filter(
+      (s) => s.playerId === last.playerId,
+    ).length;
+    // Add a new instance if under the goal limit
+    if (selectedGoalscorers.length < userClubGoals) {
+      setSelectedGoalscorers([
+        ...selectedGoalscorers,
+        { ...last, value: `${last.value}-${count}` },
+      ]);
+    }
+  };
+
+  // exact same logic as for goals but for assists
+  const handleDuplicateAssist = (option) => {
+    if (!option || option.length === 0) {
+      // user cleared all selections
+      setSelectedAssists([]);
+      return;
+    }
+    const last = option[option.length - 1];
+    if (!last) return;
+    const count = selectedAssists.filter(
+      (s) => s.playerId === last.playerId,
+    ).length;
+    if (selectedAssists.length < userClubGoals) {
+      setSelectedAssists([
+        ...selectedAssists,
+        { ...last, value: `${last.value}-${count}` },
+      ]);
+    }
+  };
+
+  const handleSubmitMatchStats = async (e) => {
+    e.preventDefault();
+    const cleanSheet =
+      (oppo === "home" && Number(homeGoals) === 0) ||
+      (oppo === "away" && Number(awayGoals) === 0);
+
+    console.log("here");
+    console.log(cleanSheet);
+
+    // need to call this BUT only once we have written all of our data to the db
+    // handleNextTeam();
+  };
+
   // sorts out the loop thru all teams in the club for results
   const handleNextTeam = () => {
     if (currentDataTeamIndex < team) {
+      // clear data stored in all values
+
+      // this must be last thing we do
       setCurrentDataTeamIndex(currentDataTeamIndex + 1);
-      // and write data to the database
     } else {
-      // and take us back to the admin home page
+      // here we have to update all users same club as admin to gw + 1
+      // have to lock the gameweek in fixtures
+      // have to update all teams for users same club as admin with gwPoints for their players
+      // set those teams to locked
+      // THEN go to home page and thats results and points done
       console.log("All teams Done");
     }
   };
@@ -159,8 +271,7 @@ function ResultsPage() {
           </div>
 
           <div className="resultsRow">
-            {/* <form className="teamsheetForm" onSubmit={handleSubmit}> */}
-            <form className="teamsheetForm">
+            <form className="teamsheetForm" onSubmit={handleSubmit}>
               <div className="formRow">
                 <label> Goalkeeper : </label>
                 {gkOptions && (
@@ -247,9 +358,157 @@ function ResultsPage() {
               </div>
             </form>
           </div>
-
-          <button onClick={handleNextTeam}>click me</button>
         </>
+      )}
+
+      {temp && (
+        <div className="statsRow">
+          <h4>Match Stats</h4>
+          <form className="matchDetailsForm" onSubmit={handleSubmitMatchStats}>
+            <fieldset disabled={!selectedTeamSheet}>
+              <div className="formRow" id="goalsRow">
+                {homeTeam === userClub && (
+                  <>
+                    {/* our goals */}
+                    <label>{homeTeam} Goals:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={userClubGoals}
+                      onChange={(e) => {
+                        setUserClubGoals(Number(e.target.value));
+                        setHomeGoals(Number(e.target.value));
+                        setSelectedGoalscorers([]);
+                        setSelectedAssists([]);
+                      }}
+                    />
+                    <label>{awayTeam} Goals:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={awayGoals}
+                      onChange={(e) => {
+                        setAwayGoals(Number(e.target.value));
+                      }}
+                    />
+                  </>
+                )}
+
+                {awayTeam === userClub && (
+                  <>
+                    <label>{homeTeam} Goals:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={homeGoals}
+                      onChange={(e) => {
+                        setHomeGoals(Number(e.target.value));
+                      }}
+                    />
+                    {/* our goals if away */}
+                    <label>{awayTeam} Goals:</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={userClubGoals}
+                      onChange={(e) => {
+                        setUserClubGoals(Number(e.target.value));
+                        setAwayGoals(Number(e.target.value));
+                        setSelectedGoalscorers([]);
+                        setSelectedAssists([]);
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+
+              <div className="formRow">
+                <label> Goalscorers: </label>
+                <Select
+                  isMulti
+                  name="goalscorers"
+                  className="multiSelect"
+                  options={goalsOptions}
+                  isDisabled={!selectedTeamSheet || userClubGoals === 0}
+                  value={selectedGoalscorers || []}
+                  // closeMenuOnSelect={false}
+                  hideSelectedOptions={false}
+                  onChange={handleDuplicateScorer}
+                />
+              </div>
+
+              <div className="formRow">
+                <label> Assists: </label>
+                <Select
+                  isMulti
+                  name="assists"
+                  className="multiSelect"
+                  options={assistOptions}
+                  isDisabled={!selectedTeamSheet || userClubGoals === 0}
+                  value={selectedAssists || []}
+                  closeMenuOnSelect={false}
+                  hideSelectedOptions={false}
+                  onChange={handleDuplicateAssist}
+                />
+              </div>
+
+              <div className="formRow">
+                <label> Yellows: </label>
+                <Select
+                  isMulti
+                  name="yellows"
+                  className="multiSelect"
+                  options={selectedTeamSheet}
+                  isDisabled={!selectedTeamSheet}
+                  value={selectedYellows || []}
+                  onChange={(selected) => setSelectedYellows(selected)}
+                />
+              </div>
+
+              <div className="formRow">
+                <label> Reds: </label>
+                <Select
+                  isMulti
+                  name="reds"
+                  className="multiSelect"
+                  options={selectedTeamSheet}
+                  isDisabled={!selectedTeamSheet}
+                  value={selectedReds || []}
+                  onChange={(selected) => setSelectedReds(selected)}
+                />
+              </div>
+
+              {/* <div className="formRow">
+                <label> Pen Saves: </label>
+                only want data from saved teamsheet
+                <Select
+                // name="penSaves"
+                // className="multiSelect"
+                // options={selectedGK}
+                // isDisabled={!selectedTeamSheet}
+                // value={selectedPenSaves || []}
+                // onChange={(selected) => setSelectedPenSaves(selected)}
+                />
+              </div> */}
+
+              <div className="formRow">
+                <button
+                  type="submit"
+                  className="submitButton"
+                  // disabled={
+                  //   selectedGK.length === 0 ||
+                  //   selectedDef.length === 0 ||
+                  //   selectedMid.length === 0 ||
+                  //   selectedFwd.length === 0
+                  //   // selectedDef.length === 0
+                  // }
+                >
+                  Save Match Stats
+                </button>
+              </div>
+            </fieldset>
+          </form>
+        </div>
       )}
     </div>
   );
