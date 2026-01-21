@@ -13,6 +13,9 @@ import { getApiBase } from "../../config/api.js";
 import "../../themes/clubThemes.css";
 import "./ResultsPage.css";
 
+// WORKS to submit button - have to save team - move onto match details 
+// then offer the next squad button !!
+
 function ResultsPage() {
   const { user } = useUser();
   const { players } = usePlayer();
@@ -23,7 +26,10 @@ function ResultsPage() {
   const [currentDataTeamIndex, setCurrentDataTeamIndex] = useState(1);
   const [selectedSquad, setSelectedSquad] = useState("");
 
-  const [selectedSquadTest, setSelectedSquadTest] = useState(null);
+  const [selectedGK, setSelectedGK] = useState([]);
+  const [selectedDef, setSelectedDef] = useState([]);
+  const [selectedMid, setSelectedMid] = useState([]);
+  const [selectedFwd, setSelectedFwd] = useState([]);
 
   const teamForDataEntry = currentDataTeamIndex; // max it at the number of teams we have in "team"
 
@@ -60,9 +66,10 @@ function ResultsPage() {
     return true;
   };
 
-  const allGk = players.filter((p) => p.position === "GK")
-  console.log(allGk)
-
+  const allGk = players.filter((p) => p.position === "GK");
+  const allDef = players.filter((p) => p.position === "DEF");
+  const allMid = players.filter((p) => p.position === "MID");
+  const allFwd = players.filter((p) => p.position === "FWD");
   // this gets all the fixture info for our current squad we're working with
   // can surely set squad from this and use all the code and shaboom
   const teamFixtures = fixtures[`gw${currentGW}`][`${currentDataTeamIndex}s`];
@@ -78,8 +85,19 @@ function ResultsPage() {
       label: `${g.name} - (${g.team})`,
     }));
 
-  console.log(gkOptions);
+  const defOptions = (allDef || [])
+    .filter((d) => d.team === selectedSquad)
+    .map((d) => ({ value: d.id, label: `${d.name} - (${d.team})` }));
 
+  const midOptions = (allMid || [])
+    .filter((m) => m.team === selectedSquad)
+    .map((m) => ({ value: m.id, label: `${m.name} - (${m.team})` }));
+
+  const fwdOptions = (allFwd || [])
+    .filter((f) => f.team === selectedSquad)
+    .map((f) => ({ value: f.id, label: `${f.name} - (${f.team})` }));
+
+  // sorts out the loop thru all teams in the club for results
   const handleNextTeam = () => {
     if (currentDataTeamIndex < team) {
       setCurrentDataTeamIndex(currentDataTeamIndex + 1);
@@ -138,6 +156,96 @@ function ResultsPage() {
               Gameweek <b>{currentGW}</b> for the <b>{currentDataTeamIndex}s</b>{" "}
               - <b>{homeTeam}</b> vs <b>{awayTeam}</b>
             </h4>
+          </div>
+
+          <div className="resultsRow">
+            {/* <form className="teamsheetForm" onSubmit={handleSubmit}> */}
+            <form className="teamsheetForm">
+              <div className="formRow">
+                <label> Goalkeeper : </label>
+                {gkOptions && (
+                  <Select
+                    name="gk"
+                    className="multiSelect"
+                    options={gkOptions}
+                    value={selectedGK || []}
+                    onChange={(selected) => {
+                      setSelectedGK(selected);
+                    }}
+                  />
+                )}
+              </div>
+
+              <div className="formRow">
+                <label> Defender : </label>
+                {defOptions && (
+                  <Select
+                    isMulti
+                    name="def"
+                    className="multiSelect"
+                    options={defOptions}
+                    value={selectedDef || []}
+                    onChange={(selected) => {
+                      setSelectedDef(selected);
+                    }}
+                  />
+                )}
+              </div>
+
+              <div className="formRow">
+                <label> Midfielder : </label>
+                {midOptions && (
+                  <Select
+                    isMulti
+                    name="mid"
+                    className="multiSelect"
+                    options={midOptions}
+                    value={selectedMid || []}
+                    onChange={(selected) => {
+                      setSelectedMid(selected);
+                    }}
+                  />
+                )}
+              </div>
+
+              <div className="formRow">
+                <label> Forward : </label>
+                {fwdOptions && (
+                  <Select
+                    isMulti
+                    name="fwd"
+                    className="multiSelect"
+                    options={fwdOptions}
+                    value={selectedFwd}
+                    onChange={(selected) => {
+                      setSelectedFwd(selected);
+                    }}
+                  />
+                )}
+              </div>
+
+              <div className="formRow">
+                <button
+                  type="submit"
+                  className="submitButton"
+                  // disabled={
+                  //   selectedGK.length +
+                  //     selectedDef.length +
+                  //     selectedMid.length +
+                  //     selectedFwd.length !==
+                  //   8
+
+                  //   // selectedGK.length +
+                  //   //   selectedDef.length +
+                  //   //   selectedMid.length +
+                  //   //   selectedFwd.length !==
+                  //   // 11
+                  // }
+                >
+                  Save Team Sheet
+                </button>
+              </div>
+            </form>
           </div>
 
           <button onClick={handleNextTeam}>click me</button>
