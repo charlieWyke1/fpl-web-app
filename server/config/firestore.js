@@ -95,7 +95,7 @@ export async function addPlayer(name, cost, position, club, totalPoints, team) {
       club,
       totalPoints,
       gameweeks: {},
-      team,
+      team : Number(team),
     });
     console.log("Player added with ID: ", newPlayerRef.id);
     return true;

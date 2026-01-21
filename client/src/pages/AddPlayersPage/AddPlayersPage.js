@@ -46,7 +46,6 @@ function AddPlayersPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newteam = `${team}s`;
 
     try {
       const token = await auth.currentUser.getIdToken();
@@ -61,7 +60,7 @@ function AddPlayersPage() {
           club: userClub,
           position: position,
           cost: parseFloat(cost),
-          team: newteam,
+          team: team,
         }),
       });
 

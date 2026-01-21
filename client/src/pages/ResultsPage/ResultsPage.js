@@ -28,304 +28,11 @@ function ResultsPage() {
   const teamForDataEntry = currentDataTeamIndex; // max it at the number of teams we have in "team"
 
   const userClub = user?.club;
-  const allGk = players.filter((p) => p.position === "GK");
-  const allDef = players.filter((p) => p.position === "DEF");
-  const allMid = players.filter((p) => p.position === "MID");
-  const allFwd = players.filter((p) => p.position === "FWD");
-
-  const [selectedGK, setSelectedGK] = useState([]);
-  const [selectedDef, setSelectedDef] = useState([]);
-  const [selectedMid, setSelectedMid] = useState([]);
-  const [selectedFwd, setSelectedFwd] = useState([]);
-  const [selectedSubs, setSelectedSubs] = useState([]);
-
-  const [userClubGoals, setUserClubGoals] = useState(0);
-  const [homeGoals, setHomeGoals] = useState(0);
-  const [awayGoals, setAwayGoals] = useState(0);
-  const [oppo, setOppo] = useState("");
-  // const [cleanSheet, setCleanSheet] = useState(false);
-
-  const [selectedGoalscorers, setSelectedGoalscorers] = useState("");
-  const [selectedAssists, setSelectedAssists] = useState([]);
-  const [selectedYellows, setSelectedYellows] = useState([]);
-  const [selectedReds, setSelectedReds] = useState([]);
-  const [selectedPenSaves, setSelectedPenSaves] = useState("");
-
-  const [selectedTeamSheet, setSelectedTeamSheet] = useState(null);
-
-  const gkOptions = (allGk || [])
-    .filter((g) => g.team === selectedSquad)
-    .map((g) => ({
-      value: g.id,
-      label: `${g.name} - (${g.team})`,
-    }));
-
-  const defOptions = (allDef || [])
-    .filter((d) => d.team === selectedSquad)
-    .map((d) => ({ value: d.id, label: `${d.name} - (${d.team})` }));
-
-  const midOptions = (allMid || [])
-    .filter((m) => m.team === selectedSquad)
-    .map((m) => ({ value: m.id, label: `${m.name} - (${m.team})` }));
-
-  const fwdOptions = (allFwd || [])
-    .filter((f) => f.team === selectedSquad)
-    .map((f) => ({ value: f.id, label: `${f.name} - (${f.team})` }));
-
-  // const subOptions =
-
   const currentGW = user?.currentGW;
-  const squadFixtures = fixtures[selectedSquad] || [];
-  const gwFixture = squadFixtures?.[`gw${currentGW}`]?.fixture1;
 
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
-
-  const goalsOptions = selectedTeamSheet?.map((player) => ({
-    value: player.value,
-    label: player.label,
-    playerId: player.value,
-  }));
-
-  const assistOptions = selectedTeamSheet?.map((player) => ({
-    value: player.value,
-    label: player.label,
-    playerId: player.value,
-  }));
-
-  // allows us to enter multiple goals by the same player
-  const handleDuplicateScorer = (option) => {
-    if (!option || option.length === 0) {
-      // user cleared all selections
-      setSelectedGoalscorers([]);
-      return;
-    }
-    // Get the last item selected
-    const last = option[option.length - 1];
-    if (!last) return;
-    // Count how many times this player is already selected
-    const count = selectedGoalscorers.filter(
-      (s) => s.playerId === last.playerId,
-    ).length;
-    // Add a new instance if under the goal limit
-    if (selectedGoalscorers.length < userClubGoals) {
-      setSelectedGoalscorers([
-        ...selectedGoalscorers,
-        { ...last, value: `${last.value}-${count}` },
-      ]);
-    }
-  };
-
-  // same as for goals but for assists
-  const handleDuplicateAssist = (option) => {
-    if (!option || option.length === 0) {
-      // user cleared all selections
-      setSelectedAssists([]);
-      return;
-    }
-    const last = option[option.length - 1];
-    if (!last) return;
-    const count = selectedAssists.filter(
-      (s) => s.playerId === last.playerId,
-    ).length;
-    if (selectedAssists.length < userClubGoals) {
-      setSelectedAssists([
-        ...selectedAssists,
-        { ...last, value: `${last.value}-${count}` },
-      ]);
-    }
-  };
-
-  const handleSquadChange = (e) => {
-    const newSquad = e.target.value;
-    setSelectedSquad(newSquad);
-
-    // Reset selected players when changing squad
-    setSelectedGK("");
-    setSelectedDef([]);
-    setSelectedMid([]);
-    setSelectedFwd([]);
-  };
-
-  // FOR THE TEAMSHEET SUBMISSION
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const teamSheet = [
-      selectedGK,
-      ...selectedDef,
-      ...selectedMid,
-      ...selectedFwd,
-    ];
-    console.log(teamSheet.length);
-    if (teamSheet.length !== 11) {
-      alert("Please select exactly 11 players for the team sheet.");
-      setSelectedTeamSheet(null);
-      return;
-    } else {
-      setSelectedTeamSheet(teamSheet);
-      if (gwFixture?.home?.club === userClub) {
-        setOppo("away");
-      }
-      if (gwFixture?.away?.club === userClub) {
-        setOppo("home");
-      }
-    }
-  };
-
-  // FOR THE MATCH STATS SUBMISSION
-  const handleSubmitMatchStats = async (e) => {
-    e.preventDefault();
-    // handle the match stats being added
-    // 1. write to our database fixtures section and update home score and away score and change from upcoming to played
-
-    const cleanSheet =
-      (oppo === "home" && Number(homeGoals) === 0) ||
-      (oppo === "away" && Number(awayGoals) === 0);
-
-    // console.log(cleanSheet);
-    // console.log(oppo);
-
-    try {
-      const token = await auth.currentUser.getIdToken();
-      const res = await fetch(`${getApiBase()}/api/results/updateScore`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          homeScore: homeGoals,
-          awayScore: awayGoals,
-          club: userClub,
-          squad: selectedSquad,
-          gw: currentGW,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert("Fixture score updated successfully!");
-        // reset form and teamsheet
-        setHomeGoals(0);
-        setAwayGoals(0);
-        setUserClubGoals(0);
-        setSelectedSquad("");
-        setSelectedGoalscorers([]);
-        setSelectedAssists([]);
-        setSelectedYellows([]);
-        setSelectedReds([]);
-        setSelectedPenSaves("");
-        setSelectedTeamSheet(null);
-        setSelectedGK([]);
-        setSelectedDef([]);
-        setSelectedMid([]);
-        setSelectedFwd([]);
-        // now update currentGW for user
-        try {
-          const token2 = await auth.currentUser.getIdToken();
-          const res2 = await fetch(
-            `${getApiBase()}/api/results/updateCurrentGW`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token2}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                userId: user.id,
-                newGW: currentGW + 1,
-              }),
-            },
-          );
-          const data2 = await res2.json();
-          if (data2.success) {
-            user.currentGW = currentGW + 1; // update locally
-          }
-        } catch (error) {
-          console.error("Error updating current GW:", error);
-        }
-      }
-      // now need to write player stats and update currentGW
-
-      const countOccurrences = (arr, playerId) => {
-        return arr.filter((item) => item.playerId === playerId).length;
-      };
-
-      const buildPlayerPoints = (
-        selectedTeamSheet,
-        goals,
-        assists,
-        yellows,
-        reds,
-        cleanSheet,
-        // started
-      ) => {
-        return selectedTeamSheet.map((player) => {
-          const playerId = player.playerId || player.value; // depending on your structure
-
-          const goalsCount = countOccurrences(goals, playerId);
-          const assistsCount = countOccurrences(assists, playerId);
-          const yellowsCount = countOccurrences(yellows, playerId);
-          const redsCount = countOccurrences(reds, playerId);
-
-          const gwPoints =
-            goalsCount * 7 +
-            assistsCount * 4 +
-            yellowsCount * -1 +
-            redsCount * -3 +
-            (cleanSheet ? 4 : 0);
-
-          return {
-            playerId,
-            goals: goalsCount,
-            assists: assistsCount,
-            yellows: yellowsCount,
-            reds: redsCount,
-            // started: started,
-            cleanSheet: cleanSheet,
-            gwPoints: gwPoints + 2, // adding 2 for playing
-          };
-        });
-      };
-
-      const playerPoints = buildPlayerPoints(
-        selectedTeamSheet,
-        selectedGoalscorers,
-        selectedAssists,
-        selectedYellows,
-        selectedReds,
-        cleanSheet,
-        // (started = true)
-      );
-      // console.log("Player Points Data:", playerPoints);
-      // console.log(cleanSheet);
-      try {
-        const token3 = await auth.currentUser.getIdToken();
-        const res3 = await fetch(
-          `${getApiBase()}/api/results/updatePlayerPoints`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token3}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              playerData: playerPoints,
-              gw: currentGW,
-            }),
-          },
-        );
-        const data3 = await res3.json();
-        if (data3.success) {
-          console.log("Player points updated successfully!");
-        }
-      } catch (error) {
-        console.error("Error updating player points:", error);
-      }
-    } catch (error) {
-      console.error("Error updating fixture score:", error);
-    }
-  };
 
   const checkKickOff = async (now, newChecked) => {
     const useFixtures = fixtures[`gw${currentGW}`];
@@ -353,18 +60,35 @@ function ResultsPage() {
     return true;
   };
 
+  const allGk = players.filter((p) => p.position === "GK")
+  console.log(allGk)
+
+  // this gets all the fixture info for our current squad we're working with
+  // can surely set squad from this and use all the code and shaboom
+  const teamFixtures = fixtures[`gw${currentGW}`][`${currentDataTeamIndex}s`];
+  const homeData = teamFixtures[`home`];
+  const awayData = teamFixtures[`away`];
+  const homeTeam = homeData[`club`];
+  const awayTeam = awayData[`club`];
+
+  const gkOptions = (allGk || [])
+    .filter((g) => g.team === currentDataTeamIndex)
+    .map((g) => ({
+      value: g.id,
+      label: `${g.name} - (${g.team})`,
+    }));
+
+  console.log(gkOptions);
+
   const handleNextTeam = () => {
     if (currentDataTeamIndex < team) {
       setCurrentDataTeamIndex(currentDataTeamIndex + 1);
       // and write data to the database
     } else {
+      // and take us back to the admin home page
       console.log("All teams Done");
     }
   };
-
-  // this gets all the fixture info for our current team we're working with
-  // can surely set squad from this and use all the code and shaboom
-  const teamFixtures = fixtures[`gw${currentGW}`][`${currentDataTeamIndex}s`]; 
 
   return (
     <div className={themeClass}>
@@ -392,6 +116,7 @@ function ResultsPage() {
                   const ok = await checkKickOff(now, newChecked);
                   if (ok) {
                     setChecked(true);
+                    setSelectedSquad(currentDataTeamIndex);
                   } else {
                     setChecked(false);
                   }
@@ -408,7 +133,13 @@ function ResultsPage() {
       {checked && (
         <>
           {/* now we need all the entering stuff */}
-          <h4> {currentDataTeamIndex} </h4>
+          <div className="secondInfoRow">
+            <h4>
+              Gameweek <b>{currentGW}</b> for the <b>{currentDataTeamIndex}s</b>{" "}
+              - <b>{homeTeam}</b> vs <b>{awayTeam}</b>
+            </h4>
+          </div>
+
           <button onClick={handleNextTeam}>click me</button>
         </>
       )}
