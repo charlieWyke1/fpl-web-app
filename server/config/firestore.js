@@ -25,7 +25,7 @@ export async function getAllUsers(club) {
       id: doc.id,
       ...doc.data(),
     }));
-    
+
     return users;
   } catch (error) {
     console.error("Error getting all users:", error);
@@ -95,7 +95,7 @@ export async function addPlayer(name, cost, position, club, totalPoints, team) {
       club,
       totalPoints,
       gameweeks: {},
-      team : Number(team),
+      team: Number(team),
     });
     console.log("Player added with ID: ", newPlayerRef.id);
     return true;
@@ -106,20 +106,20 @@ export async function addPlayer(name, cost, position, club, totalPoints, team) {
 
 export async function getFixtures(club) {
   try {
-    const fixturesRef =  db.collection("fixtures").doc(club);
+    const fixturesRef = db.collection("fixtures").doc(club);
 
-    const result = {}; 
-    
+    const result = {};
+
     const gwCollections = await fixturesRef.listCollections();
     for (const gw of gwCollections) {
       // skip cutOff for now
       if (gw.id === "cutOff") continue;
 
-      const gwId = gw.id
-      const squadsSnapshot = await gw.get(); 
+      const gwId = gw.id;
+      const squadsSnapshot = await gw.get();
       result[gwId] = {};
 
-      squadsSnapshot.forEach(squadDoc => {
+      squadsSnapshot.forEach((squadDoc) => {
         const squadId = squadDoc.id;
 
         result[gwId][squadId] = squadDoc.data();
@@ -127,14 +127,14 @@ export async function getFixtures(club) {
     }
 
     // now get cutoff data
-    const cutOffDocRef =  fixturesRef.collection("cutOff").doc("fplCutOffTime");
+    const cutOffDocRef = fixturesRef.collection("cutOff").doc("fplCutOffTime");
     const cutOffDoc = await cutOffDocRef.get();
 
     if (cutOffDoc.exists) {
       const gameweeksMap = cutOffDoc.data().gameweeks || {};
       result.cutOff = gameweeksMap;
     } else {
-      result.cutOff = {}
+      result.cutOff = {};
     }
 
     return result;
@@ -144,28 +144,26 @@ export async function getFixtures(club) {
   }
 }
 
-export async function addResult(
-  homeScore,
-  awayScore,
-  userClub,
-  squad,
-  gw,
-  fixture
-) {
+export async function addResult(homeScore, awayScore, userClub, squad, gw) {
   try {
     const fixtureRef = db
       .collection("fixtures")
       .doc(userClub)
-      .collection(squad)
-      .doc("gameweeks")
       .collection(gw)
-      .doc(fixture);
+      .doc(squad);
 
-    await fixtureRef.update({
-      "home.score": homeScore,
-      "away.score": awayScore,
-      status: "played",
-    });
+    fixtureRef.set(
+      {
+        ["home"]: {
+          score: homeScore,
+        },
+        ["away"]: {
+          score: awayScore,
+        },
+        status: true,
+      },
+      { merge: true },
+    );
 
     return true;
   } catch (error) {
@@ -210,7 +208,7 @@ export async function addGWPoints(playerData, gw) {
           },
           totalPoints: FieldValue.increment(gwPoints || 0),
         },
-        { merge: true }
+        { merge: true },
       );
     });
     await batch.commit();
@@ -260,7 +258,7 @@ export async function saveFirstTeam(userId, teamName, team, gw, budget) {
           },
         },
       },
-      { merge: true }
+      { merge: true },
     );
 
     const userRef = db.collection("users").doc(userId);
@@ -300,7 +298,7 @@ export async function saveFirstSquad(userId, squad, gw) {
           },
         },
       },
-      { merge: true }
+      { merge: true },
     );
 
     return true;

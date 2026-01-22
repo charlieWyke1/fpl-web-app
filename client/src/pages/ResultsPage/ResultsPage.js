@@ -53,6 +53,15 @@ function ResultsPage() {
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
 
+  const SCORING = {
+    GOAL: 7,
+    ASSIST: 5,
+    CLEAN_SHEET: 4,
+    YELLOW: -1,
+    RED: -3,
+    STARTED: 2,
+  };
+
   const checkKickOff = async (now, newChecked) => {
     const useFixtures = fixtures[`gw${currentGW}`];
 
@@ -99,15 +108,15 @@ function ResultsPage() {
     }));
 
   const defOptions = (allDef || [])
-    .filter((d) => d.team === selectedSquad)
+    .filter((d) => d.team === currentDataTeamIndex)
     .map((d) => ({ value: d.id, label: `${d.name} - (${d.team})` }));
 
   const midOptions = (allMid || [])
-    .filter((m) => m.team === selectedSquad)
+    .filter((m) => m.team === currentDataTeamIndex)
     .map((m) => ({ value: m.id, label: `${m.name} - (${m.team})` }));
 
   const fwdOptions = (allFwd || [])
-    .filter((f) => f.team === selectedSquad)
+    .filter((f) => f.team === currentDataTeamIndex)
     .map((f) => ({ value: f.id, label: `${f.name} - (${f.team})` }));
 
   // FOR THE TEAMSHEET SUBMISSION
@@ -119,32 +128,49 @@ function ResultsPage() {
       ...selectedMid,
       ...selectedFwd,
     ];
-    if (teamSheet.length !== 11) {
-      alert("Please select exactly 11 players for the team sheet.");
-      setSelectedTeamSheet(null);
-      return;
+    if (teamFixtures.status === true) {
+      alert("Data has already been entered for this match, please message");
+      handleNextTeam();
     } else {
-      setSelectedTeamSheet(teamSheet);
-      if (homeTeam === userClub) {
-        setOppo("away");
+      if (teamSheet.length !== 11) {
+        alert("Please select exactly 11 players for the team sheet.");
+        setSelectedTeamSheet(null);
+        return;
+      } else {
+        setSelectedTeamSheet(teamSheet);
+        if (homeTeam === userClub) {
+          setOppo("away");
+        }
+        if (awayTeam === userClub) {
+          setOppo("home");
+        }
       }
-      if (awayTeam === userClub) {
-        setOppo("home");
-      }
+      setTemp(true);
     }
-    setTemp(true);
   };
 
   const goalsOptions = selectedTeamSheet?.map((player) => ({
     value: player.value,
     label: player.label,
-    // playerId: player.value,
+    playerId: player.value,
   }));
 
   const assistOptions = selectedTeamSheet?.map((player) => ({
     value: player.value,
     label: player.label,
-    // playerId: player.value,
+    playerId: player.value,
+  }));
+
+  const yellowOptions = selectedTeamSheet?.map((player) => ({
+    value: player.value,
+    label: player.label,
+    playerId: player.value,
+  }));
+
+  const redOptions = selectedTeamSheet?.map((player) => ({
+    value: player.value,
+    label: player.label,
+    playerId: player.value,
   }));
 
   // allows us to enter multiple goals by the same player
@@ -196,18 +222,132 @@ function ResultsPage() {
       (oppo === "home" && Number(homeGoals) === 0) ||
       (oppo === "away" && Number(awayGoals) === 0);
 
-    console.log("here");
-    console.log(cleanSheet);
+    if (teamFixtures.status === true) {
+      alert("Data has already been entered for this match, please message");
+      handleNextTeam();
+    } else {
+      try {
+        // console.log(homeGoals, awayGoals, userClub, selectedSquad, currentGW);
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(`${getApiBase()}/api/results/updateScore`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            homeScore: homeGoals,
+            awayScore: awayGoals,
+            club: userClub,
+            squad: selectedSquad,
+            gw: currentGW,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          const countOccurrences = (arr, playerId) => {
+            return arr.filter((item) => item.playerId === playerId).length;
+          };
 
-    // need to call this BUT only once we have written all of our data to the db
-    // handleNextTeam();
+          const buildPlayerPoints = (
+            selectedTeamSheet,
+            selectedGoalscorers,
+            selectedAssists,
+            selectedYellows,
+            selectedReds,
+            cleanSheet,
+          ) => {
+            return selectedTeamSheet.map((player) => {
+              const playerId = player.value;
+
+              const goalsCount = countOccurrences(
+                selectedGoalscorers,
+                playerId,
+              );
+              const assistsCount = countOccurrences(selectedAssists, playerId);
+              const yellowsCount = countOccurrences(selectedYellows, playerId);
+              const redsCount = countOccurrences(selectedReds, playerId);
+
+              const gwPoints =
+                goalsCount * SCORING.GOAL +
+                assistsCount * SCORING.ASSIST +
+                yellowsCount * SCORING.YELLOW +
+                redsCount * SCORING.RED +
+                (cleanSheet ? SCORING.CLEAN_SHEET : 0) +
+                SCORING.STARTED;
+
+              return {
+                playerId,
+                goals: goalsCount,
+                assists: assistsCount,
+                yellows: yellowsCount,
+                reds: redsCount,
+                cleanSheet: cleanSheet,
+                gwPoints: gwPoints,
+              };
+            });
+          };
+
+          const playerPoints = buildPlayerPoints(
+            selectedTeamSheet,
+            selectedGoalscorers,
+            selectedAssists,
+            selectedYellows,
+            selectedReds,
+            cleanSheet,
+          );
+
+          // console.log("Player Points Data:", playerPoints);
+
+          try {
+            const token2 = await auth.currentUser.getIdToken();
+            const res2 = await fetch(
+              `${getApiBase()}/api/results/updatePlayerPoints`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token2}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  playerData: playerPoints,
+                  gw: currentGW,
+                }),
+              },
+            );
+            const data2 = await res2.json();
+            if (data2.success) {
+              alert("Player points and Fixtures updated successfully!");
+              handleNextTeam();
+            }
+          } catch (error) {
+            console.error("Error updating player points:", error);
+          }
+        }
+      } catch (error) {
+        console.error("Error updating fixture score: ", error);
+      }
+    }
   };
 
   // sorts out the loop thru all teams in the club for results
   const handleNextTeam = () => {
     if (currentDataTeamIndex < team) {
       // clear data stored in all values
-
+      setHomeGoals(0);
+      setAwayGoals(0);
+      setUserClubGoals(0);
+      setSelectedSquad(currentDataTeamIndex + 1);
+      setSelectedGoalscorers([]);
+      setSelectedAssists([]);
+      setSelectedYellows([]);
+      setSelectedReds([]);
+      setSelectedTeamSheet(null);
+      setSelectedGK([]);
+      setSelectedDef([]);
+      setSelectedMid([]);
+      setSelectedFwd([]);
+      setTemp(false);
       // this must be last thing we do
       setCurrentDataTeamIndex(currentDataTeamIndex + 1);
     } else {
@@ -216,6 +356,9 @@ function ResultsPage() {
       // have to update all teams for users same club as admin with gwPoints for their players
       // set those teams to locked
       // THEN go to home page and thats results and points done
+
+      // NEED TO FIGURE OUT PROBLEM W WRITING TO THE GW SQUAD CURRENTLY NOT WORKING
+      // may be fixed - check later
       console.log("All teams Done");
     }
   };
@@ -431,7 +574,7 @@ function ResultsPage() {
                   options={goalsOptions}
                   isDisabled={!selectedTeamSheet || userClubGoals === 0}
                   value={selectedGoalscorers || []}
-                  // closeMenuOnSelect={false}
+                  closeMenuOnSelect={false}
                   hideSelectedOptions={false}
                   onChange={handleDuplicateScorer}
                 />
@@ -458,7 +601,7 @@ function ResultsPage() {
                   isMulti
                   name="yellows"
                   className="multiSelect"
-                  options={selectedTeamSheet}
+                  options={yellowOptions}
                   isDisabled={!selectedTeamSheet}
                   value={selectedYellows || []}
                   onChange={(selected) => setSelectedYellows(selected)}
@@ -471,7 +614,7 @@ function ResultsPage() {
                   isMulti
                   name="reds"
                   className="multiSelect"
-                  options={selectedTeamSheet}
+                  options={redOptions}
                   isDisabled={!selectedTeamSheet}
                   value={selectedReds || []}
                   onChange={(selected) => setSelectedReds(selected)}

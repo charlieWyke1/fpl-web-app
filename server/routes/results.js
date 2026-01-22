@@ -11,18 +11,10 @@ router.post("/api/results/updateScore", authenticateToken, async (req, res) => {
     const homeScore = req.body.homeScore;
     const awayScore = req.body.awayScore;
     const userClub = req.body.club;
-    const squad = req.body.squad;
+    const squad = `${req.body.squad}s`;
     const gw = `gw${req.body.gw}`;
-    const fixture = "fixture1";
 
-    const result = await addResult(
-      homeScore,
-      awayScore,
-      userClub,
-      squad,
-      gw,
-      fixture
-    );
+    const result = await addResult(homeScore, awayScore, userClub, squad, gw);
     if (result) {
       res.status(200).json({ message: "success", success: true });
     } else {
@@ -54,7 +46,7 @@ router.post(
       console.error("Error updating current GW:", error);
       res.status(500).json({ error: "Failed to update current GW" });
     }
-  }
+  },
 );
 
 router.post(
@@ -78,7 +70,7 @@ router.post(
         .status(500)
         .json({ error: "Failed to update points", success: false });
     }
-  }
+  },
 );
 
 export default router;
