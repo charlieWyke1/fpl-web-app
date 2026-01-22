@@ -363,14 +363,14 @@ function ResultsPage() {
 
       // 1 - go to all the teams associated with users in allUser and update their players with currentGW totalPoints
       // ADD A LOCK variable to all the gw teams - check if teams locked status before writing
-      
+
       // 2 - update admins currentGW + 1
       // 3 - update all in allUsers currentGW + 1
 
       console.log("All teams Done");
       navigate("/admin");
     }
-  };
+  };``
 
   return (
     <div className={themeClass}>
