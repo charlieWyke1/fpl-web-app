@@ -10,7 +10,7 @@ import { auth } from "../../config/firebase.js";
 
 import { getApiBase } from "../../config/api.js";
 
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";

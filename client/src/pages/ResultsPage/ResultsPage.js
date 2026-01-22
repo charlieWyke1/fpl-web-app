@@ -6,9 +6,12 @@ import { useUser } from "../../context/UserContext.js";
 import { usePlayer } from "../../context/PlayerContext.js";
 import { useTeam } from "../../context/TeamContext.js";
 import { useFixture } from "../../context/FixtureContext.js";
+
 import { auth } from "../../config/firebase.js";
 
 import { getApiBase } from "../../config/api.js";
+
+import { useNavigate } from "react-router-dom";
 
 import "../../themes/clubThemes.css";
 import "./ResultsPage.css";
@@ -21,6 +24,8 @@ function ResultsPage() {
   const { players } = usePlayer();
   const { team } = useTeam(); // stores how many teams in the admins club
   const { fixtures } = useFixture();
+
+  const navigate = useNavigate();
 
   const [checked, setChecked] = useState(false);
   const [currentDataTeamIndex, setCurrentDataTeamIndex] = useState(1);
@@ -352,14 +357,18 @@ function ResultsPage() {
       setCurrentDataTeamIndex(currentDataTeamIndex + 1);
     } else {
       // here we have to update all users same club as admin to gw + 1
-      // have to lock the gameweek in fixtures
       // have to update all teams for users same club as admin with gwPoints for their players
       // set those teams to locked
       // THEN go to home page and thats results and points done
 
-      // NEED TO FIGURE OUT PROBLEM W WRITING TO THE GW SQUAD CURRENTLY NOT WORKING
-      // may be fixed - check later
+      // 1 - go to all the teams associated with users in allUser and update their players with currentGW totalPoints
+      // ADD A LOCK variable to all the gw teams - check if teams locked status before writing
+      
+      // 2 - update admins currentGW + 1
+      // 3 - update all in allUsers currentGW + 1
+
       console.log("All teams Done");
+      navigate("/admin");
     }
   };
 
