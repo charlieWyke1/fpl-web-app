@@ -6,6 +6,7 @@ import { useUser } from "../../context/UserContext.js";
 import { usePlayer } from "../../context/PlayerContext.js";
 import { useTeam } from "../../context/TeamContext.js";
 import { useFixture } from "../../context/FixtureContext.js";
+import { useAllClub } from "../../context/AllClubUsersContext.js";
 
 import { auth } from "../../config/firebase.js";
 
@@ -24,6 +25,7 @@ function ResultsPage() {
   const { players } = usePlayer();
   const { team } = useTeam(); // stores how many teams in the admins club
   const { fixtures } = useFixture();
+  const { allUsers } = useAllClub();
 
   const navigate = useNavigate();
 
@@ -49,6 +51,7 @@ function ResultsPage() {
   const [selectedYellows, setSelectedYellows] = useState([]);
   const [selectedReds, setSelectedReds] = useState([]);
 
+  const [allPts, setAllPts] = useState([]);
   // const teamForDataEntry = currentDataTeamIndex; // max it at the number of teams we have in "team"
 
   const userClub = user?.club;
@@ -233,23 +236,23 @@ function ResultsPage() {
     } else {
       try {
         // console.log(homeGoals, awayGoals, userClub, selectedSquad, currentGW);
-        const token = await auth.currentUser.getIdToken();
-        const res = await fetch(`${getApiBase()}/api/results/updateScore`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            homeScore: homeGoals,
-            awayScore: awayGoals,
-            club: userClub,
-            squad: selectedSquad,
-            gw: currentGW,
-          }),
-        });
-        const data = await res.json();
-        if (data.success) {
+        // const token = await auth.currentUser.getIdToken();
+        // const res = await fetch(`${getApiBase()}/api/results/updateScore`, {
+        //   method: "POST",
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({
+        //     homeScore: homeGoals,
+        //     awayScore: awayGoals,
+        //     club: userClub,
+        //     squad: selectedSquad,
+        //     gw: currentGW,
+        //   }),
+        // });
+        // const data = await res.json();
+        if (true) {
           const countOccurrences = (arr, playerId) => {
             return arr.filter((item) => item.playerId === playerId).length;
           };
@@ -303,31 +306,38 @@ function ResultsPage() {
           );
 
           // console.log("Player Points Data:", playerPoints);
+          // handleAddPts(playerPoints);
+          // handleNextTeam(allPts);
 
-          try {
-            const token2 = await auth.currentUser.getIdToken();
-            const res2 = await fetch(
-              `${getApiBase()}/api/results/updatePlayerPoints`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${token2}`,
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  playerData: playerPoints,
-                  gw: currentGW,
-                }),
-              },
-            );
-            const data2 = await res2.json();
-            if (data2.success) {
-              alert("Player points and Fixtures updated successfully!");
-              handleNextTeam();
-            }
-          } catch (error) {
-            console.error("Error updating player points:", error);
-          }
+          // Usage:
+          handleAddPts(playerPoints, (updatedPts) => {
+            handleNextTeam(updatedPts);
+          });
+
+          // try {
+          //   const token2 = await auth.currentUser.getIdToken();
+          //   const res2 = await fetch(
+          //     `${getApiBase()}/api/results/updatePlayerPoints`,
+          //     {
+          //       method: "POST",
+          //       headers: {
+          //         Authorization: `Bearer ${token2}`,
+          //         "Content-Type": "application/json",
+          //       },
+          //       body: JSON.stringify({
+          //         playerData: playerPoints,
+          //         gw: currentGW,
+          //       }),
+          //     },
+          //   );
+          //   const data2 = await res2.json();
+          //   if (data2.success) {
+          //     alert("Player points and Fixtures updated successfully!");
+          //     handleNextTeam();
+          //   }
+          // } catch (error) {
+          //   console.error("Error updating player points:", error);
+          // }
         }
       } catch (error) {
         console.error("Error updating fixture score: ", error);
@@ -335,8 +345,16 @@ function ResultsPage() {
     }
   };
 
+  const handleAddPts = (playerPoints, callback) => {
+    setAllPts((prev) => {
+      const newPts = [...prev, ...playerPoints];
+      if (callback) callback(newPts); // run callback with updated array
+      return newPts; // update state
+    });
+  };
+
   // sorts out the loop thru all teams in the club for results
-  const handleNextTeam = () => {
+  const handleNextTeam = async (allPts) => {
     if (currentDataTeamIndex < team) {
       // clear data stored in all values
       setHomeGoals(0);
@@ -361,16 +379,44 @@ function ResultsPage() {
       // set those teams to locked
       // THEN go to home page and thats results and points done
 
+
       // 1 - go to all the teams associated with users in allUser and update their players with currentGW totalPoints
       // ADD A LOCK variable to all the gw teams - check if teams locked status before writing
+      // WORKS !!!!
 
       // 2 - update admins currentGW + 1
       // 3 - update all in allUsers currentGW + 1
 
+      // ^^ just this to do 
+
+      try {
+        const token3 = await auth.currentUser.getIdToken();
+        const res3 = fetch(`${getApiBase()}/api/results/updateTEAMpoints`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token3}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            users: allUsers,
+            gw: currentGW,
+            points : allPts
+          }),
+        });
+        const data3 = res3.json();
+        if (data3.success) {
+          console.log("YES")
+        }
+        else {
+          console.log("NO")
+        }
+      } catch (error) {}
+
       console.log("All teams Done");
-      navigate("/admin");
+
+      // navigate("/admin");
     }
-  };``
+  };
 
   return (
     <div className={themeClass}>

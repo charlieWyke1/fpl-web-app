@@ -126,7 +126,7 @@ function AdminHomePage() {
   };
 
   // allUsers -- THIS stores all of our users who are in the same club of the admin whos logged in
-  // console.log(allUsers); -- does work for future notice
+  // console.log(allUsers); // -- does work for future notice
 
   // loading screen
   if (loadingUsers || loadingPlayers || loadingFixtures) {

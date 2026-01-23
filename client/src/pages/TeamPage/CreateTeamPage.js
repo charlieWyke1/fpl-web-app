@@ -306,12 +306,11 @@ function CreateTeamPage() {
         <button
           className="saveTeamButton"
           disabled={
-            false
-            // selectedGK.includes(null) ||
-            // selectedDEF.includes(null) ||
-            // selectedMID.includes(null) ||
-            // selectedFWD.includes(null) ||
-            // budget < 0
+            selectedGK.includes(null) ||
+            selectedDEF.includes(null) ||
+            selectedMID.includes(null) ||
+            selectedFWD.includes(null) ||
+            budget < 0
           }
           onClick={() => {
             // save team function

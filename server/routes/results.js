@@ -3,6 +3,7 @@ import { authenticateToken } from "../middleware/authMiddleware.js";
 import { addResult } from "../config/firestore.js";
 import { updateGW } from "../config/firestore.js";
 import { addGWPoints } from "../config/firestore.js";
+import { addTeamPoints } from "../config/firestore.js"
 
 const router = express.Router();
 
@@ -58,6 +59,36 @@ router.post(
       const gw = req.body.gw;
       // console.log(playerData);
       const result = await addGWPoints(playerData, gw);
+      if (result) {
+        res.status(200).json({ message: "success", success: true });
+      } else {
+        res
+          .status(500)
+          .json({ error: "Failed to update points", success: false });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: "Failed to update points", success: false });
+    }
+  },
+);
+
+router.post(
+  "/api/results/updateTEAMpoints",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const users = req.body.users;
+      const gw = req.body.gw;
+      const points = req.body.points;
+
+      const pointsMap = Object.fromEntries(
+        points.map(p => [p.playerId, p])
+      )
+
+
+      const result = addTeamPoints(users, gw, pointsMap);
       if (result) {
         res.status(200).json({ message: "success", success: true });
       } else {

@@ -307,3 +307,46 @@ export async function saveFirstSquad(userId, squad, gw) {
     throw error;
   }
 }
+
+export async function addTeamPoints(users, gw, pointsMap) {
+  try {
+    const gwKey = `gw${gw}`;
+    const updatePromises = users.map(async(user) => {
+      const teamRef = db.collection("teams").doc(user.id)
+
+      const teamSnap = await teamRef.get();
+      if (!teamSnap.exists) return;
+
+      const teamData = teamSnap.data();
+      const gwData = teamData.gameweeks?.[gwKey] || {}
+
+      const updatedTeam = (gwData.team || []).map(player => ({
+        ...player,
+        gwPoints: pointsMap[player.id]?.gwPoints ?? 0
+      }))
+
+
+
+      const updatedGW = {
+        ...gwData,
+        team : updatedTeam,
+        locked : true,
+      }
+
+      await teamRef.set(
+        {
+          gameweeks: {
+            [gwKey] : updatedGW
+          }
+        },
+        { merge : true }
+      )
+    })
+
+    await Promise.all(updatePromises)
+
+    return true
+  } catch (error) {
+    console.log("Error updating teams: ", error)
+  }
+}
