@@ -21,7 +21,7 @@ import "./ResultsPage.css";
 // then offer the next squad button !!
 
 function ResultsPage() {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const { players } = usePlayer();
   const { team } = useTeam(); // stores how many teams in the admins club
   const { fixtures } = useFixture();
@@ -235,23 +235,23 @@ function ResultsPage() {
       handleNextTeam();
     } else {
       try {
-        // console.log(homeGoals, awayGoals, userClub, selectedSquad, currentGW);
-        // const token = await auth.currentUser.getIdToken();
-        // const res = await fetch(`${getApiBase()}/api/results/updateScore`, {
-        //   method: "POST",
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     homeScore: homeGoals,
-        //     awayScore: awayGoals,
-        //     club: userClub,
-        //     squad: selectedSquad,
-        //     gw: currentGW,
-        //   }),
-        // });
-        // const data = await res.json();
+        console.log(homeGoals, awayGoals, userClub, selectedSquad, currentGW);
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch(`${getApiBase()}/api/results/updateScore`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            homeScore: homeGoals,
+            awayScore: awayGoals,
+            club: userClub,
+            squad: selectedSquad,
+            gw: currentGW,
+          }),
+        });
+        const data = await res.json();
         if (true) {
           const countOccurrences = (arr, playerId) => {
             return arr.filter((item) => item.playerId === playerId).length;
@@ -314,30 +314,30 @@ function ResultsPage() {
             handleNextTeam(updatedPts);
           });
 
-          // try {
-          //   const token2 = await auth.currentUser.getIdToken();
-          //   const res2 = await fetch(
-          //     `${getApiBase()}/api/results/updatePlayerPoints`,
-          //     {
-          //       method: "POST",
-          //       headers: {
-          //         Authorization: `Bearer ${token2}`,
-          //         "Content-Type": "application/json",
-          //       },
-          //       body: JSON.stringify({
-          //         playerData: playerPoints,
-          //         gw: currentGW,
-          //       }),
-          //     },
-          //   );
-          //   const data2 = await res2.json();
-          //   if (data2.success) {
-          //     alert("Player points and Fixtures updated successfully!");
-          //     handleNextTeam();
-          //   }
-          // } catch (error) {
-          //   console.error("Error updating player points:", error);
-          // }
+          try {
+            const token2 = await auth.currentUser.getIdToken();
+            const res2 = await fetch(
+              `${getApiBase()}/api/results/updatePlayerPoints`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token2}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  playerData: playerPoints,
+                  gw: currentGW,
+                }),
+              },
+            );
+            const data2 = await res2.json();
+            if (data2.success) {
+              alert("Player points and Fixtures updated successfully!");
+              handleNextTeam();
+            }
+          } catch (error) {
+            console.error("Error updating player points:", error);
+          }
         }
       } catch (error) {
         console.error("Error updating fixture score: ", error);
@@ -379,7 +379,6 @@ function ResultsPage() {
       // set those teams to locked
       // THEN go to home page and thats results and points done
 
-
       // 1 - go to all the teams associated with users in allUser and update their players with currentGW totalPoints
       // ADD A LOCK variable to all the gw teams - check if teams locked status before writing
       // WORKS !!!!
@@ -387,34 +386,65 @@ function ResultsPage() {
       // 2 - update admins currentGW + 1
       // 3 - update all in allUsers currentGW + 1
 
-      // ^^ just this to do 
+      // ^^ WORKS
 
       try {
         const token3 = await auth.currentUser.getIdToken();
-        const res3 = fetch(`${getApiBase()}/api/results/updateTEAMpoints`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token3}`,
-            "Content-Type": "application/json",
+        const res3 = await fetch(
+          `${getApiBase()}/api/results/updateTEAMpoints`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token3}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              users: allUsers,
+              gw: currentGW,
+              points: allPts,
+            }),
           },
-          body: JSON.stringify({
-            users: allUsers,
-            gw: currentGW,
-            points : allPts
-          }),
-        });
-        const data3 = res3.json();
+        );
+        const data3 = await res3.json();
         if (data3.success) {
-          console.log("YES")
-        }
-        else {
-          console.log("NO")
-        }
-      } catch (error) {}
+          try {
+            const token4 = await auth.currentUser.getIdToken();
+            const res4 = await fetch(
+              `${getApiBase()}/api/results/updateAllGW`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token4}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  users: allUsers,
+                  gw: currentGW,
+                }),
+              },
+            );
+            const data4 = await res4.json();
+            if (data4) {
+              alert("GW updated and Team Points updated !");
+              console.log("All teams Done");
 
-      console.log("All teams Done");
+              setUser(prevUser => ({
+                ...prevUser, currentGW : Number(prevUser.currentGW)+1
+              }));
 
-      // navigate("/admin");
+              navigate("/admin");
+            } else {
+              console.log("NO");
+            }
+          } catch (error) {
+            console.log("Error updating gw : ", error);
+          }
+        } else {
+          // console.log("NO");
+        }
+      } catch (error) {
+        console.log("Error adding gw points: ", error);
+      }
     }
   };
 

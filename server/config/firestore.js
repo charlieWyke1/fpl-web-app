@@ -172,17 +172,6 @@ export async function addResult(homeScore, awayScore, userClub, squad, gw) {
   }
 }
 
-export async function updateGW(userId, newGW) {
-  try {
-    const userRef = db.collection("users").doc(userId);
-    await userRef.update({ currentGW: newGW });
-    return true;
-  } catch (error) {
-    console.error("Error updating current GW:", error);
-    throw error;
-  }
-}
-
 export async function addGWPoints(playerData, gw) {
   try {
     const batch = db.batch();
@@ -311,42 +300,53 @@ export async function saveFirstSquad(userId, squad, gw) {
 export async function addTeamPoints(users, gw, pointsMap) {
   try {
     const gwKey = `gw${gw}`;
-    const updatePromises = users.map(async(user) => {
-      const teamRef = db.collection("teams").doc(user.id)
+    const updatePromises = users.map(async (user) => {
+      const teamRef = db.collection("teams").doc(user.id);
 
       const teamSnap = await teamRef.get();
       if (!teamSnap.exists) return;
 
       const teamData = teamSnap.data();
-      const gwData = teamData.gameweeks?.[gwKey] || {}
+      const gwData = teamData.gameweeks?.[gwKey] || {};
 
-      const updatedTeam = (gwData.team || []).map(player => ({
+      const updatedTeam = (gwData.team || []).map((player) => ({
         ...player,
-        gwPoints: pointsMap[player.id]?.gwPoints ?? 0
-      }))
-
-
+        gwPoints: pointsMap[player.id]?.gwPoints ?? 0,
+      }));
 
       const updatedGW = {
         ...gwData,
-        team : updatedTeam,
-        locked : true,
-      }
+        team: updatedTeam,
+        locked: true,
+      };
 
       await teamRef.set(
         {
           gameweeks: {
-            [gwKey] : updatedGW
-          }
+            [gwKey]: updatedGW,
+          },
         },
-        { merge : true }
-      )
-    })
+        { merge: true },
+      );
+    });
 
-    await Promise.all(updatePromises)
-
-    return true
+    await Promise.all(updatePromises);
+    return true;
   } catch (error) {
-    console.log("Error updating teams: ", error)
+    console.log("Error updating teams: ", error);
+  }
+}
+
+export async function updateAllGW(users, gwPlus) {
+  try {
+    const updatePromises = users.map(async (user) => {
+      const userRef = db.collection("users").doc(user.id);
+
+      await userRef.set({ currentGW: gwPlus }, { merge: true });
+    });
+    await Promise.all(updatePromises);
+    return true;
+  } catch (error) {
+    console.log("Error updating GW: ", error);
   }
 }
