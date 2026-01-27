@@ -389,6 +389,7 @@ function ResultsPage() {
       // ^^ WORKS
 
       try {
+        // HAVE TO DUPLICATE ALL TEAMS FOR ALL USERS INTO CURRENTGW+1 SO THEY HAVE TEAM FOR NEXT WEEK
         const token3 = await auth.currentUser.getIdToken();
         const res3 = await fetch(
           `${getApiBase()}/api/results/updateTEAMpoints`,
@@ -428,8 +429,9 @@ function ResultsPage() {
               alert("GW updated and Team Points updated !");
               console.log("All teams Done");
 
-              setUser(prevUser => ({
-                ...prevUser, currentGW : Number(prevUser.currentGW)+1
+              setUser((prevUser) => ({
+                ...prevUser,
+                currentGW: Number(prevUser.currentGW) + 1,
               }));
 
               navigate("/admin");

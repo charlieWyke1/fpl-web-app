@@ -1,15 +1,20 @@
 // src/hooks/useHasTeamContextFiller.js
 import { useEffect } from "react";
+
 import { auth } from "../config/firebase.js";
 import { getApiBase } from "../config/api.js";
+
 import { useCurrentTeam } from "../context/CurrentTeamContext.js";
 import { useClub } from "../context/ClubContext.js";
+import { useAllTeam } from "../context/AllTeamsContext.js";
 
 export const useHasTeamContextFiller = (user, refetchPlayers) => {
   const { setCurrentTeam } = useCurrentTeam();
   const { setClubData } = useClub();
+  const { setAllTeam } = useAllTeam();
 
   const userClub = user?.club;
+  const gw = user?.currentGW;
 
   useEffect(() => {
     if (!user || !userClub) return;
@@ -40,7 +45,7 @@ export const useHasTeamContextFiller = (user, refetchPlayers) => {
     };
 
     fetchClubData();
-  }, [user, userClub, setClubData, setCurrentTeam, refetchPlayers]);
+  }, [user, userClub, setClubData, refetchPlayers]);
 
   // fill the current TEAM section
   // just needs userid and currentGw
@@ -50,28 +55,31 @@ export const useHasTeamContextFiller = (user, refetchPlayers) => {
     const getTeam = async () => {
       try {
         const token = await auth.currentUser.getIdToken();
-        const res = await fetch(`${getApiBase()}/api/team/getCurrentGWTeam`, {
+        const res = await fetch(`${getApiBase()}/api/team/getTeam`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userId: user.id, gw: user.currentGW }),
+          body: JSON.stringify({ userId: user.id }),
         });
 
         if (!res.ok) throw new Error("Failed to fetch team data");
 
         const data = await res.json();
 
-        const currentGw = `gw${user.currentGW}`
-        // console.log(data.gameweeks[currentGw].team);
-        setCurrentTeam(data.gameweeks[currentGw].team);
+        const currentGw = `gw${user.currentGW}`;
 
+        setAllTeam(data);
+        console.log(data.gameweeks[currentGw]);
+        console.log(data?.gameweeks[`${currentGw}`]["team"]);
+
+        // setCurrentTeam(data.gameweeks[currentGw].team);
       } catch (error) {
         console.error("Error fetching team data:", error);
       }
     };
 
     getTeam();
-  }, [user, userClub]);
+  }, [user?.id, userClub, user?.currentGW]);
 };

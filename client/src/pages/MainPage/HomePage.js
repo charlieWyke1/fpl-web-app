@@ -5,6 +5,7 @@ import { auth } from "../../config/firebase.js";
 import { useUser } from "../../context/UserContext.js";
 import { useClub } from "../../context/ClubContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
+import { useAllTeam } from "../../context/AllTeamsContext.js";
 
 import { useNavigate } from "react-router-dom";
 
@@ -35,10 +36,13 @@ function HomePage() {
   const { user } = useUser();
   const { currentTeam, setCurrentTeam } = useCurrentTeam();
   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
+  const { allTeam } = useAllTeam();
 
   const navigate = useNavigate();
 
   const [hasTeam, setHasTeam] = useState(false);
+  const [pointsTeam, setPointsTeam] = useState([]);
+  const [nextTeam, setNextTeam] = useState([]);
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -88,14 +92,15 @@ function HomePage() {
       isStarting: teamPlayer.isStarting,
     };
   });
+
   // KEEP currentTeam simple, only playerId and starting boolean
   // make use of the joinedTeamList for the data side of stuff
 
   // everything from here only works if we HAVE a team
 
   const fixturesTemp = useFixtures(user);
-  const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
-  const cutOffDate = new Date(tsDate._seconds * 1000);
+  // const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
+  // const cutOffDate = new Date(tsDate._seconds * 1000);
 
   const startingGk = joinedTeamList.filter(
     (p) => p.position === "GK" && p.isStarting === true,
@@ -112,8 +117,36 @@ function HomePage() {
 
   const allSubs = joinedTeamList.filter((p) => p.isStarting === false);
 
-  // all ready to set up the display page for our users Home Page
-  // current team is set and so is players - can cross refrence them now to build the team data
+  // console.log(allTeam)
+  // console.log(currentTeam)
+  // setCurrentTeam(allTeam[x])
+  // NEXT UP
+  // function to get teams total Points and gw points
+
+  // giove option to display team as points (gw-1) or next team (gw)
+  // transfers
+  // pick team
+  // view points
+
+  // league stuff
+
+  // console.log(allTeam);
+  useEffect(() => {
+    // console.log(allTeam?.[`${currentGW}`]?.team);
+    setPointsTeam(allTeam?.[`${currentGW}`]?.team);
+  }, [allTeam]);
+  // think this will work, not sure tho
+  // this will be currentTeam for here ^^
+  // currentTeam is very weirdly broken and doesnt fill up ??
+
+  useEffect(() => {
+    if (!allTeam) return;
+
+    if (currentGW !== "gw1") {
+      const nextGW = `gw${user?.currentGW + 1}`;
+      setNextTeam(allTeam?.[`${nextGW}`]?.team);
+    }
+  }, [currentGW, allTeam]);
 
   if (!hasTeam) {
     return (
@@ -143,7 +176,13 @@ function HomePage() {
         </div>
       </div>
 
-      <Countdown targetDate={cutOffDate} />
+      {/* <Countdown targetDate={cutOffDate} /> */}
+
+      <div className="teamChoice">
+        <button>Test</button>
+
+        <button>Test</button>
+      </div>
 
       <div className="selectedTeamContainer HomePage">
         <div className="penalty-box top"></div>

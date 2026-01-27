@@ -57,14 +57,13 @@ router.post("/api/team/saveTeam", authenticateToken, async (req, res) => {
 });
 
 router.post(
-  "/api/team/getCurrentGWTeam",
+  "/api/team/getTeam",
   authenticateToken,
   async (req, res) => {
     try {
       const userId = req.body.userId;
-      const gw = "gw" + req.body.currentGW;
 
-      const getCurrentTeam = await getCurrentGWTeam(userId, gw);
+      const getCurrentTeam = await getCurrentGWTeam(userId);
       return res.json(getCurrentTeam);
     } catch (error) {
       res.status(500).json({ error: "Failed to find current team" });

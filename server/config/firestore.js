@@ -264,9 +264,11 @@ export async function getCurrentGWTeam(userId, gw) {
   try {
     const teamRef = db.collection("teams").doc(userId);
     const docSnap = await teamRef.get();
-    const teamData = docSnap.data();
 
-    return teamData;
+    const teamData = docSnap.data();
+    const allTeam = teamData?.gameweeks;
+
+    return allTeam;
   } catch (error) {
     console.error("Error finding team", error);
     throw error;
@@ -300,9 +302,10 @@ export async function saveFirstSquad(userId, squad, gw) {
 export async function addTeamPoints(users, gw, pointsMap) {
   try {
     const gwKey = `gw${gw}`;
+    const nextGwKey = `gw${gw + 1}`;
+
     const updatePromises = users.map(async (user) => {
       const teamRef = db.collection("teams").doc(user.id);
-
       const teamSnap = await teamRef.get();
       if (!teamSnap.exists) return;
 
@@ -314,6 +317,9 @@ export async function addTeamPoints(users, gw, pointsMap) {
         gwPoints: pointsMap[player.id]?.gwPoints ?? 0,
       }));
 
+      // set copy of team for next gw
+      const nextGwTeam = updatedTeam.map(({ gwPoints, ...player }) => player);
+
       const updatedGW = {
         ...gwData,
         team: updatedTeam,
@@ -324,6 +330,9 @@ export async function addTeamPoints(users, gw, pointsMap) {
         {
           gameweeks: {
             [gwKey]: updatedGW,
+            [nextGwKey]: {
+              team: nextGwTeam,
+            }
           },
         },
         { merge: true },
