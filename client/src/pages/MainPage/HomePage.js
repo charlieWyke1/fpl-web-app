@@ -43,7 +43,7 @@ function HomePage() {
   const [hasTeam, setHasTeam] = useState(false);
   const [pointsTeam, setPointsTeam] = useState([]);
   const [nextTeam, setNextTeam] = useState([]);
-  const [view, setView] = useState("points")
+  const [view, setView] = useState("points");
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -85,6 +85,7 @@ function HomePage() {
 
   // gets players and the most up to date version of it
   useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
+
   const joinedTeamList = currentTeam.map((teamPlayer) => {
     const fullPlayerData = players.find((p) => p.id === teamPlayer.id);
 
@@ -133,7 +134,7 @@ function HomePage() {
 
   // console.log(allTeam);
   useEffect(() => {
-    // console.log(allTeam?.[`${currentGW}`]?.team);
+    if (allTeam.length === 0) return;
     setPointsTeam(allTeam?.[`${currentGW}`]?.team);
   }, [allTeam]);
   // think this will work, not sure tho
@@ -141,24 +142,41 @@ function HomePage() {
   // currentTeam is very weirdly broken and doesnt fill up ??
 
   useEffect(() => {
-    if (!allTeam) return;
+    if (allTeam.length === 0) return;
 
     if (currentGW !== "gw1") {
       const nextGW = `gw${user?.currentGW + 1}`;
       setNextTeam(allTeam?.[`${nextGW}`]?.team);
+    } else {
+      // temp for now 
+      setNextTeam(allTeam?.[`${currentGW}`]?.team);
     }
   }, [currentGW, allTeam]);
 
   useEffect(() => {
+    if (allTeam.length === 0) return;
+
     if (view === "points") {
-      console.log("Points")
-      console.log(pointsTeam)
+      console.log("Points");
+      const pointsAndDataTeam = matchPlayerData(pointsTeam);
+      // console.log(pointsAndDataTeam);
     }
     if (view === "team") {
-      console.log("Team")
-      console.log(nextTeam)
+      console.log("Team");
+      const nextAndDataTeam = matchPlayerData(nextTeam);
+      // console.log(nextAndDataTeam);
     }
-  })
+  });
+
+  const matchPlayerData = (data) => {
+    return data
+      .map((tp) => {
+        const player = players.find((p) => p.id === tp.id);
+        if (!player) return null;
+        return { ...player, ...tp };
+      })
+      .filter(Boolean);
+  };
 
   if (!hasTeam) {
     return (
@@ -193,14 +211,14 @@ function HomePage() {
       {/* only give user the option to flick between teams when there is +1 weeks of data */}
       {user?.currentGW > 1 && (
         <div className="teamChoice">
-        <button onClick={() => setView("points")}>
-          <h4>View Points</h4>
-        </button>
+          <button onClick={() => setView("points")}>
+            <h4>View Points</h4>
+          </button>
 
-        <button onClick={() => setView("team")}>
-          <h4>View Team</h4>
-        </button>
-      </div>
+          <button onClick={() => setView("team")}>
+            <h4>View Team</h4>
+          </button>
+        </div>
       )}
 
       <div className="selectedTeamContainer HomePage">
