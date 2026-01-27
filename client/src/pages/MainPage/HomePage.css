@@ -66,6 +66,9 @@
 .teamChoice button:hover {
   transform: scale(1.3);
 }
+.teamChoice.selected {
+  text-decoration: underline;
+}
 
 @media (max-width: 768px) {
   .topRow {

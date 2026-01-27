@@ -47,6 +47,12 @@ function HomePage() {
   const [totalGwPoints, setTotalGwPoints] = useState(0);
   const [totalSeasonPoints, setTotalSeasonPoints] = useState(0);
 
+  const [startingGk, setStartingGk] = useState([]);
+  const [startingDef, setStartingDef] = useState([]);
+  const [startingMid, setStartingMid] = useState([]);
+  const [startingFwd, setStartingFwd] = useState([]);
+  const [startingSub, setStartingSub] = useState([]);
+
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
 
@@ -75,6 +81,8 @@ function HomePage() {
           navigate("/CreateTeam");
         } else {
           setHasTeam(true);
+          setView("points");
+
           // need to populate contexts for if user hasnt gone thru their set up of first team
         }
       } catch (error) {
@@ -105,21 +113,6 @@ function HomePage() {
   const fixturesTemp = useFixtures(user);
   // const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
   // const cutOffDate = new Date(tsDate._seconds * 1000);
-
-  const startingGk = joinedTeamList.filter(
-    (p) => p.position === "GK" && p.isStarting === true,
-  );
-  const startingDef = joinedTeamList.filter(
-    (p) => p.position === "DEF" && p.isStarting === true,
-  );
-  const startingMid = joinedTeamList.filter(
-    (p) => p.position === "MID" && p.isStarting === true,
-  );
-  const startingFwd = joinedTeamList.filter(
-    (p) => p.position === "FWD" && p.isStarting === true,
-  );
-
-  const allSubs = joinedTeamList.filter((p) => p.isStarting === false);
 
   // console.log(allTeam)
   // console.log(currentTeam)
@@ -169,14 +162,58 @@ function HomePage() {
       const totalTemp = x.reduce((sum, player) => {
         if (!player?.isStarting) return sum;
 
-        return sum + (Number(player.gwPoints) || 0)
-      }, 0)
-      setTotalSeasonPoints(totalTemp)
+        return sum + (Number(player.gwPoints) || 0);
+      }, 0);
+      setTotalSeasonPoints(totalTemp);
+
+      setStartingGk(
+        pointsAndDataTeam.filter(
+          (p) => p.position === "GK" && p.isStarting === true,
+        ),
+      );
+      setStartingDef(
+        pointsAndDataTeam.filter(
+          (p) => p.position === "DEF" && p.isStarting === true,
+        ),
+      );
+      setStartingMid(
+        pointsAndDataTeam.filter(
+          (p) => p.position === "MID" && p.isStarting === true,
+        ),
+      );
+      setStartingFwd(
+        pointsAndDataTeam.filter(
+          (p) => p.position === "FWD" && p.isStarting === true,
+        ),
+      );
+      setStartingSub(pointsAndDataTeam.filter((p) => p.isStarting === false));
     }
     if (view === "team") {
       const nextAndDataTeam = matchPlayerData(nextTeam);
+      // set team for upcoming gw
+      setStartingGk(
+        nextAndDataTeam.filter(
+          (p) => p.position === "GK" && p.isStarting === true,
+        ),
+      );
+      setStartingDef(
+        nextAndDataTeam.filter(
+          (p) => p.position === "DEF" && p.isStarting === true,
+        ),
+      );
+      setStartingMid(
+        nextAndDataTeam.filter(
+          (p) => p.position === "MID" && p.isStarting === true,
+        ),
+      );
+      setStartingFwd(
+        nextAndDataTeam.filter(
+          (p) => p.position === "FWD" && p.isStarting === true,
+        ),
+      );
+      setStartingSub(nextAndDataTeam.filter((p) => p.isStarting === false));
     }
-  });
+  }, [view, allTeam, pointsTeam, nextTeam]);
 
   const matchPlayerData = (data) => {
     return data
@@ -223,11 +260,17 @@ function HomePage() {
       {/* only give user the option to flick between teams when there is +1 weeks of data */}
       {user?.currentGW > 1 && (
         <div className="teamChoice">
-          <button onClick={() => setView("points")}>
+          <button
+            className={`teamChoice ${view === "points" ? "selected" : ""}`}
+            onClick={() => setView("points")}
+          >
             <h4>View Points</h4>
           </button>
 
-          <button onClick={() => setView("team")}>
+          <button
+            className={`teamChoice ${view === "team" ? "selected" : ""}`}
+            onClick={() => setView("team")}
+          >
             <h4>View Team</h4>
           </button>
         </div>
