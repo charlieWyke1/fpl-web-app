@@ -43,8 +43,7 @@ function HomePage() {
   const [hasTeam, setHasTeam] = useState(false);
   const [pointsTeam, setPointsTeam] = useState([]);
   const [nextTeam, setNextTeam] = useState([]);
-  const [viewPts, setViewPts] = useState(true);
-  const [viewTeam, setViewTeam] = useState(false);
+  const [view, setView] = useState("points")
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -150,6 +149,17 @@ function HomePage() {
     }
   }, [currentGW, allTeam]);
 
+  useEffect(() => {
+    if (view === "points") {
+      console.log("Points")
+      console.log(pointsTeam)
+    }
+    if (view === "team") {
+      console.log("Team")
+      console.log(nextTeam)
+    }
+  })
+
   if (!hasTeam) {
     return (
       <div className={themeClass}>
@@ -180,25 +190,18 @@ function HomePage() {
 
       {/* <Countdown targetDate={cutOffDate} /> */}
 
-      <div className="teamChoice">
-        <button
-          onClick={() => {
-            setViewPts(true);
-            setViewTeam(false);
-          }}
-        >
+      {/* only give user the option to flick between teams when there is +1 weeks of data */}
+      {user?.currentGW > 1 && (
+        <div className="teamChoice">
+        <button onClick={() => setView("points")}>
           <h4>View Points</h4>
         </button>
 
-        <button
-          onClick={() => {
-            setViewPts(false);
-            setViewTeam(true);
-          }}
-        >
+        <button onClick={() => setView("team")}>
           <h4>View Team</h4>
         </button>
       </div>
+      )}
 
       <div className="selectedTeamContainer HomePage">
         <div className="penalty-box top"></div>
