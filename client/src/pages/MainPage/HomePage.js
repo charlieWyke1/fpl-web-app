@@ -43,6 +43,8 @@ function HomePage() {
   const [hasTeam, setHasTeam] = useState(false);
   const [pointsTeam, setPointsTeam] = useState([]);
   const [nextTeam, setNextTeam] = useState([]);
+  const [viewPts, setViewPts] = useState(true);
+  const [viewTeam, setViewTeam] = useState(false);
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -179,9 +181,23 @@ function HomePage() {
       {/* <Countdown targetDate={cutOffDate} /> */}
 
       <div className="teamChoice">
-        <button>Test</button>
+        <button
+          onClick={() => {
+            setViewPts(true);
+            setViewTeam(false);
+          }}
+        >
+          <h4>View Points</h4>
+        </button>
 
-        <button>Test</button>
+        <button
+          onClick={() => {
+            setViewPts(false);
+            setViewTeam(true);
+          }}
+        >
+          <h4>View Team</h4>
+        </button>
       </div>
 
       <div className="selectedTeamContainer HomePage">
