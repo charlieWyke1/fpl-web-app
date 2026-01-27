@@ -71,15 +71,14 @@ export const useHasTeamContextFiller = (user, refetchPlayers) => {
         const currentGw = `gw${user.currentGW}`;
 
         setAllTeam(data);
-        console.log(data.gameweeks[currentGw]);
-        console.log(data?.gameweeks[`${currentGw}`]["team"]);
 
-        // setCurrentTeam(data.gameweeks[currentGw].team);
+        refetchPlayers?.();
+
       } catch (error) {
         console.error("Error fetching team data:", error);
       }
     };
 
     getTeam();
-  }, [user?.id, userClub, user?.currentGW]);
+  }, [user?.id, userClub, user?.currentGW, refetchPlayers]);
 };

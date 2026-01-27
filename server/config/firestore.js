@@ -331,6 +331,7 @@ export async function addTeamPoints(users, gw, pointsMap) {
           gameweeks: {
             [gwKey]: updatedGW,
             [nextGwKey]: {
+              locked: false,
               team: nextGwTeam,
             }
           },

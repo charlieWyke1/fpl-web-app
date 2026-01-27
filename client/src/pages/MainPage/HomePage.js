@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
@@ -44,6 +44,8 @@ function HomePage() {
   const [pointsTeam, setPointsTeam] = useState([]);
   const [nextTeam, setNextTeam] = useState([]);
   const [view, setView] = useState("points");
+  const [totalGwPoints, setTotalGwPoints] = useState(0);
+  const [totalSeasonPoints, setTotalSeasonPoints] = useState(0);
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -86,9 +88,9 @@ function HomePage() {
   // gets players and the most up to date version of it
   useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
 
+  // this does nothing atm
   const joinedTeamList = currentTeam.map((teamPlayer) => {
     const fullPlayerData = players.find((p) => p.id === teamPlayer.id);
-
     return {
       ...fullPlayerData,
       isStarting: teamPlayer.isStarting,
@@ -132,39 +134,47 @@ function HomePage() {
 
   // league stuff
 
-  // console.log(allTeam);
-  useEffect(() => {
-    if (allTeam.length === 0) return;
-    setPointsTeam(allTeam?.[`${currentGW}`]?.team);
-  }, [allTeam]);
-  // think this will work, not sure tho
-  // this will be currentTeam for here ^^
-  // currentTeam is very weirdly broken and doesnt fill up ??
-
   useEffect(() => {
     if (allTeam.length === 0) return;
 
-    if (currentGW !== "gw1") {
-      const nextGW = `gw${user?.currentGW + 1}`;
-      setNextTeam(allTeam?.[`${nextGW}`]?.team);
+    if (user?.currentGW === 1) {
+      // if gw1 then both teams have to be set for gw1
+      setNextTeam(allTeam?.[`${currentGW}`]?.team);
+      setPointsTeam(allTeam?.[`${currentGW}`]?.team);
     } else {
-      // temp for now 
+      // temp for now
+      // when we have gw2 pts shld be gw1, next team gw2
+      const prevGW = `gw${user?.currentGW - 1}`;
+      setPointsTeam(allTeam?.[`${prevGW}`]?.team);
       setNextTeam(allTeam?.[`${currentGW}`]?.team);
     }
-  }, [currentGW, allTeam]);
+  }, [allTeam]);
 
   useEffect(() => {
     if (allTeam.length === 0) return;
 
     if (view === "points") {
-      console.log("Points");
       const pointsAndDataTeam = matchPlayerData(pointsTeam);
-      // console.log(pointsAndDataTeam);
+      // map thru here and count points
+      const gwTemp = pointsAndDataTeam.reduce((total, player) => {
+        if (!player?.isStarting) return total;
+
+        return total + (Number(player.gwPoints) || 0);
+      }, 0);
+      setTotalGwPoints(gwTemp);
+
+      const x = Object.values(allTeam)
+        .filter((gw) => gw.locked)
+        .flatMap((gw) => gw.team);
+      const totalTemp = x.reduce((sum, player) => {
+        if (!player?.isStarting) return sum;
+
+        return sum + (Number(player.gwPoints) || 0)
+      }, 0)
+      setTotalSeasonPoints(totalTemp)
     }
     if (view === "team") {
-      console.log("Team");
       const nextAndDataTeam = matchPlayerData(nextTeam);
-      // console.log(nextAndDataTeam);
     }
   });
 
@@ -177,6 +187,8 @@ function HomePage() {
       })
       .filter(Boolean);
   };
+
+  // displays all points gw and total !!
 
   if (!hasTeam) {
     return (
@@ -197,10 +209,10 @@ function HomePage() {
           </div>
           <div className="ptsShow">
             <div className="gwPoints">
-              <h5>58pts</h5>
+              <h5>{totalGwPoints}pts</h5>
             </div>
             <div className="totalPoints">
-              <h4>100pts</h4>
+              <h4>{totalSeasonPoints}pts</h4>
             </div>
           </div>
         </div>
