@@ -111,8 +111,8 @@ function HomePage() {
   // everything from here only works if we HAVE a team
 
   const fixturesTemp = useFixtures(user);
-  // const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
-  // const cutOffDate = new Date(tsDate._seconds * 1000);
+  const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
+  const cutOffDate = new Date(tsDate._seconds * 1000);
 
   // console.log(allTeam)
   // console.log(currentTeam)
@@ -255,24 +255,33 @@ function HomePage() {
         </div>
       </div>
 
-      {/* <Countdown targetDate={cutOffDate} /> */}
+      <Countdown targetDate={cutOffDate} />
 
       {/* only give user the option to flick between teams when there is +1 weeks of data */}
       {user?.currentGW > 1 && (
-        <div className="teamChoice">
-          <button
-            className={`teamChoice ${view === "points" ? "selected" : ""}`}
-            onClick={() => setView("points")}
-          >
-            <h4>View Points</h4>
-          </button>
+        <div className="secondRow">
+          <div className="teamChoice">
+            <button
+              className={`teamChoice ${view === "points" ? "selected" : ""}`}
+              onClick={() => setView("points")}
+            >
+              <h4>View Last Weeks Points</h4>
+            </button>
 
-          <button
-            className={`teamChoice ${view === "team" ? "selected" : ""}`}
-            onClick={() => setView("team")}
-          >
-            <h4>View Team</h4>
-          </button>
+            <button
+              className={`teamChoice ${view === "team" ? "selected" : ""}`}
+              onClick={() => setView("team")}
+            >
+              <h4>View Next Weeks Team</h4>
+            </button>
+          </div>
+
+          <div className="secondRowInfo">
+            {view === "points" && <h4>Points from GW{user?.currentGW - 1}</h4>}
+            {view === "team" && (
+              <h4> Team for {currentGW.toLocaleUpperCase()} </h4>
+            )}
+          </div>
         </div>
       )}
 
@@ -281,7 +290,121 @@ function HomePage() {
         <div className="six-yard-box top"></div>
         <div className="penalty-arc top"></div>
         <div className="halfway-line"></div>
+
+        <div className="gkRow">
+          {Array.from({ length: startingGk.length }).map((_, index) => (
+            <div key={index} className="shirtContainer">
+              <button className="shirtButton">
+                <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+              </button>
+              <div className="homePageTag">
+                {startingGk[index] && (
+                  <>
+                    <p>{startingGk[index].name}</p>
+                    {view === "points" && <p>{startingGk[index].gwPoints}</p>}
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="defRow">
+          <div className="shirtRow">
+            {Array.from({ length: startingDef.length }).map((_, index) => (
+              <div key={index} className="shirtContainer">
+                <button className="shirtButton">
+                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                </button>
+                <div className="homePageTag">
+                  {startingDef[index] && (
+                    <>
+                      <p>{startingDef[index].name}</p>
+                      {view === "points" && (
+                        <p>{startingDef[index].gwPoints}</p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="midRow">
+          <div className="shirtRow">
+            {Array.from({ length: startingMid.length }).map((_, index) => (
+              <div key={index} className="shirtContainer">
+                <button className="shirtButton">
+                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                </button>
+                <div className="homePageTag">
+                  {startingMid[index] && (
+                    <>
+                      <p>{startingMid[index].name}</p>
+                      {view === "points" && (
+                        <p>{startingMid[index].gwPoints}</p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="fwdRow">
+          <div className="shirtRow">
+            {Array.from({ length: startingFwd.length }).map((_, index) => (
+              <div key={index} className="shirtContainer">
+                <button className="shirtButton">
+                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                </button>
+                <div className="homePageTag">
+                  {startingFwd[index] && (
+                    <>
+                      <p>{startingFwd[index].name}</p>
+                      {view === "points" && (
+                        <p>{startingFwd[index].gwPoints}</p>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+      <div className="subRow">
+        <div className="shirtRow">
+          {Array.from({ length: startingSub.length }).map((_, index) => (
+            <div key={index} className="shirtContainer">
+              <button className="shirtButton">
+                {startingSub[index].position === "GK" && (
+                  <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+                )}
+                {startingSub[index].position !== "GK" && (
+                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                )}
+              </button>
+              <div className="homePageTag">
+                {startingSub[index] && (
+                  <>
+                    <p>{startingSub[index].name}</p>
+                    {view === "points" && <p>{startingSub[index].gwPoints}</p>}
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <h4>Select Next Weeks Team</h4>
+      <h4>Make Transfers</h4>
+      <h4>View Point History</h4>
+      <h4>Leagues and shit</h4>
     </div>
   );
 }

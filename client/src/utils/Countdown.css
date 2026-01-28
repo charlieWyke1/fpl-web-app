@@ -1,24 +1,27 @@
 .countDown {
-    padding: 0.5rem;
-    background-color: lightgray;
-    border-radius: 10px;
-    width: 60%;
-    align-items: center;
-    margin-left: 20%;
+  padding: 0.5rem;
+  /* background-color: lightgray; */
+  /* border-radius: 10px; */
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .countDown h4 {
-    font-size: 2rem !important;
-    font-weight: 600 !important;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+  font-size: 3rem !important;
+  font-weight: 600 !important;
+  margin: 0;
+  padding: 0;
+  text-align: center;
 }
 .countDown h5 {
-    font-size: 1.3rem !important;
-    font-weight: 300 !important;
-    margin: 0;
-    margin-top: 0.5rem !important;
-    padding: 0;
-    text-align: center;
+  font-size: 1.5rem !important;
+  font-weight: 400 !important;
+  margin: 0;
+  margin-top: 0.5rem !important;
+  padding: 0;
+  text-align: center;
+  font-family:
+    Andale Mono,
+    monospace !important;
 }
