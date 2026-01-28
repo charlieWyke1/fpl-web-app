@@ -148,7 +148,7 @@ function FirstTeamPage() {
 
   const saveSquad = async (fullSquad) => {
     setCurrentTeam(fullSquad);
-    console.log("Full details squad...", currentTeam);
+    // console.log("Full details squad...", currentTeam);
     // right now need to save the team to database
     // need to decide what we store either just id and starting or full details
     // i think just id and starting and then we keep the currentTeam locally
@@ -157,7 +157,7 @@ function FirstTeamPage() {
       isStarting: player.isStarting,
     }));
 
-    console.log(user.budget);
+    // console.log(user.budget);
 
     console.log("database squad ...", saveSquad);
     try {

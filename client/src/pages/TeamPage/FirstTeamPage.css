@@ -26,7 +26,7 @@
   border-radius: 20px;
   /* margin-bottom: 2rem; */
   padding: 1rem;
-  align-items:center;
+  align-items: center;
   justify-content: center;
 }
 
@@ -38,12 +38,14 @@
   justify-content: center;
   font-size: 1.5rem;
   font-weight: 700 !important;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
   padding: 1rem;
   padding-bottom: 0rem !important;
   padding-top: 0.5rem;
 }
-.nameTagSub{
+.nameTagSub {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,7 +53,9 @@
   justify-content: center;
   font-size: 1rem;
   font-weight: 700 !important;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
   padding: 1rem;
   padding-bottom: 0rem !important;
   padding-top: 0.5rem;
@@ -61,17 +65,21 @@
 .gkButton {
   border: 2px solid transparent;
   border-radius: 8px;
-  transition: transform 0.3s ease, border 0.2s;
+  transition:
+    transform 0.3s ease,
+    border 0.2s;
 }
 .outfieldButton {
   border: 2px solid transparent;
   border-radius: 8px;
-  transition: transform 0.3s ease, border 0.2s;
+  transition:
+    transform 0.3s ease,
+    border 0.2s;
   z-index: 2;
 }
 
 /* RED HIGHLIGHT: For starters moving off */
-.activeGK, 
+.activeGK,
 .activeOutfield {
   border: 3px solid red !important;
   transform: scale(1.1);
@@ -79,7 +87,7 @@
 }
 
 /* GREEN HIGHLIGHT: For subs moving on */
-.activeSubGK, 
+.activeSubGK,
 .activeSubOutfield {
   border: 3px solid #00ff00 !important;
   transform: scale(1.1);
@@ -95,7 +103,9 @@
   border-radius: 10px;
   font-size: 1.5rem;
   font-weight: 600 !important;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
   transition: transform 0.5s;
   width: 30%;
   margin-left: 35%;

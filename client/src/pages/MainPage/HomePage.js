@@ -7,7 +7,7 @@ import { useClub } from "../../context/ClubContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
@@ -40,12 +40,17 @@ function HomePage() {
 
   const navigate = useNavigate();
 
+  const [cutOffDate, setCutOffDate] = useState(0);
+
   const [hasTeam, setHasTeam] = useState(false);
   const [pointsTeam, setPointsTeam] = useState([]);
   const [nextTeam, setNextTeam] = useState([]);
   const [view, setView] = useState("points");
   const [totalGwPoints, setTotalGwPoints] = useState(0);
   const [totalSeasonPoints, setTotalSeasonPoints] = useState(0);
+
+  const [nextTeamStateSend, setNextTeamStateSend] = useState([]);
+  const [dataTeamStateSend, setDataTeamStateSend] = useState([]);
 
   const [startingGk, setStartingGk] = useState([]);
   const [startingDef, setStartingDef] = useState([]);
@@ -111,16 +116,19 @@ function HomePage() {
   // everything from here only works if we HAVE a team
 
   const fixturesTemp = useFixtures(user);
-  const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
-  const cutOffDate = new Date(tsDate._seconds * 1000);
 
-  // console.log(allTeam)
-  // console.log(currentTeam)
-  // setCurrentTeam(allTeam[x])
+  useEffect(() => {
+    if (!fixturesTemp?.fixtures?.cutOff) return;
+    if (!currentGW) return;
+
+    const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
+    if (!tsDate) return;
+
+    setCutOffDate(new Date(tsDate._seconds * 1000));
+  }, [currentGW]);
+
   // NEXT UP
-  // function to get teams total Points and gw points
 
-  // giove option to display team as points (gw-1) or next team (gw)
   // transfers
   // pick team
   // view points
@@ -148,6 +156,7 @@ function HomePage() {
 
     if (view === "points") {
       const pointsAndDataTeam = matchPlayerData(pointsTeam);
+      setDataTeamStateSend(pointsAndDataTeam);
       // map thru here and count points
       const gwTemp = pointsAndDataTeam.reduce((total, player) => {
         if (!player?.isStarting) return total;
@@ -190,6 +199,7 @@ function HomePage() {
     }
     if (view === "team") {
       const nextAndDataTeam = matchPlayerData(nextTeam);
+      setNextTeamStateSend(nextAndDataTeam);
       // set team for upcoming gw
       setStartingGk(
         nextAndDataTeam.filter(
@@ -279,7 +289,7 @@ function HomePage() {
           <div className="secondRowInfo">
             {view === "points" && <h4>Points from GW{user?.currentGW - 1}</h4>}
             {view === "team" && (
-              <h4> Team for {currentGW.toLocaleUpperCase()} </h4>
+              <h4>Team for {currentGW.toLocaleUpperCase()} </h4>
             )}
           </div>
         </div>
@@ -401,10 +411,29 @@ function HomePage() {
         </div>
       </div>
 
-      <h4>Select Next Weeks Team</h4>
-      <h4>Make Transfers</h4>
-      <h4>View Point History</h4>
-      <h4>Leagues and shit</h4>
+      <div className="homePageOpts">
+        <button
+          onClick={() =>
+            navigate("/SelectTeam", {
+              state: { team: matchPlayerData(nextTeam) },
+            })
+          }
+        >
+          <h4>Select Next Weeks Team</h4>
+        </button>
+
+        <button>
+          <h4>Make Transfers</h4>
+        </button>
+
+        <button>
+          <h4>View Point History</h4>
+        </button>
+
+        <button>
+          <h4>Leagues and shit</h4>
+        </button>
+      </div>
     </div>
   );
 }

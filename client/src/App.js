@@ -16,6 +16,9 @@ import ResultsPage from "./pages/ResultsPage/ResultsPage";
 import FirstTeamPage from "./pages/TeamPage/FirstTeamPage.js";
 import CreateTeamPage from "./pages/TeamPage/CreateTeamPage.js";
 import HomePage from "./pages/MainPage/HomePage.js";
+import SelectTeamPage from "./pages/SelectTeamPage/SelectTeamPage.js"
+
+import ScrollToTop from "./utils/Scroll.js";
 
 function App() {
   return (
@@ -28,6 +31,7 @@ function App() {
                 <AllClubProvider>
                   <AllTeamProvider>
                     <Router>
+                      <ScrollToTop />
                       <Routes>
                         <Route path="/" element={<LoginPage />} />
                         <Route path="/admin" element={<AdminHomePage />} />
@@ -39,6 +43,7 @@ function App() {
                           element={<CreateTeamPage />}
                         />
                         <Route path="/HomePage" element={<HomePage />} />
+                        <Route path="/SelectTeam" element={<SelectTeamPage />} />
                       </Routes>
                     </Router>
                   </AllTeamProvider>
