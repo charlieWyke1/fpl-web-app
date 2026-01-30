@@ -5,6 +5,7 @@ import { getTeamData } from "../config/firestore.js";
 import { saveFirstTeam } from "../config/firestore.js";
 import { getCurrentGWTeam } from "../config/firestore.js";
 import { saveFirstSquad } from "../config/firestore.js";
+import { saveSubSwapTeam } from "../config/firestore.js";
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.post(
     } catch (error) {
       res.status(500).json({ error: "Failed to check team existence" });
     }
-  }
+  },
 );
 
 router.get("/api/team/getClubData", authenticateToken, async (req, res) => {
@@ -57,19 +58,37 @@ router.post("/api/team/saveTeam", authenticateToken, async (req, res) => {
 });
 
 router.post(
-  "/api/team/getTeam",
+  "/api/team/saveSubSwapTeam",
   authenticateToken,
   async (req, res) => {
     try {
       const userId = req.body.userId;
-
-      const getCurrentTeam = await getCurrentGWTeam(userId);
-      return res.json(getCurrentTeam);
+      const team = req.body.team;
+      const gw = req.body.gw;
+      // console.log(userId, teamName, players);
+      const saveTeam = await saveSubSwapTeam(userId, team, gw);
+      if (saveTeam) {
+        res
+          .status(200)
+          .json({ success: true, message: "Team saved successfully" });
+        return;
+      }
     } catch (error) {
-      res.status(500).json({ error: "Failed to find current team" });
+      res.status(500).json({ error: "Failed to save team" });
     }
-  }
+  },
 );
+
+router.post("/api/team/getTeam", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.body.userId;
+
+    const getCurrentTeam = await getCurrentGWTeam(userId);
+    return res.json(getCurrentTeam);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to find current team" });
+  }
+});
 
 router.post("/api/team/saveSquad", authenticateToken, async (req, res) => {
   try {

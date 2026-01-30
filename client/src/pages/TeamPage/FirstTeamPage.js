@@ -159,7 +159,7 @@ function FirstTeamPage() {
 
     // console.log(user.budget);
 
-    console.log("database squad ...", saveSquad);
+    // console.log("database squad ...", saveSquad);
     try {
       const token = await auth.currentUser.getIdToken();
       const res = await fetch(`${getApiBase()}/api/team/saveTeam`, {

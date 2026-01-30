@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
+import { useAllTeam } from "../../context/AllTeamsContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 
 import { useNavigate, useLocation } from "react-router-dom";
@@ -30,6 +31,7 @@ import "../../themes/clubThemes.css";
 function SelectTeamPage() {
   const { user } = useUser();
   const { state } = useLocation();
+  const { allTeam } = useAllTeam();
   //   const { currentTeam, setCurrentTeam } = useCurrentTeam();
   //   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
 
@@ -44,6 +46,7 @@ function SelectTeamPage() {
 
   const [activeStarterId, setActiveStarterId] = useState(null);
   const [activeSubId, setActiveSubId] = useState(null);
+  const [deadlinePassed, setDeadlinePassed] = useState(false);
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -137,6 +140,60 @@ function SelectTeamPage() {
     setActiveSubId(null);
   };
 
+  const newTeam = () => {
+    const team = [
+      ...(startingGk ?? []),
+      ...(startingDef ?? []),
+      ...(startingMid ?? []),
+      ...(startingFwd ?? []),
+    ].map(({ id }) => ({
+      id,
+      isStarting: true,
+    }));
+    const subs = [...startingSub].map(({ id }) => ({
+      id,
+      isStarting: false,
+    }));
+    setStartingSub((prev) =>
+      prev.map((player) => ({
+        ...player,
+        isStarting: false,
+      })),
+    );
+
+    saveNewSquad(team, subs);
+  };
+
+  const saveNewSquad = async (team, subs) => {
+    const newSquad = [...team, ...subs];
+    console.log(newSquad);
+    // now just write to db
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const res = await fetch(`${getApiBase()}/api/team/saveSubSwapTeam`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          gw: user.currentGW,
+          team: newSquad,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success === true) {
+        //   navigate to create team page
+        navigate("/HomePage");
+      }
+    } catch (error) {
+      console.error("Error saving team :", error);
+    }
+  };
+
   return (
     <div className={themeClass}>
       <NavBar />
@@ -146,7 +203,7 @@ function SelectTeamPage() {
         <h4>Select Team for {currentGW.toLocaleUpperCase()}</h4>
       </div>
 
-      <Countdown targetDate={cutOffDate} />
+      <Countdown targetDate={cutOffDate} onExpired={setDeadlinePassed} />
 
       <div className="selectedTeamContainer HomePage">
         <div className="penalty-box top"></div>
@@ -231,6 +288,16 @@ function SelectTeamPage() {
           ))}
         </div>
       </div>
+
+      {!deadlinePassed && (
+        <>
+          <div className="saveRow">
+            <button onClick={newTeam}>
+              <h4>Save new team</h4>
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -254,7 +321,7 @@ const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
       >
         <ShirtSvg
           className={isGk ? `gkShirt ${themeClass}` : `shirt ${themeClass}`}
-          size={type === "sub" ? 100 : 120}
+          size={type === "sub" ? 80 : 100}
         />
       </button>
       <div className={type === "sub" ? "nameTagSub" : "nameTag"}>

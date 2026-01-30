@@ -333,7 +333,7 @@ export async function addTeamPoints(users, gw, pointsMap) {
             [nextGwKey]: {
               locked: false,
               team: nextGwTeam,
-            }
+            },
           },
         },
         { merge: true },
@@ -358,5 +358,29 @@ export async function updateAllGW(users, gwPlus) {
     return true;
   } catch (error) {
     console.log("Error updating GW: ", error);
+  }
+}
+
+export async function saveSubSwapTeam(userId, team, gw) {
+  try {
+    const teamRef = db.collection("teams").doc(userId);
+    const gwKey = `gw${gw}`;
+
+    await teamRef.set(
+      {
+        gameweeks: {
+          [gwKey]: {
+            team: team,
+            savedAt: new Date(),
+          },
+        },
+      },
+      { merge: true },
+    );
+
+    return true;
+  } catch (error) {
+    console.error("Error saving team: ", error);
+    throw error;
   }
 }

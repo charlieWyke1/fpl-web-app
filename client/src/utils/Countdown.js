@@ -3,7 +3,7 @@ import { useUser } from "../context/UserContext.js";
 
 import "./Countdown.css";
 
-export default function Countdown({ targetDate }) {
+export default function Countdown({ targetDate, onExpired }) {
   const { user } = useUser();
   const [timeLeft, setTimeLeft] = useState(getTimeLeft());
 
@@ -27,11 +27,17 @@ export default function Countdown({ targetDate }) {
   // Update every second
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimeLeft(getTimeLeft());
+      const updatedTime = getTimeLeft();
+      setTimeLeft(updatedTime);
+
+      if (!updatedTime) {
+        onExpired?.(true); // notify parent
+        clearInterval(interval);
+      }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [targetDate]);
+  }, [targetDate, onExpired]);
 
   if (!timeLeft) {
     return <span>Cut-off passed!</span>;

@@ -163,6 +163,9 @@
   color: black !important;
   text-decoration: none !important;
 }
+.homePageOpts.button:disabled {
+  cursor: not-allowed;
+}
 
 @media (max-width: 768px) {
   .topRow {

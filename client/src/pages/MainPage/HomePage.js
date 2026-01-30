@@ -58,6 +58,8 @@ function HomePage() {
   const [startingFwd, setStartingFwd] = useState([]);
   const [startingSub, setStartingSub] = useState([]);
 
+  const [deadlinePassed, setDeadlinePassed] = useState(false);
+
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
 
@@ -130,7 +132,6 @@ function HomePage() {
   // NEXT UP
 
   // transfers
-  // pick team
   // view points
 
   // league stuff
@@ -235,7 +236,16 @@ function HomePage() {
       .filter(Boolean);
   };
 
-  // displays all points gw and total !!
+  const handleSelectTeam = () => {
+    if (deadlinePassed) {
+      alert("Deadline has passed, you can no longer edit your team!");
+      return;
+    }
+
+    navigate("/SelectTeam", {
+      state: { team: matchPlayerData(nextTeam) },
+    });
+  };
 
   if (!hasTeam) {
     return (
@@ -265,7 +275,7 @@ function HomePage() {
         </div>
       </div>
 
-      <Countdown targetDate={cutOffDate} />
+      <Countdown targetDate={cutOffDate} onExpired={setDeadlinePassed} />
 
       {/* only give user the option to flick between teams when there is +1 weeks of data */}
       {user?.currentGW > 1 && (
@@ -412,18 +422,13 @@ function HomePage() {
       </div>
 
       <div className="homePageOpts">
-        <button
-          onClick={() =>
-            navigate("/SelectTeam", {
-              state: { team: matchPlayerData(nextTeam) },
-            })
-          }
-        >
+        <button onClick={handleSelectTeam} disabled={deadlinePassed}>
           <h4>Select Next Weeks Team</h4>
         </button>
 
         <button>
           <h4>Make Transfers</h4>
+          {/* NEXT JOB */}
         </button>
 
         <button>
