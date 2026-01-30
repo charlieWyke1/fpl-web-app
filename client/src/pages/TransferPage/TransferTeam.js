@@ -18,6 +18,9 @@ import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 import Countdown from "../../utils/Countdown.js";
 
 import TransferGkModal from "./TransferGkModal.js";
+import TransferDefModal from "./TransferDefModal.js";
+import TransferMidModal from "./TransferMidModal.js";
+import TransferFwdModal from "./TransferFwdModal.js";
 
 import "../../utils/Pitch.css";
 import "../../themes/clubThemes.css";
@@ -35,6 +38,9 @@ function CreateTeamPage() {
 
   const navigate = useNavigate();
   const squad = state?.team;
+  const originalTeam = state?.team;
+  const originalTransfers = user?.transfers;
+  const originalBudget = user?.budget;
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -54,31 +60,62 @@ function CreateTeamPage() {
 
   const gkOptions = (allGk || []).map((g) => ({
     ...g,
-    // value: g.cost, removed as dont think does anythign
     label: `${g.name} - (${g.team})`,
   }));
-
-  //   const [gk, setGk] = useState([]);
-  //   const [def, setDef] = useState([]);
-  //   const [mid, setMid] = useState([]);
-  //   const [fwd, setFwd] = useState([]);
+  const defOptions = (allDef || []).map((d) => ({
+    ...d,
+    label: `${d.name} - (${d.team})`,
+  }));
+  const midOptions = (allMid || []).map((m) => ({
+    ...m,
+    label: `${m.name} - (${m.team})`,
+  }));
+  const fwdOptions = (allFwd || []).map((f) => ({
+    ...f,
+    label: `${f.name} - (${f.team})`,
+  }));
 
   const [selectedGK, setSelectedGK] = useState(
     Array(clubData.numbGk).fill(null),
   );
   const [activeGKIndex, setActiveGKIndex] = useState(null);
 
+  const [selectedDef, setSelectedDef] = useState(
+    Array(clubData.numbDef).fill(null),
+  );
+  const [activeDefIndex, setActiveDefIndex] = useState(null);
+
+  const [selectedMid, setSelectedMid] = useState(
+    Array(clubData.numbMid).fill(null),
+  );
+  const [activeMidIndex, setActiveMidIndex] = useState(null);
+
+  const [selectedFwd, setSelectedFwd] = useState(
+    Array(clubData.numbFwd).fill(null),
+  );
+  const [activeFwdIndex, setActiveFwdIndex] = useState(null);
+
   const [showGkTransferModal, setShowGkTransferModal] = useState(false);
-  const [showDefModal, setShowDefModal] = useState(false);
-  const [showMidModal, setShowMidModal] = useState(false);
-  const [showFwdModal, setShowFwdModal] = useState(false);
+  const [showDefTransferModal, setShowDefTransferModal] = useState(false);
+  const [showMidTransferModal, setShowMidTransferModal] = useState(false);
+  const [showFwdTransferModal, setShowFwdTransferModal] = useState(false);
+
+  const resetTeam = () => {
+    setSelectedGK(originalTeam.filter((p) => p.position === "GK"));
+    setSelectedDef(originalTeam.filter((p) => p.position === "DEF"));
+    setSelectedMid(originalTeam.filter((p) => p.position === "MID"));
+    setSelectedFwd(originalTeam.filter((p) => p.position === "FWD"));
+
+    setTransfers(originalTransfers);
+    setBudget(originalBudget);
+  };
 
   useEffect(() => {
     if (squad && squad.length > 0) {
       setSelectedGK(squad.filter((p) => p.position === "GK"));
-      //   setDef(squad.filter((p) => p.position === "DEF"));
-      //   setMid(squad.filter((p) => p.position === "MID"));
-      //   setFwd(squad.filter((p) => p.position === "FWD"));
+      setSelectedDef(squad.filter((p) => p.position === "DEF"));
+      setSelectedMid(squad.filter((p) => p.position === "MID"));
+      setSelectedFwd(squad.filter((p) => p.position === "FWD"));
     }
   }, [squad]);
 
@@ -93,13 +130,16 @@ function CreateTeamPage() {
 
       <Countdown targetDate={cutOffDate} onExpired={setDeadlinePassed} />
 
-      <div className="topRowSelect" id="two">
+      <div className="topRowSelect">
         <h4 className={`budget ${budget < 0 ? "negative" : ""}`}>
           Budget: £{budget.toFixed(2)}m
         </h4>
         <h4 className={`transfer ${transfers < 0 ? "negative" : ""}`}>
           Free Transfers: {transfers}
         </h4>
+        <button onClick={resetTeam}>
+          <h4>Reset Team</h4>
+        </button>
       </div>
 
       <div className="selectedTeamContainer HomePage">
@@ -117,7 +157,7 @@ function CreateTeamPage() {
                   onClick={() => {
                     const currentPlayer = selectedGK[index];
                     setBudget((prev) => prev + currentPlayer.cost);
-                    setShowGkTransferModal(true);
+                    setShowDefTransferModal(true);
                     setActiveGKIndex(index);
                   }}
                 >
@@ -136,70 +176,89 @@ function CreateTeamPage() {
           </div>
         </div>
 
-        {/* <div className="defRow">
+        <div className="defRow">
           <div className="shirtRow">
-            {Array.from({ length: def.length }).map((_, index) => (
+            {Array.from({ length: selectedDef.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
                 <button
                   className="shirtButton"
                   onClick={() => {
-                    console.log(def[index]);
+                    const currentPlayer = selectedDef[index];
+                    setBudget((prev) => prev + currentPlayer.cost);
+                    setShowDefTransferModal(true);
+                    setActiveDefIndex(index);
                   }}
                 >
                   <ShirtSvg className={`shirt ${themeClass}`} size={100} />
                 </button>
                 <div className="transferTag">
-                  {def[index] && (
+                  {selectedDef[index] && (
                     <>
-                      <p>{def[index].name}</p>
-                      <p>£{def[index].cost}m</p>
+                      <p>{selectedDef[index].name}</p>
+                      <p>£{selectedDef[index].cost}m</p>
                     </>
                   )}
                 </div>
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
 
-        {/* <div className="midRow">
+        <div className="midRow">
           <div className="shirtRow">
-            {Array.from({ length: mid.length }).map((_, index) => (
+            {Array.from({ length: selectedMid.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+                <button
+                  className="shirtButton"
+                  onClick={() => {
+                    const currentPlayer = selectedMid[index];
+                    setBudget((prev) => prev + currentPlayer.cost);
+                    setShowMidTransferModal(true);
+                    setActiveMidIndex(index);
+                  }}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} size={100} />
                 </button>
                 <div className="transferTag">
-                  {mid[index] && (
+                  {selectedMid[index] && (
                     <>
-                      <p>{mid[index].name}</p>
-                      <p>£{mid[index].cost}m</p>
+                      <p>{selectedMid[index].name}</p>
+                      <p>£{selectedMid[index].cost}m</p>
                     </>
                   )}
                 </div>
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
 
-        {/* <div className="fwdRow">
+        <div className="fwdRow">
           <div className="shirtRow">
-            {Array.from({ length: fwd.length }).map((_, index) => (
+            {Array.from({ length: selectedFwd.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+                <button
+                  className="shirtButton"
+                  onClick={() => {
+                    const currentPlayer = selectedFwd[index];
+                    setBudget((prev) => prev + currentPlayer.cost);
+                    setShowFwdTransferModal(true);
+                    setActiveFwdIndex(index);
+                  }}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} size={100} />
                 </button>
                 <div className="transferTag">
-                  {fwd[index] && (
+                  {selectedFwd[index] && (
                     <>
-                      <p>{fwd[index].name}</p>
-                      <p>£{fwd[index].cost}m</p>
+                      <p>{selectedFwd[index].name}</p>
+                      <p>£{selectedFwd[index].cost}m</p>
                     </>
                   )}
                 </div>
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
 
         <TransferGkModal
           show={showGkTransferModal}
@@ -212,6 +271,45 @@ function CreateTeamPage() {
           setSelectedGK={setSelectedGK}
           selectedGK={selectedGK || []}
           activeGKIndex={activeGKIndex}
+        />
+
+        <TransferDefModal
+          show={showDefTransferModal}
+          onClose={() => setShowDefTransferModal(false)}
+          defOptions={defOptions}
+          budget={budget}
+          setBudget={setBudget}
+          setTransfers={setTransfers}
+          transfers={transfers}
+          setSelectedDef={setSelectedDef}
+          selectedDef={selectedDef || []}
+          activeDefIndex={activeDefIndex}
+        />
+
+        <TransferMidModal
+          show={showMidTransferModal}
+          onClose={() => setShowMidTransferModal(false)}
+          midOptions={midOptions}
+          budget={budget}
+          setBudget={setBudget}
+          setTransfers={setTransfers}
+          transfers={transfers}
+          setSelectedMid={setSelectedMid}
+          selectedMid={selectedMid || []}
+          activeMidIndex={activeMidIndex}
+        />
+
+        <TransferFwdModal
+          show={showFwdTransferModal}
+          onClose={() => setShowFwdTransferModal(false)}
+          fwdOptions={fwdOptions}
+          budget={budget}
+          setBudget={setBudget}
+          setTransfers={setTransfers}
+          transfers={transfers}
+          setSelectedFwd={setSelectedFwd}
+          selectedFwd={selectedFwd || []}
+          activeFwdIndex={activeFwdIndex}
         />
       </div>
     </div>
