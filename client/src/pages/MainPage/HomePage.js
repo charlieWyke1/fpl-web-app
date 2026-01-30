@@ -7,7 +7,7 @@ import { useClub } from "../../context/ClubContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
 
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
@@ -89,6 +89,7 @@ function HomePage() {
         } else {
           setHasTeam(true);
           setView("points");
+          // useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
 
           // need to populate contexts for if user hasnt gone thru their set up of first team
         }
@@ -243,6 +244,17 @@ function HomePage() {
     }
 
     navigate("/SelectTeam", {
+      state: { team: matchPlayerData(nextTeam) },
+    });
+  };
+
+  const handleTransferTeam = () => {
+    if (deadlinePassed) {
+      alert("Deadline has passed, you can no longer edit your team!");
+      return;
+    }
+
+    navigate("/TransferTeam", {
       state: { team: matchPlayerData(nextTeam) },
     });
   };
@@ -426,7 +438,7 @@ function HomePage() {
           <h4>Select Next Weeks Team</h4>
         </button>
 
-        <button>
+        <button onClick={handleTransferTeam} disabled={deadlinePassed}>
           <h4>Make Transfers</h4>
           {/* NEXT JOB */}
         </button>

@@ -239,7 +239,6 @@ export async function saveFirstTeam(userId, teamName, team, gw, budget) {
 
     await teamRef.set(
       {
-        budget: budget,
         gameweeks: {
           [gwKey]: {
             team: team,
@@ -251,7 +250,7 @@ export async function saveFirstTeam(userId, teamName, team, gw, budget) {
     );
 
     const userRef = db.collection("users").doc(userId);
-    await userRef.set({ teamName: teamName }, { merge: true });
+    await userRef.set({ teamName: teamName, budget: budget }, { merge: true });
 
     return true;
   } catch (error) {
@@ -352,7 +351,10 @@ export async function updateAllGW(users, gwPlus) {
     const updatePromises = users.map(async (user) => {
       const userRef = db.collection("users").doc(user.id);
 
-      await userRef.set({ currentGW: gwPlus }, { merge: true });
+      await userRef.set(
+        { currentGW: gwPlus, transfers: increment(1) },
+        { merge: true },
+      );
     });
     await Promise.all(updatePromises);
     return true;

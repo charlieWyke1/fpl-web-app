@@ -17,6 +17,7 @@ import FirstTeamPage from "./pages/TeamPage/FirstTeamPage.js";
 import CreateTeamPage from "./pages/TeamPage/CreateTeamPage.js";
 import HomePage from "./pages/MainPage/HomePage.js";
 import SelectTeamPage from "./pages/SelectTeamPage/SelectTeamPage.js"
+import TransferTeam from "./pages/TransferPage/TransferTeam.js"
 
 import ScrollToTop from "./utils/Scroll.js";
 
@@ -44,6 +45,7 @@ function App() {
                         />
                         <Route path="/HomePage" element={<HomePage />} />
                         <Route path="/SelectTeam" element={<SelectTeamPage />} />
+                        <Route path="/Transferteam" element={<TransferTeam />} />
                       </Routes>
                     </Router>
                   </AllTeamProvider>

@@ -1,0 +1,33 @@
+.transferTag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family:
+    Andale Mono,
+    monospace !important;
+}
+.transferTag p {
+  /* margin: 0.3rem 1rem; */
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  z-index: 2;
+}
+
+.budget {
+  color: black;
+  font-weight: 500 !important;
+}
+.budget.negative {
+  color: red;
+  font-weight: 700 !important;
+}
+.transfer {
+  color: black;
+  font-weight: 500 !important;
+}
+.transfer.negative {
+  color: red;
+  font-weight: 700 !important;
+}
+

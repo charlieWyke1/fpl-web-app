@@ -136,7 +136,6 @@ function CreateTeamPage() {
     alert("Team saved successfully!");
     setUser({ ...user, teamName: teamName, budget: budget });
     setCurrentTeam(team);
-    console.log(budget);
 
     if (team.length > 0) {
       navigate("/FirstTeam", { state: { freshTeam: team } });
