@@ -129,7 +129,6 @@ function CreateTeamPage() {
     // need to make sure there are enough players with isStarting
 
     console.log(transfers);
-
   };
 
   return (
@@ -325,6 +324,12 @@ function CreateTeamPage() {
           activeFwdIndex={activeFwdIndex}
         />
       </div>
+
+      {transfers < 0 && (
+        <div className="minusTransferWarning">
+          <h4>Extra transfers result in a -4 points for the next GW</h4>
+        </div>
+      )}
 
       {!deadlinePassed && (
         <>
