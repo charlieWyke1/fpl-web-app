@@ -61,7 +61,13 @@ const TransferFwdModal = ({
                     // update selectedGK at the active slot
                     setSelectedFwd((prev) => {
                       const updated = [...prev];
-                      updated[activeFwdIndex] = fwd;
+
+                      const wasStarting = prev[activeFwdIndex]?.isStarting ?? false
+
+                      updated[activeFwdIndex] = {
+                        ...fwd, 
+                        isStarting: wasStarting
+                      };
                       return updated;
                     });
                     setTransfers(transfers - 1);

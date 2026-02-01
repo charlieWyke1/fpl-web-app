@@ -62,7 +62,11 @@ const TransferMidModal = ({
                     // update selectedGK at the active slot
                     setSelectedMid((prev) => {
                       const updated = [...prev];
-                      updated[activeMidIndex] = mid;
+
+                      const wasStarting = prev[activeMidIndex]?.isStarting ?? false
+                      updated[activeMidIndex] = {
+                        ...mid, isStarting: wasStarting
+                      };
                       return updated;
                     });
                     setTransfers(transfers - 1);

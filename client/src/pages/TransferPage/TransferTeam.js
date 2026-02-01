@@ -119,6 +119,19 @@ function CreateTeamPage() {
     }
   }, [squad]);
 
+  const team = () => {
+    const transfers = [
+      ...(selectedGK ?? []),
+      ...(selectedDef ?? []),
+      ...(selectedMid ?? []),
+      ...(selectedFwd ?? []),
+    ];
+    // need to make sure there are enough players with isStarting
+
+    console.log(transfers);
+
+  };
+
   return (
     <div className={themeClass}>
       <NavBar />
@@ -312,6 +325,16 @@ function CreateTeamPage() {
           activeFwdIndex={activeFwdIndex}
         />
       </div>
+
+      {!deadlinePassed && (
+        <>
+          <div className="saveRow">
+            <button onClick={team}>
+              <h4>Save new team</h4>
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

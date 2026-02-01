@@ -62,7 +62,11 @@ const TransferGkModal = ({
                     // update selectedGK at the active slot
                     setSelectedGK((prev) => {
                       const updated = [...prev];
-                      updated[activeGKIndex] = gk;
+
+                      const wasStarting = prev[activeGKIndex]?.isStarting ?? false
+                      updated[activeGKIndex] = {
+                        ...gk, isStarting: wasStarting
+                      };
                       return updated;
                     });
                     setTransfers(transfers - 1);

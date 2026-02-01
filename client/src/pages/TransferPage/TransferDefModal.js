@@ -56,16 +56,18 @@ const TransferDefModal = ({
                   onClick={() => {
                     if (isAlreadySelected) return; // block clicking already selected GKs
 
-                    // deduct cost
-                    setBudget(budget - def.cost);
-
                     // update selectedGK at the active slot
                     setSelectedDef((prev) => {
                       const updated = [...prev];
-                      updated[activeDefIndex] = def;
+
+                      const wasStarting = prev[activeDefIndex]?.isStarting ?? false
+                      updated[activeDefIndex] = {
+                        ...def, isStarting: wasStarting
+                      };
                       return updated;
                     });
                     setTransfers(transfers - 1);
+                    setBudget(budget - def.cost);
 
                     onClose();
                   }}
