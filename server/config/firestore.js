@@ -285,6 +285,7 @@ export async function saveFirstSquad(userId, squad, gw) {
           [gwKey]: {
             team: squad,
             savedAt: new Date(),
+            minusPoints: 0,
           },
         },
       },
@@ -379,6 +380,64 @@ export async function saveSubSwapTeam(userId, team, gw) {
       },
       { merge: true },
     );
+
+    return true;
+  } catch (error) {
+    console.error("Error saving team: ", error);
+    throw error;
+  }
+}
+
+export async function saveTransfers(userId, gw, team, budget, transfers) {
+  try {
+    const teamRef = db.collection("teams").doc(userId);
+    const userRef = db.collection("users").doc(userId);
+
+    const gwKey = `gw${gw}`;
+
+    await teamRef.set(
+      {
+        gameweeks: {
+          [gwKey]: {
+            locked: false,
+            team: team,
+            savedAt: new Date(),
+          },
+        },
+      },
+      { merge: true },
+    );
+
+    if (transfers < 0) {
+      const minusPoints = transfers * 4;
+
+      await teamRef.set(
+        {
+          gameweeks: {
+            [gwKey]: {
+              minusPoints: minusPoints,
+            },
+          },
+        },
+        { merge: true },
+      );
+
+      await userRef.set(
+        {
+          budget: budget,
+          transfers: 0,
+        },
+        { merge: true },
+      );
+    } else {
+      await userRef.set(
+        {
+          budget: budget,
+          transfers: transfers,
+        },
+        { merge: true },
+      );
+    }
 
     return true;
   } catch (error) {

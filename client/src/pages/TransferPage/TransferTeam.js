@@ -27,7 +27,7 @@ import "../../themes/clubThemes.css";
 import "./TransferTeam.css";
 
 function CreateTeamPage() {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const { state } = useLocation();
   const { players } = usePlayer();
   const { clubData } = useClub();
@@ -119,16 +119,52 @@ function CreateTeamPage() {
     }
   }, [squad]);
 
-  const team = () => {
-    const transfers = [
+  const team = async () => {
+    const newTransferTeam = [
       ...(selectedGK ?? []),
       ...(selectedDef ?? []),
       ...(selectedMid ?? []),
       ...(selectedFwd ?? []),
-    ];
-    // need to make sure there are enough players with isStarting
+    ].map(({ id, isStarting }) => ({
+      id,
+      isStarting,
+    }));
 
-    console.log(transfers);
+    console.log(newTransferTeam);
+    console.log(originalTeam);
+
+    // currently rewrite the whole team - cld ugrade to just write the transfer player
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const res = await fetch(`${getApiBase()}/api/team/saveTransferTeam`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          gw: user.currentGW,
+          team: newTransferTeam,
+          budget: budget,
+          numbTransfer: transfers,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success === true) {
+        //   navigate to create team page
+        setUser((prev) => ({
+          ...prev,
+          budget: budget,
+          transfers: transfers,
+        }));
+        navigate("/HomePage");
+      }
+    } catch (error) {
+      console.error("Error saving team :", error);
+    }
   };
 
   return (
@@ -169,7 +205,7 @@ function CreateTeamPage() {
                   onClick={() => {
                     const currentPlayer = selectedGK[index];
                     setBudget((prev) => prev + currentPlayer.cost);
-                    setShowDefTransferModal(true);
+                    setShowGkTransferModal(true);
                     setActiveGKIndex(index);
                   }}
                 >
@@ -334,7 +370,7 @@ function CreateTeamPage() {
       {!deadlinePassed && (
         <>
           <div className="saveRow">
-            <button onClick={team}>
+            <button onClick={team} disabled={budget < 0}>
               <h4>Save new team</h4>
             </button>
           </div>

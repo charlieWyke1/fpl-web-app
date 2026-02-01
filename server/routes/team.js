@@ -6,6 +6,7 @@ import { saveFirstTeam } from "../config/firestore.js";
 import { getCurrentGWTeam } from "../config/firestore.js";
 import { saveFirstSquad } from "../config/firestore.js";
 import { saveSubSwapTeam } from "../config/firestore.js";
+import { saveTransfers } from "../config/firestore.js";
 
 const router = express.Router();
 
@@ -66,7 +67,7 @@ router.post(
       const team = req.body.team;
       const gw = req.body.gw;
       // console.log(userId, teamName, players);
-      const saveTeam = await saveSubSwapTeam(userId, team, gw);
+      const saveTeam = await saveSubSwapTeam(userId, gw, team);
       if (saveTeam) {
         res
           .status(200)
@@ -107,5 +108,29 @@ router.post("/api/team/saveSquad", authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Failed to save Gameweek squad" });
   }
 });
+
+router.post(
+  "/api/team/saveTransferTeam",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const userId = req.body.userId;
+      const gw = req.body.gw;
+      const team = req.body.team;
+      const budget = req.body.budget;
+      const numbTransfers = req.body.numbTransfer;
+
+      const saveTransfersTeam = await saveTransfers(userId, gw, team, budget, numbTransfers);
+      if (saveTransfersTeam) {
+      res
+        .status(200)
+        .json({ success: true, message: "Squad saved succesfully" });
+      return;
+    } 
+    } catch (error) {
+      res.status(500).json({ error: "Failed to save new squad" });
+    }
+  },
+);
 
 export default router;
