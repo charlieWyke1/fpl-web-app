@@ -66,7 +66,6 @@ router.post(
       const userId = req.body.userId;
       const team = req.body.team;
       const gw = req.body.gw;
-      // console.log(userId, teamName, players);
       const saveTeam = await saveSubSwapTeam(userId, gw, team);
       if (saveTeam) {
         res
@@ -120,13 +119,19 @@ router.post(
       const budget = req.body.budget;
       const numbTransfers = req.body.numbTransfer;
 
-      const saveTransfersTeam = await saveTransfers(userId, gw, team, budget, numbTransfers);
+      const saveTransfersTeam = await saveTransfers(
+        userId,
+        gw,
+        team,
+        budget,
+        numbTransfers,
+      );
       if (saveTransfersTeam) {
-      res
-        .status(200)
-        .json({ success: true, message: "Squad saved succesfully" });
-      return;
-    } 
+        res
+          .status(200)
+          .json({ success: true, message: "Squad saved succesfully" });
+        return;
+      }
     } catch (error) {
       res.status(500).json({ error: "Failed to save new squad" });
     }

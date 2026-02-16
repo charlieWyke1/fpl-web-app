@@ -7,7 +7,7 @@ import { useClub } from "../../context/ClubContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
@@ -37,6 +37,7 @@ function HomePage() {
   const { currentTeam, setCurrentTeam } = useCurrentTeam();
   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
   const { allTeam } = useAllTeam();
+  const location = useLocation();
 
   const navigate = useNavigate();
 
@@ -105,13 +106,13 @@ function HomePage() {
   useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
 
   // this does nothing atm
-  const joinedTeamList = currentTeam.map((teamPlayer) => {
-    const fullPlayerData = players.find((p) => p.id === teamPlayer.id);
-    return {
-      ...fullPlayerData,
-      isStarting: teamPlayer.isStarting,
-    };
-  });
+  // const joinedTeamList = currentTeam.map((teamPlayer) => {
+  //   const fullPlayerData = players.find((p) => p.id === teamPlayer.id);
+  //   return {
+  //     ...fullPlayerData,
+  //     isStarting: teamPlayer.isStarting,
+  //   };
+  // });
 
   // KEEP currentTeam simple, only playerId and starting boolean
   // make use of the joinedTeamList for the data side of stuff
@@ -132,7 +133,6 @@ function HomePage() {
 
   // NEXT UP
 
-  // transfers
   // view points
 
   // league stuff
@@ -242,7 +242,6 @@ function HomePage() {
       alert("Deadline has passed, you can no longer edit your team!");
       return;
     }
-
     navigate("/SelectTeam", {
       state: { team: matchPlayerData(nextTeam) },
     });
@@ -253,7 +252,6 @@ function HomePage() {
       alert("Deadline has passed, you can no longer edit your team!");
       return;
     }
-
     navigate("/TransferTeam", {
       state: { team: matchPlayerData(nextTeam) },
     });
@@ -434,17 +432,17 @@ function HomePage() {
       </div>
 
       <div className="homePageOpts">
-        <button onClick={handleSelectTeam} disabled={deadlinePassed}>
+        <button onClick={handleSelectTeam}>
           <h4>Select Next Weeks Team</h4>
         </button>
 
-        <button onClick={handleTransferTeam} disabled={deadlinePassed}>
+        <button onClick={handleTransferTeam}>
           <h4>Make Transfers</h4>
-          {/* NEXT JOB */}
         </button>
 
         <button>
           <h4>View Point History</h4>
+          {/* NEXT JOB */}
         </button>
 
         <button>

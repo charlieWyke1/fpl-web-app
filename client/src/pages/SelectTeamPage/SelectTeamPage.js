@@ -33,7 +33,6 @@ function SelectTeamPage() {
   const { state } = useLocation();
   const { allTeam } = useAllTeam();
   //   const { currentTeam, setCurrentTeam } = useCurrentTeam();
-  //   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
 
   const navigate = useNavigate();
   const freshTeam = state?.team;

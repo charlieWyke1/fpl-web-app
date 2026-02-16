@@ -364,10 +364,12 @@ export async function updateAllGW(users, gwPlus) {
   }
 }
 
-export async function saveSubSwapTeam(userId, team, gw) {
+export async function saveSubSwapTeam(userId, gw, team) {
   try {
     const teamRef = db.collection("teams").doc(userId);
     const gwKey = `gw${gw}`;
+
+    // console.log(gwKey);
 
     await teamRef.set(
       {
