@@ -34,10 +34,8 @@ import "../../themes/clubThemes.css";
 
 function HomePage() {
   const { user } = useUser();
-  const { currentTeam, setCurrentTeam } = useCurrentTeam();
   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
   const { allTeam } = useAllTeam();
-  const location = useLocation();
 
   const navigate = useNavigate();
 
@@ -90,9 +88,6 @@ function HomePage() {
         } else {
           setHasTeam(true);
           setView("points");
-          // useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
-
-          // need to populate contexts for if user hasnt gone thru their set up of first team
         }
       } catch (error) {
         console.error("Error checking team existence:", error);
@@ -104,15 +99,6 @@ function HomePage() {
 
   // gets players and the most up to date version of it
   useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
-
-  // this does nothing atm
-  // const joinedTeamList = currentTeam.map((teamPlayer) => {
-  //   const fullPlayerData = players.find((p) => p.id === teamPlayer.id);
-  //   return {
-  //     ...fullPlayerData,
-  //     isStarting: teamPlayer.isStarting,
-  //   };
-  // });
 
   // KEEP currentTeam simple, only playerId and starting boolean
   // make use of the joinedTeamList for the data side of stuff
@@ -157,9 +143,12 @@ function HomePage() {
     if (allTeam.length === 0) return;
 
     if (view === "points") {
+      // const currentMinus =
+      //   Number(allTeam[`gw${user.currentGW}`]?.minusPoints) || 0;
+      // console.log(currentMinus);
+      // NO need yet as gw not done
       const pointsAndDataTeam = matchPlayerData(pointsTeam);
       setDataTeamStateSend(pointsAndDataTeam);
-      // map thru here and count points
       const gwTemp = pointsAndDataTeam.reduce((total, player) => {
         if (!player?.isStarting) return total;
 
@@ -167,15 +156,20 @@ function HomePage() {
       }, 0);
       setTotalGwPoints(gwTemp);
 
-      const x = Object.values(allTeam)
+      const totalSeasonPoints = Object.values(allTeam)
         .filter((gw) => gw.locked)
-        .flatMap((gw) => gw.team);
-      const totalTemp = x.reduce((sum, player) => {
-        if (!player?.isStarting) return sum;
+        .reduce((acc, gw) => {
+          const pointsThisGW = gw.team.reduce((sum, player) => {
+            return player?.isStarting
+              ? sum + (Number(player.gwPoints) || 0)
+              : sum;
+          }, 0);
 
-        return sum + (Number(player.gwPoints) || 0);
-      }, 0);
-      setTotalSeasonPoints(totalTemp);
+          const minus = Number(gw.minusPoints) || 0;
+
+          return acc + (pointsThisGW + minus);
+        }, 0);
+      setTotalSeasonPoints(totalSeasonPoints);
 
       setStartingGk(
         pointsAndDataTeam.filter(

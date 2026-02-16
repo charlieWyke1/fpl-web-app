@@ -119,6 +119,8 @@ router.post(
       const budget = req.body.budget;
       const numbTransfers = req.body.numbTransfer;
 
+      console.log(numbTransfers);
+
       const saveTransfersTeam = await saveTransfers(
         userId,
         gw,
