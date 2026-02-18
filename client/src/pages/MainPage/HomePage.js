@@ -55,6 +55,7 @@ function HomePage() {
   const [startingMid, setStartingMid] = useState([]);
   const [startingFwd, setStartingFwd] = useState([]);
   const [startingSub, setStartingSub] = useState([]);
+  const [minusPts, setMinusPts] = useState(0);
 
   const [deadlinePassed, setDeadlinePassed] = useState(false);
 
@@ -117,9 +118,6 @@ function HomePage() {
   }, [currentGW]);
 
   // NEXT UP
-
-  // view points
-
   // league stuff
 
   useEffect(() => {
@@ -142,10 +140,6 @@ function HomePage() {
     if (allTeam.length === 0) return;
 
     if (view === "points") {
-      // const currentMinus =
-      //   Number(allTeam[`gw${user.currentGW}`]?.minusPoints) || 0;
-      // console.log(currentMinus);
-      // NO need yet as gw not done
       const pointsAndDataTeam = matchPlayerData(pointsTeam);
       setDataTeamStateSend(pointsAndDataTeam);
       const gwTemp = pointsAndDataTeam.reduce((total, player) => {
@@ -153,7 +147,13 @@ function HomePage() {
 
         return total + (Number(player.gwPoints) || 0);
       }, 0);
-      setTotalGwPoints(gwTemp);
+
+      if (currentGW === 1) {
+        setMinusPts(allTeam?.[`gw${user?.currentGW}`].minusPoints);
+      } else {
+        setMinusPts(allTeam?.[`gw${user?.currentGW - 1}`].minusPoints);
+      }
+      setTotalGwPoints(gwTemp + minusPts);
 
       const totalSeasonPoints = Object.values(allTeam)
         .filter((gw) => gw.locked)
@@ -439,11 +439,11 @@ function HomePage() {
 
         <button onClick={handlePoints}>
           <h4>View Point History</h4>
-          {/* NEXT JOB */}
         </button>
 
         <button>
           <h4>Leagues and shit</h4>
+          {/* FINAL JOB HERE */}
         </button>
       </div>
     </div>
