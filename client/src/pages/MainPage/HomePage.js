@@ -1,10 +1,9 @@
 import React from "react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
 import { useClub } from "../../context/ClubContext.js";
-import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
 
 import { useNavigate, useLocation } from "react-router-dom";
@@ -251,6 +250,10 @@ function HomePage() {
     });
   };
 
+  const handlePoints = () => {
+    navigate("/PointsHistory");
+  };
+
   if (!hasTeam) {
     return (
       <div className={themeClass}>
@@ -434,7 +437,7 @@ function HomePage() {
           <h4>Make Transfers</h4>
         </button>
 
-        <button>
+        <button onClick={handlePoints}>
           <h4>View Point History</h4>
           {/* NEXT JOB */}
         </button>

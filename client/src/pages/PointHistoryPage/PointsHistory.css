@@ -1,0 +1,43 @@
+.topRow2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.topRow2 h4 {
+  flex: 1;
+  font-size: xx-large !important;
+}
+
+.topRow2 button {
+  flex: 2;
+  padding: 1rem 2rem;
+  background-color: transparent;
+  border: none;
+  font-size: xx-large !important;
+  transition: transform 0.5s;
+}
+.topRow2 button:hover {
+  transform: scale(1.3);
+}
+
+.ptsRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+.ptsRow h4 {
+  font-weight: 400 !important;
+  font-size: 2rem !important;
+}
+.gkRow,
+.defRow,
+.midRow,
+.fwdRow {
+  padding-top: 0rem !important;
+  padding-bottom: 0rem;
+}

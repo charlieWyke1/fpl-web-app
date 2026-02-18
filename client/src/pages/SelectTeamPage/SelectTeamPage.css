@@ -58,6 +58,14 @@
   cursor: pointer;
 }
 
+.gkRow,
+.defRow,
+.midRow,
+.fwdRow {
+  padding-top: 0rem !important;
+  padding-bottom: 0rem;
+}
+
 @media (max-width: 768px) {
   .topRowSelect {
     flex-direction: column;
