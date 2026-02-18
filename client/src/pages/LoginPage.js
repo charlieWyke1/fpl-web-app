@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext.js";
 import { getApiBase } from "../config/api.js";
 
-
 function LoginPage() {
   // stores our email and password values
   const [email, setEmail] = React.useState("");
@@ -24,7 +23,7 @@ function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -63,9 +62,57 @@ function LoginPage() {
   };
 
   return (
-    <div className="container-fluid" id="loginBox">
-      <form className="loginForm" onSubmit={handleSubmit}>
-        <div className="mb-3">
+    // <div className="container-fluid" id="loginBox">
+    //   <form className="loginForm" onSubmit={handleSubmit}>
+    //     <div className="mb-3">
+    //       <label htmlFor="inputEmail" className="form-label" id="emailLabel">
+    //         Email:
+    //       </label>
+    //       <input
+    //         type="email"
+    //         className="form-control"
+    //         id="inputEmail"
+    //         onChange={(e) => setEmail(e.target.value)}
+    //         required
+    //       />
+    //     </div>
+    //     <div className="mb-3">
+    //       <label
+    //         htmlFor="inputPassword"
+    //         className="form-label"
+    //         id="passwordLabel"
+    //       >
+    //         Password:
+    //       </label>
+    //       <input
+    //         type="password"
+    //         className="form-control"
+    //         id="inputPassword"
+    //         onChange={(e) => setPassword(e.target.value)}
+    //         required
+    //       />
+    //     </div>
+
+    //     <button
+    //       type="submit"
+    //       className="btn btn-primary"
+    //       id="loginButton"
+    //       disabled={!email || !password}
+    //     >
+    //       Log In
+    //     </button>
+    //   </form>
+    // </div>
+    <div className="loginBox">
+      <div className="box" id="left">
+        <h5>Welcome to Club Fantsay Football</h5>
+        <h5>
+          Play the popular game but this time with the club and players you play
+          with every week!
+        </h5>
+      </div>
+      <div className="box" id="right">
+        <form className="loginForm" onSubmit={handleSubmit}>
           <label htmlFor="inputEmail" className="form-label" id="emailLabel">
             Email:
           </label>
@@ -76,8 +123,7 @@ function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div className="mb-3">
+
           <label
             htmlFor="inputPassword"
             className="form-label"
@@ -92,20 +138,16 @@ function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
 
-        <button
-          type="submit"
-          className="btn btn-primary"
-          id="loginButton"
-          disabled={!email || !password}
-          // onClick={() => {
-          //   console.log(email, password);
-          // }}
-        >
-          Log In
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="loginButton"
+            disabled={!email || !password}
+          >
+            Log In
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
