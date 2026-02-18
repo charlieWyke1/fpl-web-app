@@ -254,6 +254,10 @@ function HomePage() {
     navigate("/PointsHistory");
   };
 
+  const handleLeague = () => {
+    navigate("/Leagues");
+  };
+
   if (!hasTeam) {
     return (
       <div className={themeClass}>
@@ -441,7 +445,7 @@ function HomePage() {
           <h4>View Point History</h4>
         </button>
 
-        <button>
+        <button onClick={handleLeague}>
           <h4>Leagues and shit</h4>
           {/* FINAL JOB HERE */}
         </button>

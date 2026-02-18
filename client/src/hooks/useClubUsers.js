@@ -32,7 +32,7 @@ export const useClubUsers = (user) => {
 
         // filter by club
         const filteredData = data.filter(
-          (u) => u.club?.toLowerCase() === adminClub.toLowerCase()
+          (u) => u.club?.toLowerCase() === adminClub.toLowerCase(),
         );
 
         setAllUsers(filteredData);

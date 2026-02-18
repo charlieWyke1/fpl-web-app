@@ -1,7 +1,13 @@
 .selectedTeamContainer {
   position: relative; /* REQUIRED */
   border: white 2px solid;
-  background-color: #7bb369;
+  background-image: repeating-linear-gradient(
+    180deg,
+    /* angle of stripes */ #7bb369,
+    /* first green shade */ #7bb369 120px,
+    /*stripe width */ #5a9d4d 120px,
+    /* second green shade starts */ #5a9d4d 240px /* repeat stripe every 80px */
+  );
   margin-left: 5%;
   margin-right: 5%;
   border-radius: 20px;

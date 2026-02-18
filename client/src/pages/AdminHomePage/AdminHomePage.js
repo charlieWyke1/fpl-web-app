@@ -69,32 +69,6 @@ function AdminHomePage() {
     fetchTeam();
   }, [user, setTeam]);
 
-  // fetch ALL the users who are the same club as our admin
-  // useEffect(() => {
-  //   if (!user) return;
-
-  //   const fetchUsers = async () => {
-  //     try {
-  //       const token = await auth.currentUser.getIdToken();
-  //       const res = await fetch(`${getApiBase()}/api/admin/users`, {
-  //         method: "POST",
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ club: user.clubName }),
-  //       });
-
-  //       const data =  res.json;
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.error("Error fidning users : ", error);
-  //     }
-  //   };
-
-  //   fetchUsers();
-  // }, [user]);
-
   // filter players for top points table
   const filterPlayersByPosition = players
     .filter(

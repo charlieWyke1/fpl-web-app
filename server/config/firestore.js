@@ -447,3 +447,41 @@ export async function saveTransfers(userId, gw, team, budget, transfers) {
     throw error;
   }
 }
+
+export async function getAllTeams(allIds) {
+  try {
+    const teamPromises = allIds.map((id) =>
+      db.collection("teams").doc(id).get(),
+    );
+
+    const snapshots = await Promise.all(teamPromises);
+
+    const teams = snapshots.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return teams;
+  } catch (error) {
+    console.error("Error finding teams: ", error);
+    throw error;
+  }
+}
+
+export async function getTeamNames(allIds) {
+  try {
+    const teamNamePromises = allIds.map((id) =>
+      db.collection("users").doc(id).get(),
+    );
+
+    const snapshots = await Promise.all(teamNamePromises);
+    const teamNames = snapshots.map((doc) => ({
+      id: doc.id,
+      teamName: doc.data()?.teamName,
+    }));
+
+    return teamNames;
+  } catch (error) {
+    console.error("Error finding teams: ", error);
+    throw error;
+  }
+}

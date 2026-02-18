@@ -62,47 +62,6 @@ function LoginPage() {
   };
 
   return (
-    // <div className="container-fluid" id="loginBox">
-    //   <form className="loginForm" onSubmit={handleSubmit}>
-    //     <div className="mb-3">
-    //       <label htmlFor="inputEmail" className="form-label" id="emailLabel">
-    //         Email:
-    //       </label>
-    //       <input
-    //         type="email"
-    //         className="form-control"
-    //         id="inputEmail"
-    //         onChange={(e) => setEmail(e.target.value)}
-    //         required
-    //       />
-    //     </div>
-    //     <div className="mb-3">
-    //       <label
-    //         htmlFor="inputPassword"
-    //         className="form-label"
-    //         id="passwordLabel"
-    //       >
-    //         Password:
-    //       </label>
-    //       <input
-    //         type="password"
-    //         className="form-control"
-    //         id="inputPassword"
-    //         onChange={(e) => setPassword(e.target.value)}
-    //         required
-    //       />
-    //     </div>
-
-    //     <button
-    //       type="submit"
-    //       className="btn btn-primary"
-    //       id="loginButton"
-    //       disabled={!email || !password}
-    //     >
-    //       Log In
-    //     </button>
-    //   </form>
-    // </div>
     <div className="loginBox">
       <div className="box" id="left">
         <h5>Welcome to Club Fantsay Football</h5>

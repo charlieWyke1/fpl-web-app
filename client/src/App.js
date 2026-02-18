@@ -19,6 +19,7 @@ import HomePage from "./pages/MainPage/HomePage.js";
 import SelectTeamPage from "./pages/SelectTeamPage/SelectTeamPage.js";
 import TransferTeam from "./pages/TransferPage/TransferTeam.js";
 import PointsHistory from "./pages/PointHistoryPage/PointsHistory.js";
+import LeaguePage from "./pages/LeaguePage/LeaguePage.js";
 
 import ScrollToTop from "./utils/Scroll.js";
 
@@ -57,6 +58,7 @@ function App() {
                           path="/PointsHistory"
                           element={<PointsHistory />}
                         />
+                        <Route path="/Leagues" element={<LeaguePage />} />
                       </Routes>
                     </Router>
                   </AllTeamProvider>

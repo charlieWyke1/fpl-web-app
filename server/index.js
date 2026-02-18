@@ -4,6 +4,7 @@ import adminRoutes from "./routes/admin.js";
 import addPlayerRoutes from "./routes/addPlayers.js";
 import resultsRoutes from "./routes/results.js";
 import teamRoutes from "./routes/team.js";
+import leagueRoutes from "./routes/leagues.js";
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.options(/.*/, cors());
@@ -24,6 +25,6 @@ app.use(adminRoutes);
 app.use(addPlayerRoutes);
 app.use(resultsRoutes);
 app.use(teamRoutes);
+app.use(leagueRoutes);
 
 app.listen(5001, () => console.log("Server running on port 5001"));
-

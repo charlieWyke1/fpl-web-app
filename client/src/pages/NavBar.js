@@ -34,7 +34,7 @@ function NavBar() {
           </Link>
         </button>
         <button>
-          <Link to="#" onClick={() => setMenuOpen(false)}>
+          <Link to="/Leagues" onClick={() => setMenuOpen(false)}>
             Leagues
           </Link>
         </button>
