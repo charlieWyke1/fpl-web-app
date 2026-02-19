@@ -17,6 +17,8 @@ function LeaguePage() {
   const { allUsers } = useAllClub();
 
   const [allUID, setAllUID] = useState([]);
+  const [mergedData, setMergedData] = useState([]);
+  const [leagueData, setLeagueData] = useState([]);
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -34,11 +36,17 @@ function LeaguePage() {
   useEffect(() => {
     // get the ids of all users and populate list
     const allIds = allUsers.map((user) => user.id);
+
+    const managerName = allUsers.map((x) => ({
+      name: x.name,
+      id: x.id,
+    }));
+
     setAllUID(allIds);
-    getAllTeams(allIds);
+    getAllTeams(allIds, managerName);
   }, [allUsers]);
 
-  const getAllTeams = async (ids) => {
+  const getAllTeams = async (ids, managerName) => {
     try {
       const token = await auth.currentUser.getIdToken();
       const res = await fetch(`${getApiBase()}/api/leagues/getALLteams`, {
@@ -65,20 +73,78 @@ function LeaguePage() {
       const teamNames = await res2.json();
 
       if (teams.success && teamNames.success) {
-        joinTeamNames(teams, teamNames);
+        joinTeamNames(teams, teamNames, managerName);
       }
     } catch (error) {
       console.error("Error finding the teams: ", error);
     }
   };
 
-  const joinTeamNames = (teams, teamNames) => {
+  const joinTeamNames = (teams, teamNames, managerName) => {
     const teams2 = teams.allTeams;
     const teamNames2 = teamNames.allTeamNames;
 
     const nameLookUp = Object.fromEntries(teamNames2.map((n) => [n.id, n]));
-    const merged = teams2.map((t) => ({ ...t, ...nameLookUp[t.id] }));
-    //   OKAY nice now stores teamName and team data so we can start counting everything
+    const managerLookUp = Object.fromEntries(managerName.map((x) => [x.id, x]));
+    const merged = teams2.map((team) => ({
+      ...team,
+      ...nameLookUp[team.id],
+      ...managerLookUp[team.id],
+    }));
+
+    setMergedData(merged);
+  };
+
+  useEffect(() => {
+    if (!mergedData || mergedData.length === 0) return;
+
+    let number = parseInt(currentGW.slice(2), 10);
+    if (number === 1) return;
+    number = number - 1;
+    const gwKey = "gw" + number;
+
+    const leagueArr = mergedData.map((team) => {
+      const totalPts = Object.values(team.gameweeks).reduce((acc, gw) => {
+        if (!gw.locked) return acc;
+
+        const gwPoints = gw.team.reduce((sum, player) => {
+          if (player?.isStarting) return sum + (Number(player.gwPoints) || 0);
+          return sum;
+        }, 0);
+
+        const minus = Number(gw.minusPoints) || 0;
+
+        return acc + gwPoints + minus;
+      }, 0);
+
+      const prevGWData = team.gameweeks?.[gwKey];
+      let gwPts = 0;
+      if (prevGWData) {
+        gwPts =
+          prevGWData.team.reduce((sum, player) => {
+            if (player?.isStarting) return sum + (Number(player.gwPoints) || 0);
+            return sum;
+          }, 0) + (Number(prevGWData.minusPoints) || 0);
+      }
+
+      return {
+        teamName: team.teamName,
+        managerName: team.name,
+        totalPts,
+        gwPts,
+      };
+    });
+
+    setLeagueData(leagueArr);
+    test();
+  }, [mergedData]);
+
+  const test = () => {
+    console.log(leagueData);
+
+    // OKAY SWEET
+    // LEAGUEDATA holds everything we need
+    // JUST NEED TO DISPLAY IN A TABLE
   };
 
   return (
