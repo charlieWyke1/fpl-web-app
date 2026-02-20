@@ -127,37 +127,6 @@ function AdminHomePage() {
         </div>
       </div>
 
-      {/* <div className="row2Admin">
-        <div className="statsRow">
-          <div className="statsBox">
-            <h4> {club} </h4>
-          </div>
-
-          <div className="statsBox">
-            <h4> Teams : </h4>
-            <h4> 6 </h4>
-          </div>
-
-          <div className="statsBox">
-            <h4> Players : </h4>
-            <h4> {players.length} </h4>
-          </div>
-
-          <div className="statsBox">
-            <h4> Top Manager : </h4>
-            <h4> Bob Bob - 168pts</h4>
-          </div>
-
-          <div className="statsBox">
-            <h4> Top Points : </h4>
-            <h4>
-              
-              {players[0].name} - {players[0].totalPoints}pts
-            </h4>
-          </div>
-        </div>
-      </div> */}
-
       <div className="row3Admin">
         <div className="leagueTableAdmin">
           <h5>Top Point Scorers</h5>

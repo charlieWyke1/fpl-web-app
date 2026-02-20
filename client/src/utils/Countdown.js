@@ -49,10 +49,7 @@ export default function Countdown({ targetDate, onExpired }) {
         {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m{" "}
         {timeLeft.seconds}s
       </h4>
-      <h5>
-        Untill GameWeek {user?.currentGW} deadline
-        {/* check and add current gw  */}
-      </h5>
+      <h5>Untill GameWeek {user?.currentGW} deadline</h5>
     </div>
   );
 }

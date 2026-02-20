@@ -18,7 +18,9 @@ h4 {
   font-size: 1.3rem !important;
   font-weight: 400 !important;
   text-align: center;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
 
   padding: 0rem 1rem 0rem 1rem;
   margin: 0rem !important;
@@ -60,7 +62,9 @@ h5 {
   color: black;
   text-decoration: none;
   font-weight: 600;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
   font-size: 2rem !important;
   display: inline-block;
   transition: transform 0.5s;
@@ -153,7 +157,9 @@ h5 {
   height: 2.5rem;
   font-size: 1.5rem !important;
   font-weight: 300 !important;
-  font-family: Andale Mono, monospace !important;
+  font-family:
+    Andale Mono,
+    monospace !important;
 }
 .playersTable tbody tr:hover {
   text-decoration: underline;

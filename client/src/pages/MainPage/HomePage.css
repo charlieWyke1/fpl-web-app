@@ -89,7 +89,7 @@
   align-items: center;
   width: 80%;
   margin-left: 10%;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   margin-bottom: 1.5rem;
   gap: 1rem;
 }
@@ -117,8 +117,8 @@
   /* border: black 1px solid; */
 }
 .homePageTag p {
-  /* margin-top: 0rem; */
-  /* margin: 0.3rem 1rem; */
+  margin-top: 0rem !important;
+  margin: 0.3rem 1rem;
   font-weight: 700 !important;
   font-size: 1.2rem !important;
   z-index: 2;

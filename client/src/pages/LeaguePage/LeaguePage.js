@@ -27,12 +27,6 @@ function LeaguePage() {
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
 
-  // get all the users from the same club -- ALREADY DONE WITH ALLUSERS
-
-  // get all the team data from all the users
-  // get team name data from all the users
-  // count up all the points of the teams from the club
-
   useEffect(() => {
     // get the ids of all users and populate list
     const allIds = allUsers.map((user) => user.id);
@@ -41,6 +35,9 @@ function LeaguePage() {
       name: x.name,
       id: x.id,
     }));
+    console.log(allUsers);
+    console.log(allIds);
+    console.log(managerName);
 
     setAllUID(allIds);
     getAllTeams(allIds, managerName);
@@ -74,6 +71,8 @@ function LeaguePage() {
 
       if (teams.success && teamNames.success) {
         joinTeamNames(teams, teamNames, managerName);
+      } else {
+        console.log("uh oh");
       }
     } catch (error) {
       console.error("Error finding the teams: ", error);
@@ -135,21 +134,48 @@ function LeaguePage() {
       };
     });
 
-    setLeagueData(leagueArr);
-    test();
+    const sortedLeague = [...leagueArr].sort((a, b) => b.totalPts - a.totalPts);
+
+    setLeagueData(sortedLeague);
+    // test()
   }, [mergedData]);
 
   const test = () => {
     console.log(leagueData);
-
-    // OKAY SWEET
-    // LEAGUEDATA holds everything we need
-    // JUST NEED TO DISPLAY IN A TABLE
   };
 
   return (
     <div className={themeClass}>
       <NavBar />
+
+      <div className="topRow">
+        <h4>{userClub} League Table</h4>
+      </div>
+
+      <div className="leagueTableDiv">
+        <table className="leagueTable">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team Name</th>
+              <th>Manager</th>
+              <th>GW Points</th>
+              <th>Total Points</th>
+            </tr>
+          </thead>
+          <tbody>
+            {leagueData.map((team, index) => (
+              <tr key={team.id}>
+                <td>{index + 1}</td>
+                <td>{team.teamName}</td>
+                <td>{team.managerName}</td>
+                <td>{team.gwPts}</td>
+                <td>{team.totalPts}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

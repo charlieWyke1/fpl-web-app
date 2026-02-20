@@ -3,14 +3,15 @@ import { useState, useEffect } from "react";
 import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
-import { useClub } from "../../context/ClubContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
+import { useAllClub } from "../../context/AllClubUsersContext.js";
 
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
 import { useHasTeamContextFiller } from "../../hooks/useHasTeamContextFiller.js";
+import { useClubUsers } from "../../hooks/useClubUsers.js";
 
 import { getApiBase } from "../../config/api.js";
 
@@ -23,16 +24,11 @@ import "../../utils/Pitch.css";
 
 import "../../themes/clubThemes.css";
 
-// NEED TO CHECK IF OUR USER IS AN ADMIN HERE
-// AS IF they're not an admin they will have none of the context data
-// need to check and give them
-// - fixtures, allUsers, all players, current user ...
-
-// also if player has akready got their team set up
-// we need to load in all the data as well
-
 function HomePage() {
   const { user } = useUser();
+  useClubUsers(user); // does it automatically
+
+  const { allUsers, setAllUsers } = useAllClub();
   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
   const { allTeam } = useAllTeam();
 
@@ -88,6 +84,7 @@ function HomePage() {
         } else {
           setHasTeam(true);
           setView("points");
+          console.log("hi", allUsers);
         }
       } catch (error) {
         console.error("Error checking team existence:", error);
@@ -308,7 +305,11 @@ function HomePage() {
           </div>
 
           <div className="secondRowInfo">
-            {view === "points" && <h4>Points from GW{user?.currentGW - 1}</h4>}
+            {view === "points" && (
+              <h4>
+                Points from GW{user?.currentGW - 1} - {totalGwPoints}pts
+              </h4>
+            )}
             {view === "team" && (
               <h4>Team for {currentGW.toLocaleUpperCase()} </h4>
             )}
