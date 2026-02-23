@@ -233,7 +233,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
                           {player.gameweeks[selectedGW]?.started ? "Yes" : "No"}
                         </td>
                         <td>
-                          {(player.gameweeks[selectedGW]?.started ? 1 : 0) * 3}{" "}
+                          {(player.gameweeks[selectedGW]?.started ? 1 : 0) * 2}{" "}
                           pts
                         </td>
                       </tr>

@@ -1,5 +1,5 @@
 import { db, FieldValue } from "./firebaseAdmin.js";
-import { doc, collection, updateDoc } from "firebase/firestore";
+import { doc, collection, updateDoc, increment } from "firebase/firestore";
 
 export async function getUserById(userId) {
   try {
@@ -324,6 +324,7 @@ export async function addTeamPoints(users, gw, pointsMap) {
         ...gwData,
         team: updatedTeam,
         locked: true,
+        minusPoints: 0,
       };
 
       await teamRef.set(
@@ -353,7 +354,7 @@ export async function updateAllGW(users, gwPlus) {
       const userRef = db.collection("users").doc(user.id);
 
       await userRef.set(
-        { currentGW: gwPlus, transfers: increment(1) },
+        { currentGW: gwPlus, transfers: FieldValue.increment(1) },
         { merge: true },
       );
     });

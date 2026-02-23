@@ -306,9 +306,14 @@ function HomePage() {
 
           <div className="secondRowInfo">
             {view === "points" && (
-              <h4>
-                Points from GW{user?.currentGW - 1} - {totalGwPoints}pts
-              </h4>
+              <>
+                <h4>
+                  Points from GW{user?.currentGW - 1} - {totalGwPoints}pts |
+                </h4>
+                {minusPts !== 0 && (
+                  <h4 id="minusDisplay">({minusPts}) transfer minus points</h4>
+                )}
+              </>
             )}
             {view === "team" && (
               <h4>Team for {currentGW.toLocaleUpperCase()} </h4>

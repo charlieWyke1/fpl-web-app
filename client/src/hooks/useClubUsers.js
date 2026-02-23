@@ -34,12 +34,10 @@ export const useClubUsers = (user) => {
         const filteredData = data.filter(
           (u) => u.club?.toLowerCase() === adminClub.toLowerCase(),
         );
-
-        setAllUsers(filteredData);
-
         // sort by score descending
-        const sortData = filteredData.sort((a, b) => b.score - a.score);
+        const sortedData = [...filteredData].sort((a, b) => b.score - a.score);
 
+        setAllUsers(sortedData);
         setClub(adminClub);
       } catch (error) {
         console.error("Error fetching users:", error);

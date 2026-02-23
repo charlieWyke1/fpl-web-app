@@ -332,7 +332,7 @@ function ResultsPage() {
             );
             const data2 = await res2.json();
             if (data2.success) {
-              alert("Player points and Fixtures updated successfully!");
+              // alert("Player points and Fixtures updated successfully!");
               handleNextTeam();
             }
           } catch (error) {
@@ -426,7 +426,7 @@ function ResultsPage() {
             );
             const data4 = await res4.json();
             if (data4) {
-              alert("GW updated and Team Points updated !");
+              // alert("GW updated and Team Points updated !");
               console.log("All teams Done");
 
               setUser((prevUser) => ({

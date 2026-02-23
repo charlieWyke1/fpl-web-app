@@ -39,6 +39,9 @@
     monospace !important;
   padding-top: 0.3rem;
 }
+#minusDisplay {
+  color: red !important;
+}
 
 .teamChoice {
   display: flex;
