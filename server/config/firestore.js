@@ -324,7 +324,6 @@ export async function addTeamPoints(users, gw, pointsMap) {
         ...gwData,
         team: updatedTeam,
         locked: true,
-        minusPoints: 0,
       };
 
       await teamRef.set(
@@ -334,6 +333,7 @@ export async function addTeamPoints(users, gw, pointsMap) {
             [nextGwKey]: {
               locked: false,
               team: nextGwTeam,
+              minusPoints: 0,
             },
           },
         },

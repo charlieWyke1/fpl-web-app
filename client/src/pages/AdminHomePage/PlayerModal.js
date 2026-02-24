@@ -323,7 +323,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
                 <tr>
                   <td>Starts:</td>
                   <td>{totalStarts}</td>
-                  <td>{totalStarts * 3} pts</td>
+                  <td>{totalStarts * 2} pts</td>
                 </tr>
                 {player.position === "GK" && (
                   <tr>

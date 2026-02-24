@@ -254,6 +254,7 @@ function ResultsPage() {
         const data = await res.json();
         if (true) {
           const countOccurrences = (arr, playerId) => {
+            if (!Array.isArray(arr)) return 0; // return 0 if arr is not an array
             return arr.filter((item) => item.playerId === playerId).length;
           };
 

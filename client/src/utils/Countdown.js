@@ -40,7 +40,7 @@ export default function Countdown({ targetDate, onExpired }) {
   }, [targetDate, onExpired]);
 
   if (!timeLeft) {
-    return <span>Cut-off passed!</span>;
+    return <h4>Cut-off passed!</h4>;
   }
 
   return (

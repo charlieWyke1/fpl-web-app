@@ -4,12 +4,15 @@ import { auth } from "../../config/firebase.js";
 // context
 import { useUser } from "../../context/UserContext.js";
 import { useTeam } from "../../context/TeamContext.js";
+import { useAllTeam } from "../../context/AllTeamsContext.js";
+
 import { useAllClub } from "../../context/AllClubUsersContext.js";
 
 // hooks
 import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
 import { useClubUsers } from "../../hooks/useClubUsers.js";
+import { useHasTeamContextFiller } from "../../hooks/useHasTeamContextFiller.js";
 
 import { Link } from "react-router-dom";
 
@@ -25,13 +28,14 @@ import NavBar from "../NavBar.js";
 
 function AdminHomePage() {
   const { user } = useUser();
-  const { allUsers } = useAllClub();
   const userClub = user?.club;
 
   const { team, setTeam } = useTeam();
+  const { allTeam } = useAllTeam();
+  const { allUsers } = useAllClub();
 
   const { loadingFixtures } = useFixtures(user);
-  const { players, loadingPlayers } = usePlayers(user);
+  const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
   const { club, loadingUsers } = useClubUsers(user); // does it automatically
 
   const [isLeagueTableModalOpen, setIsLeagueTableModalOpen] = useState(false);
@@ -39,8 +43,10 @@ function AdminHomePage() {
 
   const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-
+  const [hasTeam, setHasTeam] = useState(false);
   const [filterPlayers, setFilterPlayers] = useState("all");
+
+  useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
 
   // fetch how many teams our admin's club has
   useEffect(() => {

@@ -138,19 +138,26 @@ function HomePage() {
 
     if (view === "points") {
       const pointsAndDataTeam = matchPlayerData(pointsTeam);
-      setDataTeamStateSend(pointsAndDataTeam);
+      // setDataTeamStateSend(pointsAndDataTeam);
       const gwTemp = pointsAndDataTeam.reduce((total, player) => {
         if (!player?.isStarting) return total;
 
         return total + (Number(player.gwPoints) || 0);
       }, 0);
 
-      if (currentGW === 1) {
+      console.log(`gw${user?.currentGW}`);
+      console.log(`gw${user?.currentGW + 1}`);
+      console.log(`gw${user?.currentGW - 1}`);
+
+      if (user?.currentGW === 1) {
+        console.log("test");
         setMinusPts(allTeam?.[`gw${user?.currentGW}`].minusPoints);
       } else {
+        console.log("test v2");
         setMinusPts(allTeam?.[`gw${user?.currentGW - 1}`].minusPoints);
       }
       setTotalGwPoints(gwTemp + minusPts);
+      // setTotalGwPoints(gwTemp);
 
       const totalSeasonPoints = Object.values(allTeam)
         .filter((gw) => gw.locked)
@@ -191,7 +198,7 @@ function HomePage() {
     }
     if (view === "team") {
       const nextAndDataTeam = matchPlayerData(nextTeam);
-      setNextTeamStateSend(nextAndDataTeam);
+      // setNextTeamStateSend(nextAndDataTeam);
       // set team for upcoming gw
       setStartingGk(
         nextAndDataTeam.filter(
@@ -308,10 +315,12 @@ function HomePage() {
             {view === "points" && (
               <>
                 <h4>
-                  Points from GW{user?.currentGW - 1} - {totalGwPoints}pts |
+                  Points from GW{user?.currentGW - 1} - {totalGwPoints}pts
                 </h4>
                 {minusPts !== 0 && (
-                  <h4 id="minusDisplay">({minusPts}) transfer minus points</h4>
+                  <h4 id="minusDisplay">
+                    | ( {minusPts}) transfer minus points
+                  </h4>
                 )}
               </>
             )}
