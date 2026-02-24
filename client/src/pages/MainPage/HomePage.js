@@ -4,7 +4,7 @@ import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
-import { useAllClub } from "../../context/AllClubUsersContext.js";
+// import { useAllClub } from "../../context/AllClubUsersContext.js";
 
 import { useNavigate } from "react-router-dom";
 
@@ -28,7 +28,7 @@ function HomePage() {
   const { user } = useUser();
   useClubUsers(user); // does it automatically
 
-  const { allUsers, setAllUsers } = useAllClub();
+  // const { allUsers, setAllUsers } = useAllClub();
   const { players, loadingPlayers, refetchPlayers } = usePlayers(user);
   const { allTeam } = useAllTeam();
 
@@ -42,9 +42,6 @@ function HomePage() {
   const [view, setView] = useState("points");
   const [totalGwPoints, setTotalGwPoints] = useState(0);
   const [totalSeasonPoints, setTotalSeasonPoints] = useState(0);
-
-  const [nextTeamStateSend, setNextTeamStateSend] = useState([]);
-  const [dataTeamStateSend, setDataTeamStateSend] = useState([]);
 
   const [startingGk, setStartingGk] = useState([]);
   const [startingDef, setStartingDef] = useState([]);

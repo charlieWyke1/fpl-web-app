@@ -41,9 +41,13 @@ function NavBar() {
               </Link>
             </button>
             <button>
-              {/* KEEP IT AS FIRST TEAM FOR NOW SO I DONT HAVE TO MAKE A NEW TEAM EVERY TIME BUT WHEN DONW SWITCH TO TEAM */}
-              <Link to="#" onClick={() => setMenuOpen(false)}>
+              <Link to="/Matches" onClick={() => setMenuOpen(false)}>
                 Matches
+              </Link>
+            </button>
+            <button>
+              <Link to="#" onClick={() => setMenuOpen(false)}>
+                Player Stats
               </Link>
             </button>
           </>
