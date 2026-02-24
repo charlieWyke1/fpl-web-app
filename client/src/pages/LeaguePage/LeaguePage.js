@@ -35,9 +35,6 @@ function LeaguePage() {
       name: x.name,
       id: x.id,
     }));
-    console.log(allUsers);
-    console.log(allIds);
-    console.log(managerName);
 
     setAllUID(allIds);
     getAllTeams(allIds, managerName);
@@ -102,7 +99,9 @@ function LeaguePage() {
     number = number - 1;
     const gwKey = "gw" + number;
 
-    const leagueArr = mergedData.map((team) => {
+    const filteredData = mergedData.filter((user) => user.name);
+
+    const leagueArr = filteredData.map((team) => {
       const totalPts = Object.values(team.gameweeks).reduce((acc, gw) => {
         if (!gw.locked) return acc;
 

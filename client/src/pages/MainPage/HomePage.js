@@ -84,7 +84,6 @@ function HomePage() {
         } else {
           setHasTeam(true);
           setView("points");
-          console.log("hi", allUsers);
         }
       } catch (error) {
         console.error("Error checking team existence:", error);
@@ -145,15 +144,9 @@ function HomePage() {
         return total + (Number(player.gwPoints) || 0);
       }, 0);
 
-      console.log(`gw${user?.currentGW}`);
-      console.log(`gw${user?.currentGW + 1}`);
-      console.log(`gw${user?.currentGW - 1}`);
-
       if (user?.currentGW === 1) {
-        console.log("test");
         setMinusPts(allTeam?.[`gw${user?.currentGW}`].minusPoints);
       } else {
-        console.log("test v2");
         setMinusPts(allTeam?.[`gw${user?.currentGW - 1}`].minusPoints);
       }
       setTotalGwPoints(gwTemp + minusPts);
