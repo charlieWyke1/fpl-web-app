@@ -237,16 +237,20 @@ export default function PlayerModal({ isOpen, onClose, player }) {
                           pts
                         </td>
                       </tr>
-                      <tr>
-                        <td>Came On:</td>
-                        <td>
-                          {player.gameweeks[selectedGW]?.cameOn ? "Yes" : "No"}
-                        </td>
-                        <td>
-                          {(player.gameweeks[selectedGW]?.cameOn ? 1 : 0) * 1}{" "}
-                          pts
-                        </td>
-                      </tr>
+                      {!player.gameweeks[selectedGW]?.started && (
+                        <tr>
+                          <td>Came On:</td>
+                          <td>
+                            {player.gameweeks[selectedGW]?.cameOn
+                              ? "Yes"
+                              : "No"}
+                          </td>
+                          <td>
+                            {(player.gameweeks[selectedGW]?.cameOn ? 1 : 0) * 1}{" "}
+                            pts
+                          </td>
+                        </tr>
+                      )}
 
                       {player.position === "GK" && (
                         <tr>
@@ -332,6 +336,11 @@ export default function PlayerModal({ isOpen, onClose, player }) {
                     <td>{totalPenSaves * 7} pts</td>
                   </tr>
                 )}
+                <tr style={{ fontWeight: "bold" }}>
+                  <td>Total:</td>
+                  <td></td>
+                  <td>{player.totalPoints || 0} pts</td>
+                </tr>
               </tbody>
             </table>
           </div>

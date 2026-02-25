@@ -50,7 +50,6 @@ h5 {
 .buttonRows button {
   flex: 1;
   padding: 1rem 2rem;
-  font-size: 2rem !important;
   font-weight: 500;
   border: none;
   background-color: white;
@@ -65,7 +64,7 @@ h5 {
   font-family:
     Andale Mono,
     monospace !important;
-  font-size: 2rem !important;
+  font-size: clamp(1.8rem, 2.5vw, 4rem) !important;
   display: inline-block;
   transition: transform 0.5s;
   cursor: pointer;
@@ -86,29 +85,12 @@ h5 {
 }
 
 .statsBox {
-  flex: 1 1 18%;
-  min-width: 200px;
-  /* border-top: lightgray 2px solid; */
-  /* border-left: black 1px solid; */
-  /* border-right: black 1px solid; */
-  /* border: black 1px solid; */
-  background-color: white;
   padding: 1rem;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
-
-.statsBox h4 {
-  font-size: 1.7rem !important;
-}
-/* .statsBox:first-child {
-  border-left: black 1px solid;
-}
-.statsBox:last-child {
-  border-right: black 1px solid;
-} */
 
 .leagueTableAdmin {
   width: 90%;
@@ -147,7 +129,7 @@ h5 {
   width: 25%;
   padding: 16px 12px;
   border-bottom: 2px solid #e0e0e0;
-  font-size: 2rem !important;
+  font-size: clamp(1.5rem, 2.2vw, 4rem) !important;
   text-align: center;
   font-weight: 600;
   border-top: none;
@@ -155,7 +137,7 @@ h5 {
 .playersTable tbody tr {
   border-bottom: 2px solid #e0e0e0;
   height: 2.5rem;
-  font-size: 1.5rem !important;
+  font-size: clamp(1.2rem, 1.8vw, 4rem) !important;
   font-weight: 300 !important;
   font-family:
     Andale Mono,
