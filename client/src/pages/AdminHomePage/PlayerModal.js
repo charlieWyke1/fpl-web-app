@@ -277,8 +277,9 @@ export default function PlayerModal({ isOpen, onClose, player }) {
             </div>
           </div>
 
+          {/* SEASON SIDE */}
           <div className="modalCol">
-            <h4 id="temp">Season Stats</h4>
+            <h3>Season Stats</h3>
             <table className="playerModalTotalTable">
               <tbody>
                 <tr>

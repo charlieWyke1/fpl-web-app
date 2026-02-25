@@ -12,7 +12,7 @@
   margin-right: 5%;
   border-radius: 20px;
   padding: 1rem;
-  min-height: 60vh;
+  min-height: 80vh;
 }
 .selectedTeamContainer::before {
   content: "";

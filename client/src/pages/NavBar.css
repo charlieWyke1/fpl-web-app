@@ -24,7 +24,7 @@
   text-decoration: none;
   font-weight: 400;
   font-family: "Andale Mono", monospace !important;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 2.2vw, 3rem) !important;
   display: inline-block;
   transition: transform 0.5s;
   cursor: pointer;
@@ -38,7 +38,7 @@
 /* Hamburger icon hidden by default */
 .hamburger {
   display: none;
-  font-size: 2rem;
+  font-size: clamp(1rem, 2.2vw, 3rem) !important;
   color: white;
   cursor: pointer;
 }

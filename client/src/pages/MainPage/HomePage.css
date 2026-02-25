@@ -18,7 +18,7 @@
 }
 .teamName h4 {
   margin: 0;
-  font-size: 2rem !important;
+  font-size: clamp(2rem, 2.8vw, 4rem) !important;
 }
 .ptsShow {
   flex: 1;
@@ -28,10 +28,10 @@
 }
 .totalPoints h4 {
   font-weight: 600 !important;
-  font-size: 2.5rem !important;
+  font-size: clamp(2rem, 2.8vw, 4rem) !important;
 }
 .gwPoints h5 {
-  font-size: 1.6rem !important;
+  font-size: clamp(1.5rem, 2vw, 4rem) !important;
   font-weight: 300 !important;
   text-align: center;
   font-family:
@@ -54,7 +54,7 @@
   flex: 1;
   padding: 1rem 2rem;
   padding-bottom: 0rem;
-  font-size: 2rem !important;
+  /* font-size: 2rem !important; */
   font-weight: 500;
   border: none;
   background-color: transparent;
@@ -63,7 +63,7 @@
   transition: transform 0.5s;
 }
 .teamChoice h4 {
-  font-size: 2rem !important;
+  font-size: clamp(1.8rem, 2.5vw, 4rem) !important;
   font-family:
     Andale Mono,
     monospace !important;
@@ -83,7 +83,7 @@
 }
 .secondRowInfo h4 {
   font-weight: 600 !important;
-  font-size: 2rem !important;
+  font-size: clamp(1.5rem, 2.5vw, 4rem) !important;
 }
 
 .shirtRow {
@@ -91,8 +91,9 @@
   justify-content: center;
   align-items: center;
   width: 80%;
+  /* min-height: 20% !important; */
   margin-left: 10%;
-  margin-top: 1rem;
+  /* margin-top: 1rem !important; */
   margin-bottom: 1.5rem;
   gap: 1rem;
 }
@@ -101,13 +102,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* border: black 1px solid; */
   width: 100%;
   height: 20vh;
+  padding: 0rem !important;
   z-index: 2;
+  /* border: black 1px solid; */
 }
 .shirtButton {
   z-index: 2;
+  margin-bottom: 0% !important;
+  padding-bottom: 0rem !important;
+  /* border: black 1px solid; */
 }
 .homePageTag {
   display: flex;
@@ -120,10 +125,10 @@
   /* border: black 1px solid; */
 }
 .homePageTag p {
-  margin-top: 0rem !important;
-  margin: 0.3rem 1rem;
+  margin-top: -0.5rem !important;
+  /* margin: 0.3rem 1rem; */
   font-weight: 700 !important;
-  font-size: 1.2rem !important;
+  font-size: clamp(0.8rem, 1.8vw, 2.2rem) !important;
   z-index: 2;
 }
 
@@ -148,7 +153,7 @@
   flex: 1;
   padding: 1rem 2rem;
   padding-bottom: 0rem;
-  font-size: 2rem !important;
+  /* font-size: 2rem !important; */
   font-weight: 500;
   border: none;
   background-color: transparent;
@@ -160,7 +165,7 @@
   transform: scale(1.1);
 }
 .homePageOpts h4 {
-  font-size: 2rem !important;
+  font-size: clamp(1.5rem, 2vw, 4rem) !important;
   font-weight: 500 !important;
   margin-bottom: 3rem !important;
   color: black !important;
@@ -190,16 +195,6 @@
     justify-content: center;
     align-items: center;
     margin: 0rem;
-  }
-
-  .teamName h4 {
-    font-size: 1.8rem !important;
-  }
-  .totalPoints h4 {
-    font-size: 1.8rem !important;
-  }
-  .gwPoints h5 {
-    font-size: 1.5rem !important;
   }
 
   .teamChoice button:hover {

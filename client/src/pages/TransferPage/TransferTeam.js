@@ -173,7 +173,7 @@ function CreateTeamPage() {
 
       <div className="topRowSelect">
         <h4>{user?.teamName}</h4>
-        <h4>Make Transfers for {currentGW.toLocaleUpperCase()}</h4>
+        <h4>Transfers for {currentGW.toLocaleUpperCase()}</h4>
       </div>
 
       <Countdown targetDate={cutOffDate} onExpired={setDeadlinePassed} />

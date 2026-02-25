@@ -1,21 +1,25 @@
 h1 {
   text-align: center;
-  font-size: 2.5rem !important;
+  font-size: clamp(1.8rem, 2.5vw, 4rem) !important;
+
   font-weight: 500 !important;
 }
 h2 {
-  font-size: 1.7rem !important;
+  font-size: clamp(1.5rem, 2.2vw, 4rem) !important;
   font-weight: 500 !important;
   padding: 1rem;
   margin-left: 1rem;
 }
 h3 {
-  font-size: 1.5rem !important;
+  font-size: clamp(1.2rem, 2vw, 4rem) !important;
   font-weight: 400 !important;
   text-align: center;
+  font-family:
+    Andale Mono,
+    monospace !important;
 }
 h4 {
-  font-size: 1.3rem !important;
+  font-size: clamp(1rem, 1.9vw, 4rem) !important;
   font-weight: 400 !important;
   text-align: center;
   font-family:
@@ -26,7 +30,7 @@ h4 {
   margin: 0rem !important;
 }
 h5 {
-  font-size: 1.3rem !important;
+  font-size: clamp(0.8rem, 1.7vw, 4rem) !important;
   font-weight: 400 !important;
   margin: 0rem !important;
 }
@@ -102,7 +106,7 @@ h5 {
   border-top: lightgray 2px solid;
 }
 .positionFilter {
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 2vw, 4rem) !important;
   border-radius: 8px;
   width: 50%;
   box-sizing: border-box;

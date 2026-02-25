@@ -1,3 +1,7 @@
+.topRow h4 {
+  font-size: clamp(1.75rem, 2.5vw, 4rem) !important;
+}
+
 .leagueTable {
   flex: 1;
   width: 100%;

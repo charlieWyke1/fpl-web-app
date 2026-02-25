@@ -8,14 +8,14 @@
 }
 
 .countDown h4 {
-  font-size: 3rem !important;
+  font-size: clamp(2.5rem, 3vw, 4rem) !important;
   font-weight: 600 !important;
   margin: 0;
   padding: 0;
   text-align: center;
 }
 .countDown h5 {
-  font-size: 1.5rem !important;
+  font-size: clamp(1.4rem, 2.3vw, 3rem) !important;
   font-weight: 400 !important;
   margin: 0;
   margin-top: 0.5rem !important;

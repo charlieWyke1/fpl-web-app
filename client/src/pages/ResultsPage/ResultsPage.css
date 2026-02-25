@@ -6,8 +6,10 @@
 }
 .infoRow h4 {
   margin-bottom: 1rem !important;
-  font-size: 1.7rem !important;
+  font-size: clamp(1.5rem, 2.2vw, 4rem) !important;
   font-weight: 600 !important;
+  padding: 1rem;
+  padding-bottom: 0rem;
 }
 .checkBoxLine {
   justify-content: center;
@@ -17,12 +19,11 @@
   gap: 0.5rem;
 }
 .checkBoxLine h4 {
-  font-size: 1.5rem !important;
+  font-size: clamp(1.3rem, 1.8vw, 4rem) !important;
   font-weight: 500 !important;
 }
 .checkBoxLine label {
-  margin-top: -1.2rem !important;
-  font-size: 1.5rem;
+  font-size: clamp(1.3rem, 1.8vw, 4rem) !important;
   font-weight: 500;
   font-family:
     Andale Mono,
@@ -52,7 +53,7 @@
   margin-left: 5%;
 }
 .teamsheetForm label {
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 2vw, 4rem) !important;
   font-weight: 600;
   padding-top: 1rem;
   font-family:
@@ -84,7 +85,7 @@
   margin-right: 10%;
 }
 .statsRow h4 {
-  font-size: 1.7rem !important;
+  font-size: clamp(1.5rem, 2.2vw, 4rem) !important;
   font-weight: 600 !important;
 }
 
@@ -99,7 +100,7 @@
 }
 #goalsRow label {
   width: auto;
-  font-size: 1.5rem;
+  font-size: clamp(1.4rem, 2.3vw, 4rem) !important;
   font-family:
     Andale Mono,
     monospace !important;
@@ -107,11 +108,11 @@
 }
 #goalsRow input {
   width: 3rem;
-  font-size: 1rem;
+  font-size: clamp(1rem, 1.3vw, 4rem) !important;
 }
 
 .matchDetailsForm label {
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 2vw, 4rem) !important;
   font-weight: 500;
   padding-top: 1rem;
   padding-bottom: 0.2rem;
@@ -130,7 +131,7 @@
   border: none;
   border-radius: 10px;
   color: white;
-  font-size: 1.5rem;
+  font-size: clamp(1.4rem, 2.3vw, 4rem) !important;
   font-weight: 700;
   font-family:
     Andale Mono,

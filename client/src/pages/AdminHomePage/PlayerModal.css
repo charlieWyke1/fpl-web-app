@@ -10,18 +10,20 @@
 .modalContainerPlayer {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 80%;
+  height: 60%;
   background: white;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  max-height: 80vh;
+  /* max-height: 80vh; */
   overflow-y: auto;
 }
 .modalHeaderPlayer {
   width: 100%;
   background-color: #0096c7;
   color: white;
+  position: sticky;
+  top: 0;
 }
 .modalHeaderRow {
   display: flex;
@@ -40,14 +42,14 @@
 }
 .modalHeaderPlayer h2 {
   text-align: center;
-  font-size: 2rem !important;
+  font-size: clamp(1.8rem, 2.5vw, 4rem) !important;
   font-weight: 500 !important;
   padding-bottom: 0rem;
 }
 .modalHeaderRow h3 {
   flex: 1;
   text-align: center !important;
-  font-size: 1.5rem !important;
+  font-size: clamp(1.5rem, 2.2vw, 4rem) !important;
   font-weight: 300 !important;
 }
 .modalBodyPlayer .modalCol {
@@ -69,8 +71,8 @@
 .gwStatsTable td {
   padding: 0.25rem 0.5rem;
   border-bottom: 1px solid #ddd;
-  font-size: 1vw !important;
   width: 33%;
+  font-size: clamp(0.9rem, 1vw, 4rem) !important;
 }
 
 .modalRow {
@@ -80,7 +82,7 @@
 }
 .gameweekFilter,
 #temp {
-  font-size: 1.5vw !important;
+  font-size: clamp(1.3rem, 2vw, 4rem) !important;
   font-weight: 400 !important;
   text-align: center;
   padding: 0rem 1rem 1rem 1rem;

@@ -135,7 +135,7 @@ function AdminHomePage() {
 
       <div className="row3Admin">
         <div className="leagueTableAdmin">
-          <h5>Top Point Scorers</h5>
+          <h3>Top Point Scorers</h3>
           <select
             className="positionFilter"
             value={filterPlayers}

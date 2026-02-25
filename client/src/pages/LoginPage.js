@@ -63,13 +63,6 @@ function LoginPage() {
 
   return (
     <div className="loginBox">
-      {/* <div className="box" id="left">
-        <h5>Welcome to Club Fantsay Football</h5>
-        <h5>
-          Play the popular game but this time with the club and players you play
-          with every week!
-        </h5>
-      </div> */}
       <div className="box" id="right">
         <form className="loginForm" onSubmit={handleSubmit}>
           <label htmlFor="inputEmail" className="form-label" id="emailLabel">

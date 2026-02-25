@@ -8,9 +8,8 @@
     monospace !important;
 }
 .transferTag p {
-  /* margin: 0.3rem 1rem; */
   font-weight: 600 !important;
-  font-size: 1rem !important;
+  font-size: clamp(0.8rem, 1.8vw, 2.2rem) !important;
   z-index: 2;
 }
 
@@ -21,10 +20,12 @@
   gap: 2rem;
   margin-bottom: 2rem !important;
 }
-
+.topRowSelect h4 {
+  font-size: clamp(1.5rem, 2.5vw, 2.25em) !important;
+  font-weight: 500 !important;
+}
 .budget {
   color: black;
-  font-weight: 500 !important;
 }
 .budget.negative {
   color: red;
@@ -32,7 +33,6 @@
 }
 .transfer {
   color: black;
-  font-weight: 500 !important;
 }
 .transfer.negative {
   color: red;
@@ -49,11 +49,11 @@
   transform: scale(1.15);
 }
 
-.minusTransferWarning{
+.minusTransferWarning {
   margin-top: 2rem;
 }
-.minusTransferWarning h4{
-  font-size: 2rem !important;
+.minusTransferWarning h4 {
+  font-size: clamp(2rem, 2.8vw, 4rem) !important;
   font-weight: 700 !important;
   color: red;
 }
@@ -74,7 +74,6 @@
   border: none;
   border-radius: 10px;
   color: white;
-  font-size: 1.5rem;
   font-weight: 700;
   font-family:
     Andale Mono,
@@ -82,31 +81,39 @@
   transition: transform 0.5s;
 }
 .saveRow h4 {
-  font-size: 1.7rem !important;
+  font-size: clamp(1rem, 2vw, 2.2rem) !important;
   font-weight: 500 !important;
 }
 .saveRow button:hover {
   transform: scale(1.1);
   cursor: pointer;
 }
-.saveRow button:disabled{
+.saveRow button:disabled {
   background-color: grey;
   cursor: not-allowed;
 }
-
-
+.gkRow,
+.defRow,
+.midRow,
+.fwdRow {
+  height: 100%;
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem !important;
+}
+.shirtRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  margin-left: 10%;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
 @media (max-width: 768px) {
   .topRowSelect {
     flex-direction: column;
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
-  .saveRow h4 {
-    font-size: 1.3rem !important;
-  }
-  .minusTransferWarning h4{
-  font-size: 1.5rem !important;
-  font-weight: 700 !important;
-  color: red;
-}
 }

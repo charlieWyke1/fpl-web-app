@@ -3,12 +3,12 @@
   flex-direction: row;
   width: 100%;
   margin-bottom: 2rem;
-  gap: 10rem;
+  /* gap: 10rem; */
   justify-content: center;
   align-items: center;
 }
 .topRowSelect h4 {
-  font-size: 2rem !important;
+  font-size: clamp(2rem, 2.8vw, 4rem) !important;
   font-weight: 500 !important;
   margin-top: 2rem !important;
   margin-bottom: 0rem !important;
@@ -18,7 +18,10 @@
   margin-top: 1.5rem !important;
 }
 .nameTagSub {
-  font-size: 1.3rem !important;
+  font-size: clamp(1rem, 2vw, 2.2rem) !important;
+}
+.nameTag {
+  font-size: clamp(1.2rem, 2.2vw, 2.2rem) !important;
 }
 .shirtRow {
   display: flex;
