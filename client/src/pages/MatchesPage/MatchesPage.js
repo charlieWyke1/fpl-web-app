@@ -10,6 +10,8 @@ import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
 
 import NavBar from "../NavBar.js";
+
+import "./MatchesPage.css";
 import "../../themes/clubThemes.css";
 
 function MatchesPage() {
@@ -102,17 +104,36 @@ function MatchesPage() {
       {/* JUST GOT CSS TO DO */}
       {gwFixtureList.map((fixture) => (
         <div key={fixture.id} className="fixtureCard">
-          <h3>{fixture.kickOff}</h3>
+          <div className="kickOffDate">
+            <h3>{fixture.kickOff}</h3>
+          </div>
 
-          <p>
-            {fixture.homeTeam} ({fixture.homeSquad}) vs {fixture.awayTeam} (
-            {fixture.awaySquad})
-          </p>
-
+          {/* if game played */}
           {fixture.status && (
-            <p>
-              {fixture.homeScore} - {fixture.awayScore}
-            </p>
+            <>
+              <div className="results">
+                <h4>
+                  {fixture.homeTeam} ({fixture.homeSquad}s){" "}
+                  <b>
+                    {fixture.homeScore} - {fixture.awayScore}
+                  </b>{" "}
+                  {fixture.awayTeam} ({fixture.awaySquad}
+                  s)
+                </h4>
+              </div>
+            </>
+          )}
+
+          {!fixture.status && (
+            <>
+              <div className="notPlayed">
+                <h4>
+                  {fixture.homeTeam} ({fixture.homeSquad}s) vs{" "}
+                  {fixture.awayTeam} ({fixture.awaySquad}
+                  s)
+                </h4>
+              </div>
+            </>
           )}
         </div>
       ))}
