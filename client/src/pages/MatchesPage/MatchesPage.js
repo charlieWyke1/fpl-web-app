@@ -29,6 +29,7 @@ function MatchesPage() {
   const [gwTeam, setGwTeam] = useState({});
   const [teamModalOpen, setTeamModalOpen] = useState(false);
   const [selectedSquad, setSelectedSquad] = useState(null);
+  const [gameData, setGameData] = useState();
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -135,7 +136,8 @@ function MatchesPage() {
       setSelectedSquad(fixture.awaySquad);
     }
     setTeamModalOpen(true);
-    console.log(changeGwFixtures);
+    setGameData(fixture);
+    console.log(fixture);
   };
 
   const closeTeamModal = () => {
@@ -261,6 +263,7 @@ function MatchesPage() {
           squad={selectedSquad}
           fixtureDetails={gwTeam[selectedSquad]}
           fixtureGw={changeGwFixtures}
+          game={gameData}
           onClose={closeTeamModal}
         />
       )}

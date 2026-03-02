@@ -1,0 +1,55 @@
+.modalOverlayTeam {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+.modalContainerTeam {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 80% !important;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  /* max-height: 80vh; */
+  overflow-y: auto;
+}
+.modalTeamHeader {
+  width: 100%;
+  background-color: white;
+  color: black;
+  position: sticky;
+  /* top: 1rem; */
+}
+.modalTeamHeader button {
+  background: none;
+  border: none;
+  color: red;
+  font-size: clamp(0.9rem, 1.5vw, 4rem) !important;
+  font-weight: 600;
+  padding: 0.5rem;
+  cursor: pointer;
+  position: absolute;
+  right: 0.5rem;
+}
+.modalTeamHeader h4 {
+  text-align: center;
+  font-size: clamp(1.3rem, 1.8vw, 4rem) !important;
+  font-weight: 500 !important;
+  padding-bottom: 0rem;
+  padding-top: 1rem;
+}
+
+.modalBodyTeam {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  background-color: white;
+  text-align: left;
+}
