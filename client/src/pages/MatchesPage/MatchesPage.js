@@ -5,6 +5,7 @@ import { auth } from "../../config/firebase.js";
 import { useUser } from "../../context/UserContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
 import { useFixture } from "../../context/FixtureContext.js";
+import { useClub } from "../../context/ClubContext.js";
 
 import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
@@ -17,15 +18,19 @@ import "../../themes/clubThemes.css";
 function MatchesPage() {
   const { user } = useUser();
   const { fixtures } = useFixture();
+  const { players } = usePlayers();
+  const { clubData } = useClub();
 
   const [changeGwFixtures, setChangeGwFixtures] = useState(
     `gw${user?.currentGW}`,
   );
 
   const [gwFixtureList, setGwFixtureList] = useState([]);
+  const [gwTeam, setGwTeam] = useState({});
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
+  const numbTeams = clubData.numbTeams;
 
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
@@ -41,10 +46,8 @@ function MatchesPage() {
       return;
     } else {
       setChangeGwFixtures("gw" + (number + 1));
-      const next = "gw" + (number + 1);
     }
     setChangeGwFixtures("gw" + (number + 1));
-    const next = "gw" + (number + 1);
   };
 
   const prevGwFixtures = () => {
@@ -54,7 +57,6 @@ function MatchesPage() {
       return;
     }
     setChangeGwFixtures("gw" + (number - 1));
-    const prev = "gw" + (number - 1);
   };
 
   useEffect(() => {
@@ -86,7 +88,48 @@ function MatchesPage() {
     );
 
     setGwFixtureList(formattedFixtures);
+
+    const number = parseInt(changeGwFixtures.slice(2), 10);
+    const teams = Object.values(players).reduce((acc, player) => {
+      const teamNumber = player.team;
+      const scored = player.gameweeks?.[number]?.goals ?? 0;
+      const assist = player.gameweeks?.[number]?.assists ?? 0;
+      const started = player.gameweeks?.[number]?.started ?? 0;
+
+      if (!acc[teamNumber]) {
+        acc[teamNumber] = {
+          gwTeam: [],
+          gwScorers: [],
+          gwAssists: [],
+        };
+      }
+
+      if (started) {
+        acc[teamNumber].gwTeam.push(player);
+      }
+
+      if (scored > 0) {
+        acc[teamNumber].gwScorers.push({
+          player,
+          goals: scored,
+        });
+      }
+
+      if (assist > 0) {
+        acc[teamNumber].gwAssists.push({
+          player,
+          assists: assist,
+        });
+      }
+      return acc;
+    }, {});
+
+    setGwTeam(teams);
   }, [changeGwFixtures, fixtures]);
+
+  // console.log(players);
+  // console.log(clubData.numbTeams);
+  // console.log(gwTeam);
 
   return (
     <div className={themeClass}>
@@ -120,6 +163,60 @@ function MatchesPage() {
                   {fixture.awayTeam} ({fixture.awaySquad}
                   s)
                 </h4>
+
+                <div className="goalScorers">
+                  {fixture.homeTeam === userClub &&
+                    gwTeam[fixture.homeSquad].gwScorers.length > 0 && (
+                      <h5>
+                        <b>⚽︎ - </b>
+                        {gwTeam[fixture.homeSquad].gwScorers
+                          .map(
+                            (scorerObj) =>
+                              `${scorerObj.player.name} x${scorerObj.goals}`,
+                          )
+                          .join(", ")}
+                      </h5>
+                    )}
+                  {fixture.awayTeam === userClub &&
+                    gwTeam[fixture.awaySquad].gwScorers.length > 0 && (
+                      <h5>
+                        <b>⚽︎ - </b>
+                        {gwTeam[fixture.awaySquad].gwScorers
+                          .map(
+                            (scorerObj) =>
+                              `${scorerObj.player.name} x${scorerObj.goals}`,
+                          )
+                          .join(", ")}
+                      </h5>
+                    )}
+                </div>
+
+                <div className="assistMakers">
+                  {fixture.homeTeam === userClub &&
+                    gwTeam[fixture.homeSquad].gwAssists.length > 0 && (
+                      <h5>
+                        <b>👟 - </b>
+                        {gwTeam[fixture.awaySquad].gwAssists
+                          .map(
+                            (assistObj) =>
+                              `${assistObj.player.name} x${assistObj.assists}`,
+                          )
+                          .join(", ")}
+                      </h5>
+                    )}
+                  {fixture.awayTeam === userClub &&
+                    gwTeam[fixture.awaySquad].gwAssists.length > 0 && (
+                      <h5>
+                        <b>👟 - </b>
+                        {gwTeam[fixture.awaySquad].gwAssists
+                          .map(
+                            (assistObj) =>
+                              `${assistObj.player.name} x${assistObj.assists}`,
+                          )
+                          .join(", ")}
+                      </h5>
+                    )}
+                </div>
               </div>
             </>
           )}

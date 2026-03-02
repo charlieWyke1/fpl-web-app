@@ -11,3 +11,26 @@
   font-size: clamp(1.5rem, 2.5vw, 4rem) !important;
   padding: 1rem !important;
 }
+
+.goalScorers h5 {
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.3vw, 4rem) !important;
+  text-align: center;
+  font-family:
+    Andale Mono,
+    monospace !important;
+
+  padding: 0rem 1rem 0rem 1rem;
+  margin: 0rem !important;
+}
+.assistMakers h5 {
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.3vw, 4rem) !important;
+  text-align: center;
+  font-family:
+    Andale Mono,
+    monospace !important;
+
+  padding: 0rem 1rem 0rem 1rem;
+  margin: 0rem !important;
+}
