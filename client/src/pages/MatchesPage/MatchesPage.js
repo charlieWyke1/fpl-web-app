@@ -11,6 +11,7 @@ import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
 
 import NavBar from "../NavBar.js";
+import TeamModal from "./TeamModal.js";
 
 import "./MatchesPage.css";
 import "../../themes/clubThemes.css";
@@ -19,7 +20,6 @@ function MatchesPage() {
   const { user } = useUser();
   const { fixtures } = useFixture();
   const { players } = usePlayers();
-  const { clubData } = useClub();
 
   const [changeGwFixtures, setChangeGwFixtures] = useState(
     `gw${user?.currentGW}`,
@@ -27,10 +27,11 @@ function MatchesPage() {
 
   const [gwFixtureList, setGwFixtureList] = useState([]);
   const [gwTeam, setGwTeam] = useState({});
+  const [teamModalOpen, setTeamModalOpen] = useState(false);
+  const [selectedSquad, setSelectedSquad] = useState(null);
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
-  const numbTeams = clubData.numbTeams;
 
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
@@ -127,6 +128,21 @@ function MatchesPage() {
     setGwTeam(teams);
   }, [changeGwFixtures, fixtures]);
 
+  const openTeamModal = (fixture) => {
+    if (fixture.homeTeam === userClub) {
+      setSelectedSquad(fixture.homeSquad);
+    } else {
+      setSelectedSquad(fixture.awaySquad);
+    }
+    setTeamModalOpen(true);
+    console.log(changeGwFixtures);
+  };
+
+  const closeTeamModal = () => {
+    setSelectedSquad(null);
+    setTeamModalOpen(false);
+  };
+
   // console.log(players);
   // console.log(clubData.numbTeams);
   // console.log(gwTeam);
@@ -155,14 +171,19 @@ function MatchesPage() {
           {fixture.status && (
             <>
               <div className="results">
-                <h4>
-                  {fixture.homeTeam} ({fixture.homeSquad}s){" "}
-                  <b>
-                    {fixture.homeScore} - {fixture.awayScore}
-                  </b>{" "}
-                  {fixture.awayTeam} ({fixture.awaySquad}
-                  s)
-                </h4>
+                <div
+                  className="clickForTeam"
+                  onClick={() => openTeamModal(fixture)}
+                >
+                  <h4>
+                    {fixture.homeTeam} ({fixture.homeSquad}s){" "}
+                    <b>
+                      {fixture.homeScore} - {fixture.awayScore}
+                    </b>{" "}
+                    {fixture.awayTeam} ({fixture.awaySquad}
+                    s)
+                  </h4>
+                </div>
 
                 <div className="goalScorers">
                   {fixture.homeTeam === userClub &&
@@ -234,6 +255,15 @@ function MatchesPage() {
           )}
         </div>
       ))}
+
+      {teamModalOpen && changeGwFixtures && (
+        <TeamModal
+          squad={selectedSquad}
+          fixtureDetails={gwTeam[selectedSquad]}
+          fixtureGw={changeGwFixtures}
+          onClose={closeTeamModal}
+        />
+      )}
     </div>
   );
 }

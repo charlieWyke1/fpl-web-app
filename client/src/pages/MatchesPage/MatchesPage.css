@@ -12,6 +12,15 @@
   padding: 1rem !important;
 }
 
+.clickForTeam h4 {
+  transition: transform 0.5s;
+}
+.clickForTeam h4:hover {
+  text-decoration: underline;
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
 .goalScorers h5 {
   font-weight: 400;
   font-size: clamp(1.4rem, 2.3vw, 4rem) !important;
