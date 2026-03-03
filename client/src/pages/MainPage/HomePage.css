@@ -86,6 +86,12 @@
   font-size: clamp(1.5rem, 2.5vw, 4rem) !important;
 }
 
+.gkShirt,
+.shirt {
+  width: clamp(50px, 8vw, 120px);
+  height: auto;
+}
+
 .shirtRow {
   display: flex;
   justify-content: center;
@@ -124,11 +130,12 @@
     monospace !important;
   /* border: black 1px solid; */
 }
-.homePageTag p {
-  margin-top: -0.5rem !important;
+.homePageTag h4 {
+  margin-top: 0rem !important;
   /* margin: 0.3rem 1rem; */
   font-weight: 700 !important;
-  font-size: clamp(0.8rem, 1.8vw, 2.2rem) !important;
+  font-size: clamp(1.5rem, 2.5vw, 3rem) !important;
+  /* font-size: 2rem !important; */
   z-index: 2;
 }
 

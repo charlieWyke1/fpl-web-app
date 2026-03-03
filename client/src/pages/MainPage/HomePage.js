@@ -331,13 +331,13 @@ function HomePage() {
           {Array.from({ length: startingGk.length }).map((_, index) => (
             <div key={index} className="shirtContainer">
               <button className="shirtButton">
-                <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+                <ShirtSvg className={`gkShirt ${themeClass}`} />
               </button>
               <div className="homePageTag">
                 {startingGk[index] && (
                   <>
-                    <p>{startingGk[index].name}</p>
-                    {view === "points" && <p>{startingGk[index].gwPoints}</p>}
+                    <h4>{startingGk[index].name}</h4>
+                    {view === "points" && <h4>{startingGk[index].gwPoints}</h4>}
                   </>
                 )}
               </div>
@@ -350,14 +350,14 @@ function HomePage() {
             {Array.from({ length: startingDef.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
                 <button className="shirtButton">
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg className={`shirt ${themeClass}`} />
                 </button>
                 <div className="homePageTag">
                   {startingDef[index] && (
                     <>
-                      <p>{startingDef[index].name}</p>
+                      <h4>{startingDef[index].name}</h4>
                       {view === "points" && (
-                        <p>{startingDef[index].gwPoints}</p>
+                        <h4>{startingDef[index].gwPoints}</h4>
                       )}
                     </>
                   )}
@@ -372,14 +372,14 @@ function HomePage() {
             {Array.from({ length: startingMid.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
                 <button className="shirtButton">
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg className={`shirt ${themeClass}`} />
                 </button>
                 <div className="homePageTag">
                   {startingMid[index] && (
                     <>
-                      <p>{startingMid[index].name}</p>
+                      <h4>{startingMid[index].name}</h4>
                       {view === "points" && (
-                        <p>{startingMid[index].gwPoints}</p>
+                        <h4>{startingMid[index].gwPoints}</h4>
                       )}
                     </>
                   )}
@@ -394,14 +394,14 @@ function HomePage() {
             {Array.from({ length: startingFwd.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
                 <button className="shirtButton">
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg className={`shirt ${themeClass}`} />
                 </button>
                 <div className="homePageTag">
                   {startingFwd[index] && (
                     <>
-                      <p>{startingFwd[index].name}</p>
+                      <h4>{startingFwd[index].name}</h4>
                       {view === "points" && (
-                        <p>{startingFwd[index].gwPoints}</p>
+                        <h4>{startingFwd[index].gwPoints}</h4>
                       )}
                     </>
                   )}
@@ -451,8 +451,7 @@ function HomePage() {
         </button>
 
         <button onClick={handleLeague}>
-          <h4>Leagues and shit</h4>
-          {/* FINAL JOB HERE */}
+          <h4>Leagues</h4>
         </button>
       </div>
     </div>

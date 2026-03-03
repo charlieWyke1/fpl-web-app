@@ -137,17 +137,12 @@ function MatchesPage() {
     }
     setTeamModalOpen(true);
     setGameData(fixture);
-    console.log(fixture);
   };
 
   const closeTeamModal = () => {
     setSelectedSquad(null);
     setTeamModalOpen(false);
   };
-
-  // console.log(players);
-  // console.log(clubData.numbTeams);
-  // console.log(gwTeam);
 
   return (
     <div className={themeClass}>

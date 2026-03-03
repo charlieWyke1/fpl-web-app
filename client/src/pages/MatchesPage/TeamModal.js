@@ -7,17 +7,61 @@ import "./TeamModal.css";
 import "../../themes/clubThemes.css";
 import "../../utils/Pitch.css";
 
+import ShirtSvg from "../../svgFolder/ShirtSVG.js";
+
 const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
   const { user } = useUser();
   const userClub = user?.club;
+
+  const [startingGk, setStartingGk] = useState([]);
+  const [startingDef, setStartingDef] = useState([]);
+  const [startingMid, setStartingMid] = useState([]);
+  const [startingFwd, setStartingFwd] = useState([]);
 
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
 
-  console.log(fixtureDetails);
-  console.log(fixtureGw);
-  console.log(game);
+  const number = parseInt(fixtureGw.slice(2), 10);
+
+  useEffect(() => {
+    const team = fixtureDetails.gwTeam;
+    const number = parseInt(fixtureGw.slice(2), 10);
+    setStartingGk(
+      team.filter(
+        (p) => p.position === "GK" && p.gameweeks?.[number]?.started === true,
+      ),
+    );
+    setStartingDef(
+      team.filter(
+        (p) => p.position === "DEF" && p.gameweeks?.[number]?.started === true,
+      ),
+    );
+    setStartingMid(
+      team.filter(
+        (p) => p.position === "MID" && p.gameweeks?.[number]?.started === true,
+      ),
+    );
+    setStartingFwd(
+      team.filter(
+        (p) => p.position === "FWD" && p.gameweeks?.[number]?.started === true,
+      ),
+    );
+  }, []);
+
+  // const team = fixtureDetails.gwTeam;
+  // setStartingGk(
+  //   team.filter((p) => p.position === "GK" && p.isStarting === true),
+  // );
+  // setStartingDef(
+  //   team.filter((p) => p.position === "DEF" && p.isStarting === true),
+  // );
+  // setStartingMid(
+  //   team.filter((p) => p.position === "MID" && p.isStarting === true),
+  // );
+  // setStartingFwd(
+  //   team.filter((p) => p.position === "FWD" && p.isStarting === true),
+  // );
 
   return (
     <div className="modalOverlayTeam" onClick={onClose}>
@@ -31,14 +75,128 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
             </b>{" "}
             {game.awayTeam} ({game.awaySquad}
             s)
-          </h4>{" "}
+          </h4>
         </div>
         <div className="modalTeamBody">
-          <div className="selectedTeamContainer HomePage">
+          <div className="selectedTeamContainer ModalPitch">
             <div className="penalty-box top"></div>
             <div className="six-yard-box top"></div>
             <div className="penalty-arc top"></div>
             <div className="halfway-line"></div>
+
+            <div className="pitch">
+              <div className="gkRow">
+                {Array.from({ length: startingGk.length }).map((_, index) => (
+                  <div key={index} className="shirtContainer">
+                    <button className="shirtButton">
+                      <ShirtSvg className={`gkShirt ${themeClass}`} />
+                    </button>
+                    <div className="homePageTag">
+                      {startingGk[index] && (
+                        <>
+                          <h4>{startingGk[index].name}</h4>
+                          <h5>
+                            {startingGk[index].gameweeks?.[number]?.gwPoints}
+                          </h5>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="defRow">
+                <div className="shirtRow">
+                  {Array.from({ length: startingDef.length }).map(
+                    (_, index) => (
+                      <div key={index} className="shirtContainer">
+                        <button className="shirtButton">
+                          <ShirtSvg
+                            className={`shirt ${themeClass}`}
+                            size={70}
+                          />
+                        </button>
+                        <div className="homePageTag">
+                          {startingDef[index] && (
+                            <>
+                              <h4>{startingDef[index].name}</h4>
+                              <h5>
+                                {
+                                  startingDef[index].gameweeks?.[number]
+                                    ?.gwPoints
+                                }
+                              </h5>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+
+              <div className="midRow">
+                <div className="shirtRow">
+                  {Array.from({ length: startingMid.length }).map(
+                    (_, index) => (
+                      <div key={index} className="shirtContainer">
+                        <button className="shirtButton">
+                          <ShirtSvg
+                            className={`shirt ${themeClass}`}
+                            size={70}
+                          />
+                        </button>
+                        <div className="homePageTag">
+                          {startingMid[index] && (
+                            <>
+                              <h4>{startingMid[index].name}</h4>
+                              <h5>
+                                {
+                                  startingMid[index].gameweeks?.[number]
+                                    ?.gwPoints
+                                }
+                              </h5>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+
+              <div className="fwdRow">
+                <div className="shirtRow">
+                  {Array.from({ length: startingFwd.length }).map(
+                    (_, index) => (
+                      <div key={index} className="shirtContainer">
+                        <button className="shirtButton">
+                          <ShirtSvg
+                            className={`shirt ${themeClass}`}
+                            size={70}
+                          />
+                        </button>
+                        <div className="homePageTag">
+                          {startingFwd[index] && (
+                            <>
+                              <h4>{startingFwd[index].name}</h4>
+                              <h5>
+                                {
+                                  startingFwd[index].gameweeks?.[number]
+                                    ?.gwPoints
+                                }
+                                {/* {startingFwd[index].gameweeks?.[number]
+                                  ?.goals !== 0 && <> - ⚽︎</>} */}
+                              </h5>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
