@@ -18,6 +18,7 @@ import { getApiBase } from "../../config/api.js";
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 import Countdown from "../../utils/Countdown.js";
+import PlayerDataModal from "./PlayerDataModal.js";
 
 import "./HomePage.css";
 import "../../utils/Pitch.css";
@@ -51,6 +52,9 @@ function HomePage() {
   const [minusPts, setMinusPts] = useState(0);
 
   const [deadlinePassed, setDeadlinePassed] = useState(false);
+
+  const [playerModal, setPlayerModal] = useState(false);
+  const [playerForModal, setPlayerForModal] = useState();
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -252,6 +256,16 @@ function HomePage() {
     navigate("/Leagues");
   };
 
+  const openPlayerModal = (player) => {
+    setPlayerModal(true);
+    setPlayerForModal(player);
+  };
+
+  const closePlayerModal = () => {
+    setPlayerModal(false);
+    setPlayerForModal(null);
+  };
+
   if (!hasTeam) {
     return (
       <div className={themeClass}>
@@ -330,7 +344,10 @@ function HomePage() {
         <div className="gkRow">
           {Array.from({ length: startingGk.length }).map((_, index) => (
             <div key={index} className="shirtContainer">
-              <button className="shirtButton">
+              <button
+                className="shirtButton"
+                onClick={() => openPlayerModal(startingGk[index])}
+              >
                 <ShirtSvg className={`gkShirt ${themeClass}`} />
               </button>
               <div className="homePageTag">
@@ -349,7 +366,10 @@ function HomePage() {
           <div className="shirtRow">
             {Array.from({ length: startingDef.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+                <button
+                  className="shirtButton"
+                  onClick={() => openPlayerModal(startingDef[index])}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} />
                 </button>
                 <div className="homePageTag">
@@ -357,7 +377,9 @@ function HomePage() {
                     <>
                       <h4>{startingDef[index].name}</h4>
                       {view === "points" && (
-                        <h4>{startingDef[index].gwPoints}</h4>
+                        <>
+                          <h4>{startingDef[index].gwPoints}</h4>
+                        </>
                       )}
                     </>
                   )}
@@ -371,7 +393,10 @@ function HomePage() {
           <div className="shirtRow">
             {Array.from({ length: startingMid.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+                <button
+                  className="shirtButton"
+                  onClick={() => openPlayerModal(startingMid[index])}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} />
                 </button>
                 <div className="homePageTag">
@@ -393,7 +418,10 @@ function HomePage() {
           <div className="shirtRow">
             {Array.from({ length: startingFwd.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
-                <button className="shirtButton">
+                <button
+                  className="shirtButton"
+                  onClick={() => openPlayerModal(startingFwd[index])}
+                >
                   <ShirtSvg className={`shirt ${themeClass}`} />
                 </button>
                 <div className="homePageTag">
@@ -416,7 +444,10 @@ function HomePage() {
         <div className="shirtRow">
           {Array.from({ length: startingSub.length }).map((_, index) => (
             <div key={index} className="shirtContainer">
-              <button className="shirtButton">
+              <button
+                className="shirtButton"
+                onClick={() => openPlayerModal(startingSub[index])}
+              >
                 {startingSub[index].position === "GK" && (
                   <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
                 )}
@@ -454,6 +485,12 @@ function HomePage() {
           <h4>Leagues</h4>
         </button>
       </div>
+
+      <PlayerDataModal
+        isOpen={playerModal}
+        onClose={closePlayerModal}
+        player={playerForModal}
+      />
     </div>
   );
 }

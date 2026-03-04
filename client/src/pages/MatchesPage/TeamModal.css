@@ -56,7 +56,7 @@
 }
 
 .selectedTeamContainer.ModalPitch {
-  height: 100vh !important;
+  height: 110vh !important;
   /* border: purple 2px solid; */
 }
 
@@ -67,7 +67,7 @@
 }
 
 .pitch {
-  height: 20vh;
+  height: 22vh;
   width: 100%;
   margin: 0 auto;
   /* border: purple 2px solid; */

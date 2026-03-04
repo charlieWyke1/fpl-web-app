@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import React from "react";
-import "./PlayerModal.css";
+import "./PlayerModalStats.css";
 import "../../themes/clubThemes.css";
 
-export default function PlayerModal({ isOpen, onClose, player }) {
+export default function PlayerModalStats({ isOpen, onClose, player }) {
   const [selectedGW, setSelectedGw] = useState("");
 
   useEffect(() => {

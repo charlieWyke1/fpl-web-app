@@ -1,10 +1,29 @@
 import { useEffect, useState } from "react";
 import React from "react";
-import "./PlayerModal.css";
-import "../../themes/clubThemes.css";
 
-export default function PlayerModal({ isOpen, onClose, player }) {
+import { useUser } from "../../context/UserContext.js";
+
+import "./PlayerDataModal.css";
+import "../../themes/clubThemes.css";
+import "../../utils/Pitch.css";
+
+import ShirtSvg from "../../svgFolder/ShirtSVG.js";
+
+const PlayerModal = ({ isOpen, onClose, player }) => {
+  const { user } = useUser();
+
   const [selectedGW, setSelectedGw] = useState("");
+
+  const userClub = user?.club;
+
+  const themeClass = userClub
+    ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
+    : "theme-default";
+
+  const handleChange = (e) => {
+    const gw = e.target.value;
+    setSelectedGw(gw);
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -14,14 +33,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
 
   if (!isOpen) return null;
 
-  const themeClass = player?.club
-    ? `theme-${player.club.toLowerCase().replace(/\s+/g, "-")}`
-    : "theme-default";
-
-  const handleChange = (e) => {
-    const gw = e.target.value;
-    setSelectedGw(gw);
-  };
+  //   console.log(player.gameweeks[gw]);
 
   let totalGoals = 0;
   let totalAssists = 0;
@@ -38,7 +50,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
     if (pos === "GK") {
       totalGoals += week.goals || 0;
       totalAssists += week.assists || 0;
-      totalCleanSheets += week.cleanSheetGK || 0;
+      totalCleanSheets += week.cleanSheet || 0;
       totalPenSaves += week.penSave || 0;
       totalYellows += week.yellows || 0;
       if (week.started) {
@@ -54,7 +66,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
     } else if (pos === "DEF") {
       totalGoals += week.goals || 0;
       totalAssists += week.assists || 0;
-      totalCleanSheets += week.cleanSheetDEF || 0;
+      totalCleanSheets += week.cleanSheet || 0;
       totalYellows += week.yellows || 0;
       totalStarts += week.starts || 0;
       if (week.started) {
@@ -70,9 +82,9 @@ export default function PlayerModal({ isOpen, onClose, player }) {
     } else if (pos === "MID") {
       totalGoals += week.goals || 0;
       totalAssists += week.assists || 0;
-      totalCleanSheets += week.cleanSheetMID || 0;
+      totalCleanSheets += week.cleanSheet || 0;
       totalYellows += week.yellows || 0;
-      totalStarts += week.starts || 0;
+      totalStarts += week.started || 0;
       if (week.started) {
         totalStarts += 1;
       } else {
@@ -102,12 +114,13 @@ export default function PlayerModal({ isOpen, onClose, player }) {
   }
 
   return (
-    <div className="modalOverlapPlayer" onClick={onClose}>
+    <div className="modalOverlayHomePage" onClick={onClose}>
       <div
-        className={`modalContainerPlayer ${themeClass}`}
+        className={`modalContainerHomePage ${themeClass}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="modalHeaderPlayer">
+        <div className="modalHeaderHomePage">
+          <button onClick={onClose}>X</button>
           <h2>{player?.name}</h2>
           <div className="modalHeaderRow">
             <h3>{player?.position}</h3>
@@ -116,7 +129,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
           </div>
         </div>
 
-        <div className="modalBodyPlayer">
+        <div className="modalBodyHomePage">
           <div className="modalCol">
             <div className="modalRow">
               <select
@@ -279,7 +292,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
           {/* SEASON SIDE */}
           <div className="modalCol">
             <h3>Season Stats</h3>
-            <table className="playerModalTotalTable">
+            <table className="HomePageModalTotalTable">
               <tbody>
                 <tr>
                   <td>Goals:</td>
@@ -348,4 +361,6 @@ export default function PlayerModal({ isOpen, onClose, player }) {
       </div>
     </div>
   );
-}
+};
+
+export default PlayerModal;

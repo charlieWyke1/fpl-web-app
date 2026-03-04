@@ -21,6 +21,7 @@ import TransferTeam from "./pages/TransferPage/TransferTeam.js";
 import PointsHistory from "./pages/PointHistoryPage/PointsHistory.js";
 import LeaguePage from "./pages/LeaguePage/LeaguePage.js";
 import MatchesPage from "./pages/MatchesPage/MatchesPage.js";
+import StatsPage from "./pages/PlayerStatsPage/StatsPage.js";
 
 import ScrollToTop from "./utils/Scroll.js";
 
@@ -61,6 +62,7 @@ function App() {
                         />
                         <Route path="/Leagues" element={<LeaguePage />} />
                         <Route path="/Matches" element={<MatchesPage />} />
+                        <Route path="/Stats" element={<StatsPage />} />
                       </Routes>
                     </Router>
                   </AllTeamProvider>
