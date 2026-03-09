@@ -8,12 +8,19 @@ import { useUser } from "../context/UserContext.js";
 import { getApiBase } from "../config/api.js";
 
 function LoginPage() {
+  const navigate = useNavigate();
+  const { setUser } = useUser();
+
   // stores our email and password values
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const navigate = useNavigate();
-  const { setUser } = useUser();
+  const [newUserClicked, setNewUserClicked] = React.useState(false);
+  const [role, setRole] = React.useState();
+
+  const newUser = () => {
+    console.log(newUserClicked);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,45 +69,104 @@ function LoginPage() {
   };
 
   return (
-    <div className="loginBox">
-      <div className="box" id="right">
-        <form className="loginForm" onSubmit={handleSubmit}>
-          <label htmlFor="inputEmail" className="form-label" id="emailLabel">
-            Email:
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="inputEmail"
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+    <>
+      <div className="loginBox">
+        {!newUserClicked && (
+          <>
+            <div className="box" id="right">
+              <form className="loginForm" onSubmit={handleSubmit}>
+                <label
+                  htmlFor="inputEmail"
+                  className="form-label"
+                  id="emailLabel"
+                >
+                  Email:
+                </label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="inputEmail"
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
 
-          <label
-            htmlFor="inputPassword"
-            className="form-label"
-            id="passwordLabel"
-          >
-            Password:
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="inputPassword"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+                <label
+                  htmlFor="inputPassword"
+                  className="form-label"
+                  id="passwordLabel"
+                >
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="inputPassword"
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
 
-          <button
-            type="submit"
-            className="loginButton"
-            disabled={!email || !password}
-          >
-            Log In
-          </button>
-        </form>
+                <button
+                  type="submit"
+                  className="loginButton"
+                  disabled={!email || !password}
+                >
+                  Log In
+                </button>
+
+                <p
+                  onClick={() => (
+                    setNewUserClicked((prev) => !prev),
+                    newUser()
+                  )}
+                >
+                  New here? Sign up !
+                </p>
+              </form>
+            </div>
+          </>
+        )}
       </div>
-    </div>
+
+      {newUserClicked && (
+        <>
+          <div className="box" id="newUserBox">
+            <div className="roleCheckboxes">
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  checked={role === "admin"}
+                  onChange={() => setRole("admin")}
+                />
+                Admin
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  checked={role === "user"}
+                  onChange={() => setRole("user")}
+                />
+                User
+              </label>
+            </div>
+
+            {/* {role === "admin" && (
+              <>
+                <h4>ADMIN</h4>
+              </>
+            )}
+
+            {role === "user" && (
+              <>
+                <h4>USER</h4>
+              </>
+            )} */}
+          </div>
+        </>
+      )}
+    </>
   );
 }
 
