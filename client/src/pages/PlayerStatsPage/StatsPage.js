@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { useAllTeam } from "../../context/AllTeamsContext.js";
 import { useUser } from "../../context/UserContext.js";
@@ -15,13 +15,17 @@ import "./StatsPage.css";
 import "../../themes/clubThemes.css";
 
 function StatsPage() {
-  const { allTeam } = useAllTeam();
   const { user } = useUser();
   const { players } = usePlayers(user);
 
   const [filterPlayers, setFilterPlayers] = useState("all");
   const [playerModal, setPlayerModal] = useState(false);
   const [playerForModal, setPlayerForModal] = useState();
+
+  const [sortConfig, setSortConfig] = useState({
+    key: null, // this is our cost, totalPts ...
+    direction: "asc", // an be asc or desc for up or down
+  });
 
   const userClub = user?.club;
   const currentGW = `gw${user?.currentGW}`;
@@ -44,12 +48,45 @@ function StatsPage() {
     setPlayerForModal(null);
   };
 
+  const handleSort = (key) => {
+    let direction = "asc";
+
+    if (key === "points") {
+      direction = "desc";
+    } else if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+
+    setSortConfig({ key, direction });
+  };
+
+  const sortedPlayers = [...filterPlayersByPosition].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+
+    return 0;
+  });
+
+  const getSortArrow = (key) => {
+    if (sortConfig.key !== key) return "";
+
+    return sortConfig.direction === "asc" ? " ▲" : " ▼";
+  };
+
+  // console.log(sortConfig);
+
   return (
     <div className={themeClass}>
       <NavBar />
       <div className="row3Admin">
         <div className="leagueTableAdmin">
-          <h3>Top Point Scorers</h3>
+          <h3> Point Scorers</h3>
           <select
             className="positionFilter"
             value={filterPlayers}
@@ -66,12 +103,16 @@ function StatsPage() {
               <tr>
                 <th>Pos.</th>
                 <th>Name</th>
-                <th>Cost</th>
-                <th>Total Points</th>
+                <th onClick={() => handleSort("cost")} id="costFilter">
+                  Cost<span id="arrow">{getSortArrow("cost")}</span>
+                </th>
+                <th onClick={() => handleSort("points")} id="pointsFilter">
+                  Total Points
+                </th>
               </tr>
             </thead>
             <tbody>
-              {filterPlayersByPosition.map((player) => (
+              {sortedPlayers.map((player) => (
                 <tr key={player.id} onClick={() => openPlayerModal(player)}>
                   <td>{player.position}</td>
                   <td>{player.name}</td>

@@ -1,0 +1,9 @@
+#costFilter:hover {
+  cursor: pointer;
+}
+#pointsFilter:hover {
+  cursor: pointer;
+}
+#arrow {
+  font-size: clamp(1rem, 2vw, 3rem) !important;
+}
