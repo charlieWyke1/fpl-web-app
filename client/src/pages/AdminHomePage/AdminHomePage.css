@@ -152,6 +152,13 @@ h5 {
   cursor: pointer;
 }
 
+.welcomeLine {
+  margin-top: 1rem;
+}
+.welcomeLine h3 {
+  font-size: clamp(1.3rem, 2.3vw, 4rem) !important;
+}
+
 @media (max-width: 600px) {
   .buttonRows {
     flex-direction: column;

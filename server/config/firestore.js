@@ -486,3 +486,20 @@ export async function getTeamNames(allIds) {
     throw error;
   }
 }
+
+export async function saveAdminDataBase(userId, club) {
+  try {
+    const userRef = db.collection("users").doc(userId);
+
+    await userRef.set({
+      admin: true,
+      club: club,
+      currentGW: 1,
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error saving admin");
+    throw error;
+  }
+}

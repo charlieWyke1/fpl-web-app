@@ -7,6 +7,7 @@ import {
   getTeam,
   getNumbSquads,
   getFixtures,
+  saveAdminDataBase,
 } from "../config/firestore.js";
 
 const router = express.Router();
@@ -79,5 +80,19 @@ router.get("/api/admin/fixtures", authenticateToken, async (req, res) => {
     console.error("Error fetching fixtures:", error);
     res.status(500).json({ error: "Failed to fetch fixtures" });
   }
+});
+
+router.post("/api/admin/saveAdmin", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const club = req.body.club;
+    // console.log(userId, club);
+    const saveAdminDb = await saveAdminDataBase(userId, club);
+    if (saveAdminDb) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
+  } catch (error) {}
 });
 export default router;

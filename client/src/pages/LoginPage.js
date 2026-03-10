@@ -2,7 +2,10 @@ import React from "react";
 import "./LoginPage.css";
 
 import { auth } from "../services/firebase.js";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext.js";
 import { getApiBase } from "../config/api.js";
@@ -25,13 +28,12 @@ function LoginPage() {
   const [adminGkColour, setAdminGkColour] = React.useState("");
   const [adminPlayerColour, setAdminPlayerColour] = React.useState("");
 
-  const newUser = () => {
-    console.log(newUserClicked);
-  };
+  // const newUser = () => {
+  //   console.log(newUserClicked);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     // sends firebase our email and password for login
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -56,6 +58,7 @@ function LoginPage() {
       if (response.ok) {
         const data = await response.json();
         setUser(data.user);
+        console.log(data.user);
         if (data.user.admin) {
           // console.log("admin");
           navigate("/admin");
@@ -84,8 +87,52 @@ function LoginPage() {
     adminPlayerColour === "" ||
     adminConfirmPassword !== adminPassword;
 
-  const adminSubmit = async () => {
+  const adminSubmit = async (e) => {
     // right now need to sign the user up as an admin using firebase
+    e.preventDefault();
+
+    if (adminPassword.length < 7) {
+      alert("Password not long enough");
+      return;
+    }
+
+    try {
+      const userCreds = await createUserWithEmailAndPassword(
+        auth,
+        adminEmail,
+        adminPassword,
+      );
+      const user = userCreds.user;
+      const userId = user.uid;
+      // this creates our user in the authentication part ^^
+      // now to save them to user in database
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch(`${getApiBase()}/api/admin/saveAdmin`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId: userId, club: adminClub }),
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          setUser({
+            admin: true,
+            id: userId,
+            club: adminClub,
+            currentGw: 1,
+          });
+          navigate("/admin");
+        }
+      } catch (error) {
+        console.log("Error creating Admin");
+      }
+    } catch (error) {
+      console.log("Error: ", error.message);
+    }
   };
 
   return (
@@ -133,12 +180,7 @@ function LoginPage() {
                   Log In
                 </button>
 
-                <p
-                  onClick={() => (
-                    setNewUserClicked((prev) => !prev),
-                    newUser()
-                  )}
-                >
+                <p onClick={() => setNewUserClicked((prev) => !prev)}>
                   New here? Sign up !
                 </p>
               </form>
@@ -223,19 +265,21 @@ function LoginPage() {
                         required
                       />
 
-                      <label htmlFor="adminColour">Gk Kit Colour</label>
+                      <label htmlFor="colourForGkInput">Gk Kit Colour</label>
                       <input
-                        id="colourForClubInput"
-                        value="#F54927"
+                        id="colourForGkInput"
+                        defaultValue="#F54927"
                         type="color"
                         onChange={(e) => setAdminGkColour(e.target.value)}
                         required
                       />
 
-                      <label htmlFor="adminColour">Player Kit Colour</label>
+                      <label htmlFor="colourForPlayerInput">
+                        Player Kit Colour
+                      </label>
                       <input
-                        id="colourForClubInput"
-                        value="#F5B427"
+                        id="colourForPlayerInput"
+                        defaultValue="#F5B427"
                         type="color"
                         onChange={(e) => setAdminPlayerColour(e.target.value)}
                         required

@@ -122,6 +122,10 @@ function AdminHomePage() {
     <div className={themeClass}>
       <NavBar />
 
+      <div className="welcomeLine">
+        <h3>Welcome to {userClub}'s fantasy dashboard</h3>
+      </div>
+
       <div className="row1Admin">
         <div className="buttonRows">
           <button>
