@@ -1,6 +1,14 @@
+.loginBox {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .box {
-  margin-top: 20vh;
-  margin-left: 20vw;
+  /* margin-top: 20vh;
+  margin-left: 20vw; */
   height: 60vh !important;
   width: 60vw !important;
   padding: 1rem;
@@ -72,20 +80,84 @@
   height: auto !important;
   min-height: 35vh !important;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   overflow-y: scroll;
   padding: 20px;
   box-sizing: border-box;
-  justify-content: center;
 }
 .roleCheckboxes {
   display: flex;
   gap: 2rem;
 }
+.roleCheckboxes input {
+  width: clamp(1rem, 2.2vw, 3rem) !important;
+  height: clamp(0.8rem, 1.1vw, 1.8rem) !important;
+}
 .roleCheckboxes label {
   color: white;
-  font-size: clamp(1rem, 2.2vw, 3rem) !important;
+  font-size: clamp(1.2rem, 2.2vw, 3rem) !important;
   font-weight: 600;
 }
+.roleContent {
+  width: 100%;
+}
+.adminForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.adminForm label {
+  color: white;
+  font-size: clamp(0.5rem, 2vw, 3rem) !important;
+  font-weight: 500;
+}
+.adminForm input {
+  font-size: clamp(0.8rem, 1.3vw, 1.4rem);
+  width: 80%;
+  padding: clamp(0.4rem, 0.8vw, 0.9rem);
+  height: clamp(2rem, 3vw, 3.2rem);
+  border-radius: 8px;
+  /* border: none; */
+}
+#adminEmail {
+  border: none;
+}
+#adminClub {
+  border: none;
+}
+#colourForClubInput {
+  width: 50%;
+  border: none;
+}
+input[type="color"] {
+  border: none;
+  padding: 0;
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.adminButton {
+  background-color: transparent;
+  border: none;
+  width: auto;
+  font-weight: 600;
+  color: white;
+  font-size: clamp(1rem, 2vw, 4rem) !important;
+  margin-top: 2vh;
+  transition: transform 0.3s;
+}
+.adminButton:hover {
+  transform: scale(1.1);
+  text-decoration: underline;
+}
+.adminButton:disabled {
+  cursor: not-allowed;
+  transform: none;
+  text-decoration: none;
+}
+
 @media (max-width: 850px) {
   .loginForm {
     width: 100%;
@@ -94,9 +166,5 @@
 
   .loginButton:hover {
     transform: scale(1.1);
-  }
-  .form-control {
-    width: 100% !important;
-    height: 2rem !important;
   }
 }

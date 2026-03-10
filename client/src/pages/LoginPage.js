@@ -18,6 +18,13 @@ function LoginPage() {
   const [newUserClicked, setNewUserClicked] = React.useState(false);
   const [role, setRole] = React.useState();
 
+  const [adminEmail, setAdminEmail] = React.useState("");
+  const [adminPassword, setAdminPassword] = React.useState("");
+  const [adminConfirmPassword, setAdminConfirmPassword] = React.useState("");
+  const [adminClub, setAdminClub] = React.useState("");
+  const [adminGkColour, setAdminGkColour] = React.useState("");
+  const [adminPlayerColour, setAdminPlayerColour] = React.useState("");
+
   const newUser = () => {
     console.log(newUserClicked);
   };
@@ -66,6 +73,19 @@ function LoginPage() {
         console.error("Error during login:", error);
       }
     }
+  };
+
+  const formInvalid =
+    adminPassword === "" ||
+    adminConfirmPassword === "" ||
+    adminEmail === "" ||
+    adminClub === "" ||
+    adminGkColour === "" ||
+    adminPlayerColour === "" ||
+    adminConfirmPassword !== adminPassword;
+
+  const adminSubmit = async () => {
+    // right now need to sign the user up as an admin using firebase
   };
 
   return (
@@ -125,47 +145,123 @@ function LoginPage() {
             </div>
           </>
         )}
-      </div>
 
-      {newUserClicked && (
-        <>
-          <div className="box" id="newUserBox">
-            <div className="roleCheckboxes">
-              <label>
-                <input
-                  type="radio"
-                  name="role"
-                  checked={role === "admin"}
-                  onChange={() => setRole("admin")}
-                />
-                Admin
-              </label>
+        {newUserClicked && (
+          <>
+            <div className="box" id="newUserBox">
+              <div className="roleCheckboxes">
+                <label>
+                  <input
+                    type="radio"
+                    name="role"
+                    checked={role === "admin"}
+                    onChange={() => setRole("admin")}
+                  />
+                  {"  "}
+                  Admin
+                </label>
 
-              <label>
-                <input
-                  type="radio"
-                  name="role"
-                  checked={role === "user"}
-                  onChange={() => setRole("user")}
-                />
-                User
-              </label>
-            </div>
+                <label>
+                  <input
+                    type="radio"
+                    name="role"
+                    checked={role === "user"}
+                    onChange={() => setRole("user")}
+                  />
+                  {"  "}
+                  User
+                </label>
+              </div>
 
-            {/* {role === "admin" && (
-              <>
-                <h4>ADMIN</h4>
-              </>
-            )}
+              <div className="roleContent">
+                {role === "admin" && (
+                  <div className="adminFormSignUp">
+                    <form className="adminForm" onSubmit={adminSubmit}>
+                      <label htmlFor="adminEmail">Email</label>
+                      <input
+                        type="email"
+                        id="adminEmail"
+                        onChange={(e) => setAdminEmail(e.target.value)}
+                        required
+                      />
 
-            {role === "user" && (
+                      <label htmlFor="adminPassword">Password</label>
+                      <input
+                        type="password"
+                        id="adminPassword"
+                        className="form-control"
+                        onChange={(e) => setAdminPassword(e.target.value)}
+                        value={adminPassword}
+                        required
+                      />
+
+                      <label htmlFor="adminConfirmPassword">
+                        Confirm Password
+                      </label>
+                      <input
+                        type="password"
+                        id="adminConfirmPassword"
+                        className={`form-control ${
+                          adminConfirmPassword
+                            ? adminPassword === adminConfirmPassword
+                              ? "is-valid"
+                              : "is-invalid"
+                            : ""
+                        }`}
+                        onChange={(e) =>
+                          setAdminConfirmPassword(e.target.value)
+                        }
+                        value={adminConfirmPassword}
+                        required
+                      />
+
+                      <label htmlFor="adminClub">Club</label>
+                      <input
+                        type="text"
+                        id="adminClub"
+                        onChange={(e) => setAdminClub(e.target.value)}
+                        required
+                      />
+
+                      <label htmlFor="adminColour">Gk Kit Colour</label>
+                      <input
+                        id="colourForClubInput"
+                        value="#F54927"
+                        type="color"
+                        onChange={(e) => setAdminGkColour(e.target.value)}
+                        required
+                      />
+
+                      <label htmlFor="adminColour">Player Kit Colour</label>
+                      <input
+                        id="colourForClubInput"
+                        value="#F5B427"
+                        type="color"
+                        onChange={(e) => setAdminPlayerColour(e.target.value)}
+                        required
+                      />
+
+                      <button
+                        type="submit"
+                        className="adminButton"
+                        disabled={formInvalid}
+                      >
+                        Save Admin
+                      </button>
+                    </form>
+                  </div>
+                )}
+              </div>
+
+              {/* {role === "user" && (
               <>
                 <h4>USER</h4>
               </>
             )} */}
-          </div>
-        </>
-      )}
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
 }
