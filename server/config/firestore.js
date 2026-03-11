@@ -503,3 +503,47 @@ export async function saveAdminDataBase(userId, club) {
     throw error;
   }
 }
+
+export async function saveClubDataBase(club, numbTeams) {
+  try {
+    // 1 - 3 teams
+    const config = {
+      1: { budget: 35, gk: 1, def: 2, mid: 2, fwd: 2, squadNumb: 7, start: 5 },
+      2: { budget: 45, gk: 1, def: 3, mid: 3, fwd: 2, squadNumb: 9, start: 7 },
+      3: { budget: 60, gk: 2, def: 3, mid: 4, fwd: 3, squadNumb: 12, start: 9 },
+    };
+
+    // 4 + teams
+    const defaultConfig = {
+      budget: 75,
+      gk: 2,
+      def: 5,
+      mid: 5,
+      fwd: 3,
+      squadNumb: 15,
+      start: 11,
+    };
+
+    // choose data based on numbTeams
+    const { budget, gk, def, mid, fwd, squadNumb, start } =
+      config[numbTeams] || defaultConfig;
+
+    const clubRef = db.collection("clubs").doc(club);
+
+    await clubRef.set({
+      budget,
+      numbGk: gk,
+      numbDef: def,
+      numbMid: mid,
+      numbFwd: fwd,
+      numbTeams,
+      squadNumber: squadNumb,
+      startingTeamNumber: start,
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error creating club:", error);
+    throw error;
+  }
+}

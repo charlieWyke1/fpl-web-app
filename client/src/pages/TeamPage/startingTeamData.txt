@@ -1,25 +1,25 @@
-SQUAD SIZE = 7 (1 team)
+SQUAD SIZE = 7 (1 team) budget = 35m
 starting 5 : 
  GK 
  DEF x1 (2)
  MID x2 (2)
  FWD x1 (2)
  
-SQUAD SIZE = 9 (2 teams)
+SQUAD SIZE = 9 (2 teams) budget = 45m
 starting 7 :
  GK 
  DEF x2 (3)
  MID x3 (3)
  FWD x1 (2)
 
-SQUAD SIZE = 12 (3 teams)
+SQUAD SIZE = 12 (3 teams) budget = 60m
 starting 9 : 
  GK (2)
  DEF x3 (3)
  MID x3 (4)
  FWD x2 (3)
 
-SQUAD SIZE = 15 (4+ teams)
+SQUAD SIZE = 15 (4+ teams) budget = 75m
 starting 11 :
  GK (2)
  DEF x4. (5)

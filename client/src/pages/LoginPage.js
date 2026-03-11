@@ -25,6 +25,7 @@ function LoginPage() {
   const [adminPassword, setAdminPassword] = React.useState("");
   const [adminConfirmPassword, setAdminConfirmPassword] = React.useState("");
   const [adminClub, setAdminClub] = React.useState("");
+  const [adminClubNumber, setAdminClubNumber] = React.useState(0);
   const [adminGkColour, setAdminGkColour] = React.useState("");
   const [adminPlayerColour, setAdminPlayerColour] = React.useState("");
 
@@ -85,6 +86,7 @@ function LoginPage() {
     adminClub === "" ||
     adminGkColour === "" ||
     adminPlayerColour === "" ||
+    adminClubNumber === 0 ||
     adminConfirmPassword !== adminPassword;
 
   const adminSubmit = async (e) => {
@@ -114,7 +116,11 @@ function LoginPage() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ userId: userId, club: adminClub }),
+          body: JSON.stringify({
+            userId: userId,
+            club: adminClub,
+            numbTeams: adminClubNumber,
+          }),
         });
         const data = await response.json();
 
@@ -262,6 +268,17 @@ function LoginPage() {
                         type="text"
                         id="adminClub"
                         onChange={(e) => setAdminClub(e.target.value)}
+                        required
+                      />
+
+                      <label htmlFor="adminClubSize">Teams in Club</label>
+                      <input
+                        type="number"
+                        id="adminClubSize"
+                        min="1"
+                        onChange={(e) =>
+                          setAdminClubNumber(Number(e.target.value))
+                        }
                         required
                       />
 

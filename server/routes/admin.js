@@ -8,6 +8,7 @@ import {
   getNumbSquads,
   getFixtures,
   saveAdminDataBase,
+  saveClubDataBase,
 } from "../config/firestore.js";
 
 const router = express.Router();
@@ -86,9 +87,10 @@ router.post("/api/admin/saveAdmin", authenticateToken, async (req, res) => {
   try {
     const userId = req.body.userId;
     const club = req.body.club;
-    // console.log(userId, club);
+    const numbTeams = req.body.numbTeams;
     const saveAdminDb = await saveAdminDataBase(userId, club);
-    if (saveAdminDb) {
+    const saveClub = await saveClubDataBase(club, numbTeams);
+    if (saveAdminDb && saveClub) {
       res.json({ success: true });
     } else {
       res.json({ success: false });
