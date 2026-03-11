@@ -1,13 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
-import { useAllTeam } from "../../context/AllTeamsContext.js";
 import { useFixture } from "../../context/FixtureContext.js";
-import { useClub } from "../../context/ClubContext.js";
 
-import { useFixtures } from "../../hooks/useFixtures.js";
 import { usePlayers } from "../../hooks/usePlayers.js";
 
 import NavBar from "../NavBar.js";

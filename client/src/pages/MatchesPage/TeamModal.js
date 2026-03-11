@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import React from "react";
 
 import { useUser } from "../../context/UserContext.js";
+import { useClub } from "../../context/ClubContext.js";
 
 import "./TeamModal.css";
 import "../../themes/clubThemes.css";
@@ -11,6 +12,7 @@ import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
 const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
   const { user } = useUser();
+  const { clubData } = useClub();
   const userClub = user?.club;
 
   const [startingGk, setStartingGk] = useState([]);
@@ -21,6 +23,9 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
+
+  const gkShirt = clubData.gkShirt;
+  const playerShirt = clubData.playerShirt;
 
   const number = parseInt(fixtureGw.slice(2), 10);
 
@@ -49,20 +54,6 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
     );
   }, []);
 
-  // const team = fixtureDetails.gwTeam;
-  // setStartingGk(
-  //   team.filter((p) => p.position === "GK" && p.isStarting === true),
-  // );
-  // setStartingDef(
-  //   team.filter((p) => p.position === "DEF" && p.isStarting === true),
-  // );
-  // setStartingMid(
-  //   team.filter((p) => p.position === "MID" && p.isStarting === true),
-  // );
-  // setStartingFwd(
-  //   team.filter((p) => p.position === "FWD" && p.isStarting === true),
-  // );
-
   return (
     <div className="modalOverlayTeam" onClick={onClose}>
       <div className={`modalContainerTeam ${themeClass}`}>
@@ -89,7 +80,7 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                 {Array.from({ length: startingGk.length }).map((_, index) => (
                   <div key={index} className="shirtContainer">
                     <button className="shirtButton">
-                      <ShirtSvg className={`gkShirt ${themeClass}`} />
+                      <ShirtSvg className={`gkShirt`} color={gkShirt} />
                     </button>
                     <div className="homePageTag">
                       {startingGk[index] && (
@@ -112,7 +103,8 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                       <div key={index} className="shirtContainer">
                         <button className="shirtButton">
                           <ShirtSvg
-                            className={`shirt ${themeClass}`}
+                            className={`shirt`}
+                            color={playerShirt}
                             size={70}
                           />
                         </button>
@@ -142,7 +134,8 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                       <div key={index} className="shirtContainer">
                         <button className="shirtButton">
                           <ShirtSvg
-                            className={`shirt ${themeClass}`}
+                            className={`shirt`}
+                            color={playerShirt}
                             size={70}
                           />
                         </button>
@@ -172,7 +165,8 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                       <div key={index} className="shirtContainer">
                         <button className="shirtButton">
                           <ShirtSvg
-                            className={`shirt ${themeClass}`}
+                            className={`shirt`}
+                            color={playerShirt}
                             size={70}
                           />
                         </button>
@@ -185,8 +179,6 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                                   startingFwd[index].gameweeks?.[number]
                                     ?.gwPoints
                                 }
-                                {/* {startingFwd[index].gameweeks?.[number]
-                                  ?.goals !== 0 && <> - ⚽︎</>} */}
                               </h5>
                             </>
                           )}

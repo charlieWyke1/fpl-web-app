@@ -17,9 +17,6 @@ import { useNavigate } from "react-router-dom";
 import "../../themes/clubThemes.css";
 import "./ResultsPage.css";
 
-// WORKS to submit button - have to save team - move onto match details
-// then offer the next squad button !!
-
 function ResultsPage() {
   const { user, setUser } = useUser();
   const { players } = usePlayer();

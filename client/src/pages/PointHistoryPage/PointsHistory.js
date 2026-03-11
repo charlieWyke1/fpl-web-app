@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import { useAllTeam } from "../../context/AllTeamsContext.js";
 import { useUser } from "../../context/UserContext.js";
+import { useClub } from "../../context/ClubContext.js";
 
 import { usePlayers } from "../../hooks/usePlayers.js";
 
@@ -18,6 +19,7 @@ function PointsHistory() {
   const { allTeam } = useAllTeam();
   const { user } = useUser();
   const { players } = usePlayers(user);
+  const { clubData } = useClub();
 
   const [displayTeam, setDisplayTeam] = useState([]);
   const [changeGw, setChangeGw] = useState(`gw${user?.currentGW}`);
@@ -35,6 +37,9 @@ function PointsHistory() {
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
+
+  const gkShirt = clubData.gkShirt;
+  const playerShirt = clubData.playerShirt;
 
   useEffect(() => {
     if (allTeam.length === 0) return;
@@ -147,7 +152,7 @@ function PointsHistory() {
           {Array.from({ length: startingGk.length }).map((_, index) => (
             <div key={index} className="shirtContainer">
               <button className="shirtButton">
-                <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+                <ShirtSvg className={`gkShirt`} color={gkShirt} size={100} />
               </button>
               <div className="homePageTag">
                 {startingGk[index] && (
@@ -166,7 +171,11 @@ function PointsHistory() {
             {Array.from({ length: startingDef.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
                 <button className="shirtButton">
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`shirt`}
+                    color={playerShirt}
+                    size={100}
+                  />
                 </button>
                 <div className="homePageTag">
                   {startingDef[index] && (
@@ -186,7 +195,11 @@ function PointsHistory() {
             {Array.from({ length: startingMid.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
                 <button className="shirtButton">
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`shirt`}
+                    color={playerShirt}
+                    size={100}
+                  />
                 </button>
                 <div className="homePageTag">
                   {startingMid[index] && (
@@ -206,7 +219,11 @@ function PointsHistory() {
             {Array.from({ length: startingFwd.length }).map((_, index) => (
               <div key={index} className="shirtContainer">
                 <button className="shirtButton">
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`shirt`}
+                    color={playerShirt}
+                    size={100}
+                  />
                 </button>
                 <div className="homePageTag">
                   {startingFwd[index] && (
@@ -228,10 +245,18 @@ function PointsHistory() {
             <div key={index} className="shirtContainer">
               <button className="shirtButton">
                 {startingSub[index].position === "GK" && (
-                  <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`gkShirt`}
+                    style={{ color: gkShirt }}
+                    size={100}
+                  />
                 )}
                 {startingSub[index].position !== "GK" && (
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`shirt`}
+                    style={{ color: playerShirt }}
+                    size={100}
+                  />
                 )}
               </button>
               <div className="homePageTag">

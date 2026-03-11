@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import React from "react";
 
 import { useUser } from "../../context/UserContext.js";
 
 import "./PlayerDataModal.css";
 import "../../themes/clubThemes.css";
 import "../../utils/Pitch.css";
-
-import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
 const PlayerModal = ({ isOpen, onClose, player }) => {
   const { user } = useUser();

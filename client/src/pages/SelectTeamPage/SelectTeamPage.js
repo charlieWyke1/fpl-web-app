@@ -4,7 +4,7 @@ import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
-import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
+import { useClub } from "../../context/ClubContext.js";
 
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -32,6 +32,7 @@ function SelectTeamPage() {
   const { user } = useUser();
   const { state } = useLocation();
   const { allTeam } = useAllTeam();
+  const { clubData } = useClub();
   //   const { currentTeam, setCurrentTeam } = useCurrentTeam();
 
   const navigate = useNavigate();
@@ -53,6 +54,9 @@ function SelectTeamPage() {
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
+
+  const gkShirt = clubData.gkShirt;
+  const playerShirt = clubData.playerShirt;
 
   const fixturesTemp = useFixtures(user);
   const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
@@ -220,7 +224,8 @@ function SelectTeamPage() {
                 onClick={handleStarterClick}
                 isGk={true}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             ))}
           </div>
@@ -235,7 +240,8 @@ function SelectTeamPage() {
                 isActive={activeStarterId === p.id}
                 onClick={handleStarterClick}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             ))}
           </div>
@@ -250,7 +256,8 @@ function SelectTeamPage() {
                 isActive={activeStarterId === p.id}
                 onClick={handleStarterClick}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             ))}
           </div>
@@ -265,7 +272,8 @@ function SelectTeamPage() {
                 isActive={activeStarterId === p.id}
                 onClick={handleStarterClick}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             ))}
           </div>
@@ -282,7 +290,8 @@ function SelectTeamPage() {
               onClick={handleSubClick}
               type="sub"
               isGk={p.position === "GK"}
-              themeClass={themeClass}
+              gkShirt={gkShirt}
+              playerShirt={playerShirt}
             />
           ))}
         </div>
@@ -301,7 +310,15 @@ function SelectTeamPage() {
   );
 }
 
-const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
+const PlayerIcon = ({
+  player,
+  isActive,
+  onClick,
+  isGk,
+  type,
+  gkShirt,
+  playerShirt,
+}) => {
   let highlightClass = "";
 
   if (isActive) {
@@ -319,7 +336,8 @@ const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
         onClick={() => onClick(player)}
       >
         <ShirtSvg
-          className={isGk ? `gkShirt ${themeClass}` : `shirt ${themeClass}`}
+          className={isGk ? `gkShirt` : `shirt`}
+          color={isGk ? gkShirt : playerShirt}
           size={type === "sub" ? 80 : 100}
         />
       </button>

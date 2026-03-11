@@ -4,6 +4,8 @@ import { auth } from "../../config/firebase.js";
 
 import { useUser } from "../../context/UserContext.js";
 import { useAllTeam } from "../../context/AllTeamsContext.js";
+import { useClub } from "../../context/ClubContext.js";
+
 // import { useAllClub } from "../../context/AllClubUsersContext.js";
 
 import { useNavigate } from "react-router-dom";
@@ -27,6 +29,7 @@ import "../../themes/clubThemes.css";
 
 function HomePage() {
   const { user } = useUser();
+  const { clubData } = useClub();
   useClubUsers(user); // does it automatically
 
   // const { allUsers, setAllUsers } = useAllClub();
@@ -63,6 +66,9 @@ function HomePage() {
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
 
+  const gkShirt = clubData.gkShirt;
+  const playerShirt = clubData.playerShirt;
+
   // check if our user has a team
   useEffect(() => {
     const checkTeam = async () => {
@@ -96,12 +102,6 @@ function HomePage() {
 
   // gets players and the most up to date version of it
   useHasTeamContextFiller(hasTeam ? user : null, refetchPlayers);
-
-  // KEEP currentTeam simple, only playerId and starting boolean
-  // make use of the joinedTeamList for the data side of stuff
-
-  // everything from here only works if we HAVE a team
-
   const fixturesTemp = useFixtures(user);
 
   useEffect(() => {
@@ -113,9 +113,6 @@ function HomePage() {
 
     setCutOffDate(new Date(tsDate._seconds * 1000));
   }, [currentGW]);
-
-  // NEXT UP
-  // league stuff
 
   useEffect(() => {
     if (allTeam.length === 0) return;
@@ -138,7 +135,6 @@ function HomePage() {
 
     if (view === "points") {
       const pointsAndDataTeam = matchPlayerData(pointsTeam);
-      // setDataTeamStateSend(pointsAndDataTeam);
       const gwTemp = pointsAndDataTeam.reduce((total, player) => {
         if (!player?.isStarting) return total;
 
@@ -151,7 +147,6 @@ function HomePage() {
         setMinusPts(allTeam?.[`gw${user?.currentGW - 1}`].minusPoints);
       }
       setTotalGwPoints(gwTemp + minusPts);
-      // setTotalGwPoints(gwTemp);
 
       const totalSeasonPoints = Object.values(allTeam)
         .filter((gw) => gw.locked)
@@ -192,8 +187,7 @@ function HomePage() {
     }
     if (view === "team") {
       const nextAndDataTeam = matchPlayerData(nextTeam);
-      // setNextTeamStateSend(nextAndDataTeam);
-      // set team for upcoming gw
+
       setStartingGk(
         nextAndDataTeam.filter(
           (p) => p.position === "GK" && p.isStarting === true,
@@ -348,7 +342,7 @@ function HomePage() {
                 className="shirtButton"
                 onClick={() => openPlayerModal(startingGk[index])}
               >
-                <ShirtSvg className={`gkShirt ${themeClass}`} />
+                <ShirtSvg className={`gkShirt`} color={gkShirt} />
               </button>
               <div className="homePageTag">
                 {startingGk[index] && (
@@ -370,7 +364,7 @@ function HomePage() {
                   className="shirtButton"
                   onClick={() => openPlayerModal(startingDef[index])}
                 >
-                  <ShirtSvg className={`shirt ${themeClass}`} />
+                  <ShirtSvg className={`shirt`} color={playerShirt} />
                 </button>
                 <div className="homePageTag">
                   {startingDef[index] && (
@@ -397,7 +391,7 @@ function HomePage() {
                   className="shirtButton"
                   onClick={() => openPlayerModal(startingMid[index])}
                 >
-                  <ShirtSvg className={`shirt ${themeClass}`} />
+                  <ShirtSvg className={`shirt`} color={playerShirt} />
                 </button>
                 <div className="homePageTag">
                   {startingMid[index] && (
@@ -422,7 +416,7 @@ function HomePage() {
                   className="shirtButton"
                   onClick={() => openPlayerModal(startingFwd[index])}
                 >
-                  <ShirtSvg className={`shirt ${themeClass}`} />
+                  <ShirtSvg className={`shirt`} color={playerShirt} />
                 </button>
                 <div className="homePageTag">
                   {startingFwd[index] && (
@@ -449,10 +443,10 @@ function HomePage() {
                 onClick={() => openPlayerModal(startingSub[index])}
               >
                 {startingSub[index].position === "GK" && (
-                  <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+                  <ShirtSvg className={`gkShirt`} color={gkShirt} />
                 )}
                 {startingSub[index].position !== "GK" && (
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg className={`shirt`} color={playerShirt} />
                 )}
               </button>
               <div className="homePageTag">

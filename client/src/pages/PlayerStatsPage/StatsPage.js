@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect, useMemo } from "react";
 
-import { useAllTeam } from "../../context/AllTeamsContext.js";
 import { useUser } from "../../context/UserContext.js";
 
 import { usePlayers } from "../../hooks/usePlayers.js";

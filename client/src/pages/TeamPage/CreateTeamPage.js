@@ -20,7 +20,7 @@ import AddMIDModal from "./AddMIDModal.js";
 import AddFWDModal from "./AddFWDModal.js";
 
 import "./CreateTeamPage.css";
-import "../../utils/Pitch.css"
+import "../../utils/Pitch.css";
 import "../../themes/clubThemes.css";
 
 function CreateTeamPage() {
@@ -47,6 +47,8 @@ function CreateTeamPage() {
   const [showFwdModal, setShowFwdModal] = useState(false);
 
   const [teamSaved, setTeamSaved] = useState([]);
+  const [playerShirt, setPlayerShirt] = "#000000";
+  const [gkShirt, setGkShirt] = "#FFFFFF";
 
   useEffect(() => {
     if (!user) return;
@@ -142,6 +144,12 @@ function CreateTeamPage() {
     }
   };
 
+  useEffect(() => {
+    if (clubData) {
+      setPlayerShirt(clubData.playerShirt);
+      setGkShirt(clubData.gkShirt);
+    }
+  }, [clubData]);
 
   return (
     <div className={themeClass}>
@@ -188,7 +196,11 @@ function CreateTeamPage() {
                       setActiveGKIndex(index);
                     }}
                   >
-                    <ShirtSvg className={`gkShirt ${themeClass}`} size={80} />
+                    <ShirtSvg
+                      className={`gkShirt`}
+                      color={playerShirt}
+                      size={75}
+                    />
                   </button>
                   <div className="namePricePoints">
                     {selectedGK[index] && (
@@ -220,7 +232,11 @@ function CreateTeamPage() {
                       setActiveDEFIndex(index);
                     }}
                   >
-                    <ShirtSvg className={`shirt ${themeClass}`} size={80} />
+                    <ShirtSvg
+                      className={`shirt`}
+                      color={playerShirt}
+                      size={75}
+                    />
                   </button>
                   <div className="namePricePoints">
                     {selectedDEF[index] && (
@@ -252,7 +268,11 @@ function CreateTeamPage() {
                       setActiveMIDIndex(index);
                     }}
                   >
-                    <ShirtSvg className={`shirt ${themeClass}`} size={75} />
+                    <ShirtSvg
+                      className={`shirt`}
+                      color={playerShirt}
+                      size={75}
+                    />
                   </button>
                   <div className="namePricePoints">
                     {selectedMID[index] && (
@@ -284,7 +304,11 @@ function CreateTeamPage() {
                       setActiveFWDIndex(index);
                     }}
                   >
-                    <ShirtSvg className={`shirt ${themeClass}`} size={75} />
+                    <ShirtSvg
+                      className={`shirt`}
+                      color={playerShirt}
+                      size={75}
+                    />
                   </button>
                   <div className="namePricePoints">
                     {selectedFWD[index] && (

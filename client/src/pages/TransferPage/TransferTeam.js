@@ -49,6 +49,9 @@ function CreateTeamPage() {
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
 
+  const gkShirt = clubData.gkShirt;
+  const playerShirt = clubData.playerShirt;
+
   const fixturesTemp = useFixtures(user);
   const tsDate = fixturesTemp.fixtures.cutOff[currentGW];
   const cutOffDate = new Date(tsDate._seconds * 1000);
@@ -209,7 +212,7 @@ function CreateTeamPage() {
                     setActiveGKIndex(index);
                   }}
                 >
-                  <ShirtSvg className={`gkShirt ${themeClass}`} size={100} />
+                  <ShirtSvg className={`gkShirt`} color={gkShirt} size={100} />
                 </button>
                 <div className="transferTag">
                   {selectedGK[index] && (
@@ -237,7 +240,11 @@ function CreateTeamPage() {
                     setActiveDefIndex(index);
                   }}
                 >
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`shirt`}
+                    color={playerShirt}
+                    size={100}
+                  />
                 </button>
                 <div className="transferTag">
                   {selectedDef[index] && (
@@ -265,7 +272,11 @@ function CreateTeamPage() {
                     setActiveMidIndex(index);
                   }}
                 >
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`shirt`}
+                    color={playerShirt}
+                    size={100}
+                  />
                 </button>
                 <div className="transferTag">
                   {selectedMid[index] && (
@@ -293,7 +304,11 @@ function CreateTeamPage() {
                     setActiveFwdIndex(index);
                   }}
                 >
-                  <ShirtSvg className={`shirt ${themeClass}`} size={100} />
+                  <ShirtSvg
+                    className={`shirt`}
+                    color={playerShirt}
+                    size={100}
+                  />
                 </button>
                 <div className="transferTag">
                   {selectedFwd[index] && (

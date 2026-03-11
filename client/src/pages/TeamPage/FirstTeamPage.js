@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../../config/firebase.js";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { useUser } from "../../context/UserContext.js";
 import { useClub } from "../../context/ClubContext.js";
 import { useCurrentTeam } from "../../context/CurrentTeamContext.js";
-import { useNavigate, useLocation } from "react-router-dom";
+
 import { SetStartingTeamValues } from "../../utils/SetStartingTeamValues.js";
+
 import NavBar from "../NavBar.js";
 import ShirtSvg from "../../svgFolder/ShirtSVG.js";
 
@@ -26,6 +28,10 @@ function FirstTeamPage() {
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
+
+  const gkShirt = clubData.gkShirt;
+  const playerShirt = clubData.playerShirt;
+
   const { def, mid, fwd } = SetStartingTeamValues(clubData);
 
   const [selectedGk, setSelectedGk] = useState(null);
@@ -148,18 +154,12 @@ function FirstTeamPage() {
 
   const saveSquad = async (fullSquad) => {
     setCurrentTeam(fullSquad);
-    // console.log("Full details squad...", currentTeam);
-    // right now need to save the team to database
-    // need to decide what we store either just id and starting or full details
-    // i think just id and starting and then we keep the currentTeam locally
+
     const saveSquad = fullSquad.map((player) => ({
       id: player.id,
       isStarting: player.isStarting,
     }));
 
-    // console.log(user.budget);
-
-    // console.log("database squad ...", saveSquad);
     try {
       const token = await auth.currentUser.getIdToken();
       const res = await fetch(`${getApiBase()}/api/team/saveTeam`, {
@@ -180,9 +180,9 @@ function FirstTeamPage() {
       const data = await res.json();
 
       if (data.success === true) {
-        //   navigate to create team page
-        navigate("/HomePage"); }
-     } catch (error) {
+        navigate("/HomePage");
+      }
+    } catch (error) {
       console.error("Error saving team :", error);
     }
   };
@@ -214,7 +214,8 @@ function FirstTeamPage() {
                 onClick={handleStarterClick}
                 isGk={true}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             )}
           </div>
@@ -229,7 +230,8 @@ function FirstTeamPage() {
                 isActive={activeStarterId === p.id}
                 onClick={handleStarterClick}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             ))}
           </div>
@@ -244,7 +246,8 @@ function FirstTeamPage() {
                 isActive={activeStarterId === p.id}
                 onClick={handleStarterClick}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             ))}
           </div>
@@ -259,7 +262,8 @@ function FirstTeamPage() {
                 isActive={activeStarterId === p.id}
                 onClick={handleStarterClick}
                 type="starter"
-                themeClass={themeClass}
+                gkShirt={gkShirt}
+                playerShirt={playerShirt}
               />
             ))}
           </div>
@@ -276,7 +280,8 @@ function FirstTeamPage() {
               onClick={handleSubClick}
               type="sub"
               isGk={p.position === "GK"}
-              themeClass={themeClass}
+              gkShirt={gkShirt}
+              playerShirt={playerShirt}
             />
           ))}
         </div>
@@ -302,7 +307,15 @@ function FirstTeamPage() {
   );
 }
 
-const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
+const PlayerIcon = ({
+  player,
+  isActive,
+  onClick,
+  isGk,
+  type,
+  gkShirt,
+  playerShirt,
+}) => {
   let highlightClass = "";
 
   if (isActive) {
@@ -320,7 +333,8 @@ const PlayerIcon = ({ player, isActive, onClick, isGk, type, themeClass }) => {
         onClick={() => onClick(player)}
       >
         <ShirtSvg
-          className={isGk ? `gkShirt ${themeClass}` : `shirt ${themeClass}`}
+          className={isGk ? `gkShirt` : `shirt`}
+          color={isGk ? gkShirt : playerShirt}
           size={type === "sub" ? 100 : 120}
         />
       </button>
