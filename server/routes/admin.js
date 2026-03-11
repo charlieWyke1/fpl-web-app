@@ -88,8 +88,15 @@ router.post("/api/admin/saveAdmin", authenticateToken, async (req, res) => {
     const userId = req.body.userId;
     const club = req.body.club;
     const numbTeams = req.body.numbTeams;
+    const gkShirt = req.body.gkShirt;
+    const playerShirt = req.body.playerShirt;
     const saveAdminDb = await saveAdminDataBase(userId, club);
-    const saveClub = await saveClubDataBase(club, numbTeams);
+    const saveClub = await saveClubDataBase(
+      club,
+      numbTeams,
+      gkShirt,
+      playerShirt,
+    );
     if (saveAdminDb && saveClub) {
       res.json({ success: true });
     } else {

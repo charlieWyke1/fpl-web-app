@@ -120,6 +120,8 @@ function LoginPage() {
             userId: userId,
             club: adminClub,
             numbTeams: adminClubNumber,
+            gkShirt: adminGkColour,
+            playerShirt: adminPlayerColour,
           }),
         });
         const data = await response.json();

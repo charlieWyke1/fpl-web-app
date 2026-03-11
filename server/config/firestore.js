@@ -504,7 +504,7 @@ export async function saveAdminDataBase(userId, club) {
   }
 }
 
-export async function saveClubDataBase(club, numbTeams) {
+export async function saveClubDataBase(club, numbTeams, gkShirt, playerShirt) {
   try {
     // 1 - 3 teams
     const config = {
@@ -539,6 +539,8 @@ export async function saveClubDataBase(club, numbTeams) {
       numbTeams,
       squadNumber: squadNumb,
       startingTeamNumber: start,
+      gkShirt,
+      playerShirt,
     });
 
     return true;
