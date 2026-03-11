@@ -549,3 +549,17 @@ export async function saveClubDataBase(club, numbTeams, gkShirt, playerShirt) {
     throw error;
   }
 }
+
+export async function getAllClubs() {
+  try {
+    const clubsCol = db.collection("clubs");
+    const clubSnapshot = await clubsCol.get();
+
+    const clubNames = clubSnapshot.docs.map((doc) => doc.id);
+
+    return clubNames;
+  } catch (error) {
+    console.error("Error getting clubs:", error);
+    throw error;
+  }
+}

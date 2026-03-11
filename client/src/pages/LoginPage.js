@@ -1,5 +1,5 @@
 import React from "react";
-import "./LoginPage.css";
+import { useState, useEffect } from "react";
 
 import { auth } from "../services/firebase.js";
 import {
@@ -10,28 +10,42 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext.js";
 import { getApiBase } from "../config/api.js";
 
+import "./LoginPage.css";
+
 function LoginPage() {
   const navigate = useNavigate();
   const { setUser } = useUser();
 
+  const [allClubs, setAllClubs] = useState([]);
+
   // stores our email and password values
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const [newUserClicked, setNewUserClicked] = React.useState(false);
-  const [role, setRole] = React.useState();
+  const [newUserClicked, setNewUserClicked] = useState(false);
+  const [role, setRole] = useState();
 
-  const [adminEmail, setAdminEmail] = React.useState("");
-  const [adminPassword, setAdminPassword] = React.useState("");
-  const [adminConfirmPassword, setAdminConfirmPassword] = React.useState("");
-  const [adminClub, setAdminClub] = React.useState("");
-  const [adminClubNumber, setAdminClubNumber] = React.useState(0);
-  const [adminGkColour, setAdminGkColour] = React.useState("");
-  const [adminPlayerColour, setAdminPlayerColour] = React.useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminConfirmPassword, setAdminConfirmPassword] = useState("");
+  const [adminClub, setAdminClub] = useState("");
+  const [adminClubNumber, setAdminClubNumber] = useState(0);
+  const [adminGkColour, setAdminGkColour] = useState("");
+  const [adminPlayerColour, setAdminPlayerColour] = useState("");
 
-  // const newUser = () => {
-  //   console.log(newUserClicked);
-  // };
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        const response = await fetch(`${getApiBase()}/api/admin/getAllClubs`);
+        const data = await response.json();
+        setAllClubs(data);
+      } catch (error) {
+        console.log("Error getting clubs", error);
+      }
+    };
+
+    fetchClubs();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -316,11 +330,11 @@ function LoginPage() {
                 )}
               </div>
 
-              {/* {role === "user" && (
-              <>
-                <h4>USER</h4>
-              </>
-            )} */}
+              {role === "user" && (
+                <>
+                  <h4> all clubs stores all our clubs for club choice</h4>
+                </>
+              )}
             </div>
           </>
         )}

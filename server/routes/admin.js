@@ -9,6 +9,7 @@ import {
   getFixtures,
   saveAdminDataBase,
   saveClubDataBase,
+  getAllClubs,
 } from "../config/firestore.js";
 
 const router = express.Router();
@@ -104,4 +105,12 @@ router.post("/api/admin/saveAdmin", authenticateToken, async (req, res) => {
     }
   } catch (error) {}
 });
+
+router.get("/api/admin/getAllClubs", async (req, res) => {
+  try {
+    const getClubs = await getAllClubs();
+    res.json(getClubs);
+  } catch (error) {}
+});
+
 export default router;
