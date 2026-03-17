@@ -114,13 +114,18 @@ router.get("/api/admin/getAllClubs", async (req, res) => {
   } catch (error) {}
 });
 
-router.get("/api/admin/saveUser", authenticateToken, async (req, res) => {
+router.post("/api/admin/saveUser", authenticateToken, async (req, res) => {
   try {
     const userId = req.body.userId;
     const club = req.body.club;
     const name = req.body.name;
 
     const saveUser = await SaveNewUser(userId, club, name);
+    if (saveUser) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
   } catch (error) {}
 });
 

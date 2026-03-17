@@ -566,6 +566,17 @@ export async function getAllClubs() {
 
 export async function SaveNewUser(userId, club, name) {
   try {
+    const userRef = db.collection("users").doc(userId);
+
+    await userRef.set({
+      admin: false,
+      club: club,
+      currentGW: 1,
+      name: name,
+      transfers: 1,
+    });
+
+    return true;
   } catch (error) {
     console.error("Error saving new user");
     throw error;

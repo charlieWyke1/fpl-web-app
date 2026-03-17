@@ -47,8 +47,8 @@ function CreateTeamPage() {
   const [showFwdModal, setShowFwdModal] = useState(false);
 
   const [teamSaved, setTeamSaved] = useState([]);
-  const [playerShirt, setPlayerShirt] = "#000000";
-  const [gkShirt, setGkShirt] = "#FFFFFF";
+  const [playerShirt, setPlayerShirt] = useState("#000000");
+  const [gkShirt, setGkShirt] = useState("#FFFFFF");
 
   useEffect(() => {
     if (!user) return;
@@ -145,11 +145,11 @@ function CreateTeamPage() {
   };
 
   useEffect(() => {
-    if (clubData) {
-      setPlayerShirt(clubData.playerShirt);
-      setGkShirt(clubData.gkShirt);
-    }
-  }, [clubData]);
+    if (!clubData?.playerShirt || !clubData?.gkShirt) return;
+
+    setPlayerShirt(clubData.playerShirt);
+    setGkShirt(clubData.gkShirt);
+  }, [clubData?.playerShirt, clubData?.gkShirt]);
 
   return (
     <div className={themeClass}>
@@ -196,11 +196,7 @@ function CreateTeamPage() {
                       setActiveGKIndex(index);
                     }}
                   >
-                    <ShirtSvg
-                      className={`gkShirt`}
-                      color={playerShirt}
-                      size={75}
-                    />
+                    <ShirtSvg className={`gkShirt`} color={gkShirt} size={75} />
                   </button>
                   <div className="namePricePoints">
                     {selectedGK[index] && (
@@ -325,33 +321,35 @@ function CreateTeamPage() {
         </div>
       )}
 
-      {teamName && (
-        <button
-          className="saveTeamButton"
-          disabled={
-            selectedGK.includes(null) ||
-            selectedDEF.includes(null) ||
-            selectedMID.includes(null) ||
-            selectedFWD.includes(null) ||
-            budget < 0
-          }
-          onClick={() => {
-            // save team function
-            const team = [
-              ...selectedGK,
-              ...selectedDEF,
-              ...selectedMID,
-              ...selectedFWD,
-            ];
-            setTeamSaved(team);
-            setBudget(clubData.budget);
+      <div className="submitbutton">
+        {teamName && (
+          <button
+            className="saveTeamButton"
+            disabled={
+              selectedGK.includes(null) ||
+              selectedDEF.includes(null) ||
+              selectedMID.includes(null) ||
+              selectedFWD.includes(null) ||
+              budget < 0
+            }
+            onClick={() => {
+              // save team function
+              const team = [
+                ...selectedGK,
+                ...selectedDEF,
+                ...selectedMID,
+                ...selectedFWD,
+              ];
+              setTeamSaved(team);
+              setBudget(clubData.budget);
 
-            saveTeam(team);
-          }}
-        >
-          Save Team
-        </button>
-      )}
+              saveTeam(team);
+            }}
+          >
+            Save Team
+          </button>
+        )}
+      </div>
 
       {/* GK modal */}
       <AddGKModal
