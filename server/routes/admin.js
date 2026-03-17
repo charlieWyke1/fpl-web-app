@@ -10,6 +10,7 @@ import {
   saveAdminDataBase,
   saveClubDataBase,
   getAllClubs,
+  SaveNewUser,
 } from "../config/firestore.js";
 
 const router = express.Router();
@@ -110,6 +111,16 @@ router.get("/api/admin/getAllClubs", async (req, res) => {
   try {
     const getClubs = await getAllClubs();
     res.json(getClubs);
+  } catch (error) {}
+});
+
+router.get("/api/admin/saveUser", authenticateToken, async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const club = req.body.club;
+    const name = req.body.name;
+
+    const saveUser = await SaveNewUser(userId, club, name);
   } catch (error) {}
 });
 

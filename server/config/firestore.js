@@ -563,3 +563,11 @@ export async function getAllClubs() {
     throw error;
   }
 }
+
+export async function SaveNewUser(userId, club, name) {
+  try {
+  } catch (error) {
+    console.error("Error saving new user");
+    throw error;
+  }
+}

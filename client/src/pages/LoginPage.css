@@ -78,7 +78,8 @@
 #newUserBox {
   border-radius: 30px;
   border-left: #0077b6 solid 1px;
-  height: 62vh !important;
+  height: auto !important;
+  max-height: 65vh !important;
   min-height: 35vh !important;
   display: flex;
   flex-direction: column;
@@ -103,25 +104,33 @@
 .roleContent {
   width: 100%;
 }
-.adminForm {
+.adminForm,
+.userForm {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 }
-.adminForm label {
+.adminForm label,
+.userForm label {
   color: white;
-  font-size: clamp(0.5rem, 2vw, 3rem) !important;
+  font-size: clamp(0.7rem, 2.1vw, 3rem) !important;
   font-weight: 500;
 }
-.adminForm input {
+.adminForm input,
+.userForm input,
+.userForm select {
   font-size: clamp(0.8rem, 1.3vw, 1.4rem);
   width: 80%;
   padding: clamp(0.4rem, 0.8vw, 0.9rem);
   height: clamp(2rem, 3vw, 3.2rem);
   border-radius: 8px;
-  /* border: none; */
+  border: none;
 }
+.userForm select {
+  height: clamp(2.2rem, 3.3vw, 3.5rem) !important;
+}
+
 #adminEmail,
 #adminClubSize,
 #adminClub {
@@ -139,21 +148,24 @@ input[type="color"] {
   appearance: none;
   -webkit-appearance: none;
 }
-.adminButton {
+.adminButton,
+.userButton {
   background-color: transparent;
   border: none;
   width: auto;
   font-weight: 600;
   color: white;
-  font-size: clamp(1rem, 2vw, 4rem) !important;
+  font-size: clamp(1.2rem, 2.2vw, 4rem) !important;
   margin-top: 2vh;
   transition: transform 0.3s;
 }
-.adminButton:hover {
+.adminButton:hover,
+.userButton:hover {
   transform: scale(1.1);
   text-decoration: underline;
 }
-.adminButton:disabled {
+.adminButton:disabled,
+.userButton:disabled {
   cursor: not-allowed;
   transform: none;
   text-decoration: none;

@@ -33,6 +33,12 @@ function LoginPage() {
   const [adminGkColour, setAdminGkColour] = useState("");
   const [adminPlayerColour, setAdminPlayerColour] = useState("");
 
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [userConfirmPassword, setUserConfirmPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userClub, setUserClub] = useState("");
+
   useEffect(() => {
     const fetchClubs = async () => {
       try {
@@ -93,7 +99,7 @@ function LoginPage() {
     }
   };
 
-  const formInvalid =
+  const adminFormInvalid =
     adminPassword === "" ||
     adminConfirmPassword === "" ||
     adminEmail === "" ||
@@ -103,15 +109,21 @@ function LoginPage() {
     adminClubNumber === 0 ||
     adminConfirmPassword !== adminPassword;
 
+  const userFormInvalid =
+    userPassword === "" ||
+    userConfirmPassword === "" ||
+    userEmail === "" ||
+    userClub === "" ||
+    userName === "" ||
+    userPassword !== userConfirmPassword;
+
   const adminSubmit = async (e) => {
     // right now need to sign the user up as an admin using firebase
     e.preventDefault();
-
     if (adminPassword.length < 7) {
       alert("Password not long enough");
       return;
     }
-
     try {
       const userCreds = await createUserWithEmailAndPassword(
         auth,
@@ -151,6 +163,57 @@ function LoginPage() {
         }
       } catch (error) {
         console.log("Error creating Admin");
+      }
+    } catch (error) {
+      console.log("Error: ", error.message);
+    }
+  };
+
+  const userSubmit = async (e) => {
+    e.preventDefault();
+
+    if (userPassword.length < 7) {
+      alert("Password not long enough");
+      return;
+    }
+
+    try {
+      const userCreds = await createUserWithEmailAndPassword(
+        auth,
+        userEmail,
+        userPassword,
+      );
+      const user = userCreds.user;
+      const userId = user.uid;
+      // this creates our user in the authentication part ^^
+      // now to save them to user in database
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch(`${getApiBase()}/api/admin/saveUser`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: userId,
+            club: userClub,
+            name: userName,
+          }),
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          setUser({
+            admin: false,
+            id: userId,
+            club: userClub,
+            currentGw: 1,
+          });
+          navigate("/HomePage");
+        }
+      } catch (error) {
+        console.log("Error creating user");
       }
     } catch (error) {
       console.log("Error: ", error.message);
@@ -321,20 +384,89 @@ function LoginPage() {
                       <button
                         type="submit"
                         className="adminButton"
-                        disabled={formInvalid}
+                        disabled={adminFormInvalid}
                       >
                         Save Admin
                       </button>
                     </form>
                   </div>
                 )}
-              </div>
 
-              {role === "user" && (
-                <>
-                  <h4> all clubs stores all our clubs for club choice</h4>
-                </>
-              )}
+                {role === "user" && (
+                  <>
+                    <div className="userSignUp">
+                      <form className="userForm" onSubmit={userSubmit}>
+                        <label htmlFor="userEmail">Email</label>
+                        <input
+                          type="email"
+                          id="userEmail"
+                          onChange={(e) => setUserEmail(e.target.value)}
+                          required
+                        />
+                        <label htmlFor="userPassword">Password</label>
+                        <input
+                          type="password"
+                          id="userPassword"
+                          className="form-control"
+                          onChange={(e) => setUserPassword(e.target.value)}
+                          value={userPassword}
+                          required
+                        />
+
+                        <label htmlFor="userConfirmPassword">
+                          Confirm Password
+                        </label>
+                        <input
+                          type="password"
+                          id="userConfirmPassword"
+                          className={`form-control ${
+                            userConfirmPassword
+                              ? userPassword === userConfirmPassword
+                                ? "is-valid"
+                                : "is-invalid"
+                              : ""
+                          }`}
+                          onChange={(e) =>
+                            setUserConfirmPassword(e.target.value)
+                          }
+                          value={userConfirmPassword}
+                          required
+                        />
+
+                        <label htmlFor="userName">Name</label>
+                        <input
+                          type="input"
+                          id="userName"
+                          onChange={(e) => setUserName(e.target.value)}
+                          required
+                        />
+
+                        <label htmlFor="clubOfUser">Club</label>
+                        <select
+                          value={userClub}
+                          onChange={(e) => setUserClub(e.target.value)}
+                        >
+                          <option value="">Select a club</option>
+
+                          {allClubs.map((club) => (
+                            <option key={club} value={club}>
+                              {club}
+                            </option>
+                          ))}
+                        </select>
+
+                        <button
+                          type="submit"
+                          className="userButton"
+                          disabled={userFormInvalid}
+                        >
+                          Save User
+                        </button>
+                      </form>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </>
         )}

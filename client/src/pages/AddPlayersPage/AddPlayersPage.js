@@ -129,6 +129,7 @@ function AddPlayersPage() {
                 type="number"
                 name="team"
                 step="1"
+                min="1"
                 value={team}
                 onChange={(e) => setTeam(e.target.value)}
               />
@@ -157,6 +158,7 @@ function AddPlayersPage() {
                 step="0.1"
                 value={cost}
                 onChange={(e) => setCost(e.target.value)}
+                min="2"
               />
             </div>
 
