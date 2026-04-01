@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import NavBar from "../NavBar.js";
 
@@ -34,6 +34,8 @@ function ResultsPage() {
   const [selectedDef, setSelectedDef] = useState([]);
   const [selectedMid, setSelectedMid] = useState([]);
   const [selectedFwd, setSelectedFwd] = useState([]);
+
+  const [selectedSub, setSelectedSub] = useState([]);
 
   const [selectedTeamSheet, setSelectedTeamSheet] = useState(null);
   const [temp, setTemp] = useState(false);
@@ -124,6 +126,29 @@ function ResultsPage() {
     .filter((f) => f.team === currentDataTeamIndex)
     .map((f) => ({ value: f.id, label: `${f.name} - (${f.team})` }));
 
+  const selectedTeam = [
+    selectedGK,
+    ...selectedDef,
+    ...selectedMid,
+    ...selectedFwd,
+  ];
+
+  const allPlayers = [
+    ...allGk.filter((x) => x.team === currentDataTeamIndex),
+    ...allDef.filter((x) => x.team === currentDataTeamIndex),
+    ...allMid.filter((x) => x.team === currentDataTeamIndex),
+    ...allFwd.filter((x) => x.team === currentDataTeamIndex),
+  ];
+
+  const selectedIds = selectedTeam.map((p) => p?.value).filter(Boolean); // removes undefined/null
+
+  const subOpts = (allPlayers || [])
+    .filter((p) => !selectedIds.includes(p.id))
+    .map((p) => ({
+      value: p.id,
+      label: `${p.name} - (${p.team})`,
+    }));
+
   // FOR THE TEAMSHEET SUBMISSION
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -132,6 +157,13 @@ function ResultsPage() {
       ...selectedDef,
       ...selectedMid,
       ...selectedFwd,
+    ];
+    const wholeTeamSheet = [
+      selectedGK,
+      ...selectedDef,
+      ...selectedMid,
+      ...selectedFwd,
+      ...selectedSub,
     ];
     if (teamFixtures.status === true) {
       alert("Data has already been entered for this match, please message");
@@ -142,7 +174,7 @@ function ResultsPage() {
         setSelectedTeamSheet(null);
         return;
       } else {
-        setSelectedTeamSheet(teamSheet);
+        setSelectedTeamSheet(wholeTeamSheet);
         if (homeTeam === userClub) {
           setOppo("away");
         }
@@ -372,20 +404,6 @@ function ResultsPage() {
       // this must be last thing we do
       setCurrentDataTeamIndex(currentDataTeamIndex + 1);
     } else {
-      // here we have to update all users same club as admin to gw + 1
-      // have to update all teams for users same club as admin with gwPoints for their players
-      // set those teams to locked
-      // THEN go to home page and thats results and points done
-
-      // 1 - go to all the teams associated with users in allUser and update their players with currentGW totalPoints
-      // ADD A LOCK variable to all the gw teams - check if teams locked status before writing
-      // WORKS !!!!
-
-      // 2 - update admins currentGW + 1
-      // 3 - update all in allUsers currentGW + 1
-
-      // ^^ WORKS
-
       try {
         // HAVE TO DUPLICATE ALL TEAMS FOR ALL USERS INTO CURRENTGW+1 SO THEY HAVE TEAM FOR NEXT WEEK
         const token3 = await auth.currentUser.getIdToken();
@@ -558,6 +576,23 @@ function ResultsPage() {
                     value={selectedFwd}
                     onChange={(selected) => {
                       setSelectedFwd(selected);
+                    }}
+                  />
+                )}
+              </div>
+
+              <div className="formRow">
+                <label> Used Subs : </label>
+                {subOpts && (
+                  <Select
+                    isMulti
+                    name="sub"
+                    className="multiSelect"
+                    options={subOpts}
+                    value={selectedSub}
+                    isOptionDisabled={() => selectedSub.length >= 2}
+                    onChange={(selected) => {
+                      setSelectedSub(selected);
                     }}
                   />
                 )}

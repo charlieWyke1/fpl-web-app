@@ -34,6 +34,10 @@
   font-weight: 400 !important;
   font-size: clamp(1.8rem, 2.6vw, 4rem) !important;
 }
+
+.homePageTag p {
+  font-weight: 700 !important;
+}
 .gkRow,
 .defRow,
 .midRow,

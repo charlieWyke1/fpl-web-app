@@ -245,18 +245,10 @@ function PointsHistory() {
             <div key={index} className="shirtContainer">
               <button className="shirtButton">
                 {startingSub[index].position === "GK" && (
-                  <ShirtSvg
-                    className={`gkShirt`}
-                    style={{ color: gkShirt }}
-                    size={100}
-                  />
+                  <ShirtSvg className={`gkShirt`} color={gkShirt} />
                 )}
                 {startingSub[index].position !== "GK" && (
-                  <ShirtSvg
-                    className={`shirt`}
-                    style={{ color: playerShirt }}
-                    size={100}
-                  />
+                  <ShirtSvg className={`shirt`} color={playerShirt} />
                 )}
               </button>
               <div className="homePageTag">
