@@ -67,6 +67,7 @@ function ResultsPage() {
     YELLOW: -1,
     RED: -3,
     STARTED: 2,
+    COMEON: 1,
   };
 
   const checkKickOff = async (now, newChecked) => {
@@ -181,6 +182,9 @@ function ResultsPage() {
         if (awayTeam === userClub) {
           setOppo("home");
         }
+        // console.log(selectedTeamSheet);
+        // console.log(wholeTeamSheet);
+        // console.log(selectedSub);
       }
       setTemp(true);
     }
@@ -289,6 +293,8 @@ function ResultsPage() {
 
           const buildPlayerPoints = (
             selectedTeamSheet,
+            // matchSubs,
+            // matchTeam,
             selectedGoalscorers,
             selectedAssists,
             selectedYellows,
@@ -306,13 +312,38 @@ function ResultsPage() {
               const yellowsCount = countOccurrences(selectedYellows, playerId);
               const redsCount = countOccurrences(selectedReds, playerId);
 
-              const gwPoints =
-                goalsCount * SCORING.GOAL +
-                assistsCount * SCORING.ASSIST +
-                yellowsCount * SCORING.YELLOW +
-                redsCount * SCORING.RED +
-                (cleanSheet ? SCORING.CLEAN_SHEET : 0) +
-                SCORING.STARTED;
+              let started = false;
+              let subbedOn = false;
+              let x = 0;
+
+              if (selectedSub.some((p) => p.value === player.value)) {
+                subbedOn = true;
+                started = false;
+                x =
+                  goalsCount * SCORING.GOAL +
+                  assistsCount * SCORING.ASSIST +
+                  yellowsCount * SCORING.YELLOW +
+                  redsCount * SCORING.RED +
+                  (cleanSheet ? SCORING.CLEAN_SHEET : 0) +
+                  SCORING.COMEON;
+              }
+
+              if (selectedTeamSheet.some((p) => p.value === player.value)) {
+                started = true;
+                subbedOn = false;
+                x =
+                  goalsCount * SCORING.GOAL +
+                  assistsCount * SCORING.ASSIST +
+                  yellowsCount * SCORING.YELLOW +
+                  redsCount * SCORING.RED +
+                  (cleanSheet ? SCORING.CLEAN_SHEET : 0) +
+                  SCORING.STARTED;
+              }
+
+              // NEED TO PASS BOTH STRATED AND SUBBED VALUE WHEN WRITING THE DATA TO DB
+              // ANDF GO BACK AND CHANGE THE PREV GW FOR PLAYERS OR REMOVE THEM AND GO AGAIN
+              // AS THEY DONT HAVE THE STARTED COMEON VALUE
+              // THEN NEED TO WORK ON TOTALLING PTS NOW WITH SUBS
 
               return {
                 playerId,
@@ -321,7 +352,9 @@ function ResultsPage() {
                 yellows: yellowsCount,
                 reds: redsCount,
                 cleanSheet: cleanSheet,
-                gwPoints: gwPoints,
+                gwPoints: x,
+                started: started,
+                subbedOn: subbedOn,
               };
             });
           };
@@ -335,9 +368,9 @@ function ResultsPage() {
             cleanSheet,
           );
 
-          // console.log("Player Points Data:", playerPoints);
-          // handleAddPts(playerPoints);
-          // handleNextTeam(allPts);
+          console.log("Player Points Data:", playerPoints);
+          handleAddPts(playerPoints);
+          handleNextTeam(allPts);
 
           // Usage:
           handleAddPts(playerPoints, (updatedPts) => {
@@ -400,6 +433,7 @@ function ResultsPage() {
       setSelectedDef([]);
       setSelectedMid([]);
       setSelectedFwd([]);
+      setSelectedSub([]);
       setTemp(false);
       // this must be last thing we do
       setCurrentDataTeamIndex(currentDataTeamIndex + 1);
