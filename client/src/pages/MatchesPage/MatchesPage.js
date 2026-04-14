@@ -93,6 +93,7 @@ function MatchesPage() {
       const scored = player.gameweeks?.[number]?.goals ?? 0;
       const assist = player.gameweeks?.[number]?.assists ?? 0;
       const started = player.gameweeks?.[number]?.started ?? 0;
+      const subbedOn = player.gameweeks?.[number]?.subbedOn ?? 0;
 
       if (!acc[teamNumber]) {
         acc[teamNumber] = {
@@ -103,6 +104,10 @@ function MatchesPage() {
       }
 
       if (started) {
+        acc[teamNumber].gwTeam.push(player);
+      }
+
+      if (subbedOn) {
         acc[teamNumber].gwTeam.push(player);
       }
 
@@ -139,6 +144,8 @@ function MatchesPage() {
     setSelectedSquad(null);
     setTeamModalOpen(false);
   };
+
+  console.log(gwTeam);
 
   return (
     <div className={themeClass}>

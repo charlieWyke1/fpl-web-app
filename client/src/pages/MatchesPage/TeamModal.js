@@ -20,6 +20,8 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
   const [startingMid, setStartingMid] = useState([]);
   const [startingFwd, setStartingFwd] = useState([]);
 
+  const [usedSubs, setUsedSubs] = useState([]);
+
   const themeClass = userClub
     ? `theme-${userClub.toLowerCase().replace(/\s+/g, "-")}`
     : "theme-default";
@@ -52,6 +54,7 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
         (p) => p.position === "FWD" && p.gameweeks?.[number]?.started === true,
       ),
     );
+    setUsedSubs(team.filter((p) => p.gameweeks?.[number]?.subbedOn === true));
   }, []);
 
   return (
@@ -105,11 +108,7 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                     (_, index) => (
                       <div key={index} className="shirtContainer">
                         <div className="shirtButton">
-                          <ShirtSvg
-                            className={`shirt`}
-                            color={playerShirt}
-                            size={70}
-                          />
+                          <ShirtSvg className={`shirt`} color={playerShirt} />
                         </div>
                         <div className="homePageTag">
                           {startingDef[index] && (
@@ -136,11 +135,7 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                     (_, index) => (
                       <div key={index} className="shirtContainer">
                         <div className="shirtButton">
-                          <ShirtSvg
-                            className={`shirt`}
-                            color={playerShirt}
-                            size={70}
-                          />
+                          <ShirtSvg className={`shirt`} color={playerShirt} />
                         </div>
                         <div className="homePageTag">
                           {startingMid[index] && (
@@ -167,11 +162,7 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                     (_, index) => (
                       <div key={index} className="shirtContainer">
                         <div className="shirtButton">
-                          <ShirtSvg
-                            className={`shirt`}
-                            color={playerShirt}
-                            size={70}
-                          />
+                          <ShirtSvg className={`shirt`} color={playerShirt} />
                         </div>
                         <div className="homePageTag">
                           {startingFwd[index] && (
@@ -191,6 +182,26 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="subRow">
+            <div className="shirtRow">
+              {Array.from({ length: usedSubs.length }).map((_, index) => (
+                <div key={index} className="shirtContainer">
+                  <div className="shirtButton">
+                    <ShirtSvg className={`shirt`} color={playerShirt} />
+                  </div>
+                  <div className="homePageTag">
+                    {usedSubs[index] && (
+                      <>
+                        <h4>{usedSubs[index].name}</h4>
+                        <h5>{usedSubs[index].gameweeks?.[number]?.gwPoints}</h5>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
