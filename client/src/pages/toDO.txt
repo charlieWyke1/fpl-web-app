@@ -1,3 +1,3 @@
-- club for deadline -- DONE 
-- subs for points etc... 
-- points for team that rely on the player either starting or coming on
+AND DISPLAY SUBS ON GAMEWEEK RESULTS / MATCHES PAGE 
+FIX TRANSFERS AMOUNT - INCREMENT ONLY BY 1
+CHANGE CLEAN SHEET PTS FOR DEPENDING ON POSITION

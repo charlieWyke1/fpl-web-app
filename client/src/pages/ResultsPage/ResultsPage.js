@@ -64,8 +64,8 @@ function ResultsPage() {
     GOAL: 7,
     ASSIST: 5,
     CLEAN_SHEET: 4,
-    YELLOW: -1,
-    RED: -3,
+    YELLOW: -2,
+    RED: -4,
     STARTED: 2,
     COMEON: 1,
   };
@@ -326,11 +326,11 @@ function ResultsPage() {
                   redsCount * SCORING.RED +
                   (cleanSheet ? SCORING.CLEAN_SHEET : 0) +
                   SCORING.COMEON;
-              }
-
-              if (selectedTeamSheet.some((p) => p.value === player.value)) {
-                started = true;
+              } else if (
+                selectedTeamSheet.some((p) => p.value === player.value)
+              ) {
                 subbedOn = false;
+                started = true;
                 x =
                   goalsCount * SCORING.GOAL +
                   assistsCount * SCORING.ASSIST +

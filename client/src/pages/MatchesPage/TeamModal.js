@@ -56,7 +56,10 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
 
   return (
     <div className="modalOverlayTeam" onClick={onClose}>
-      <div className={`modalContainerTeam ${themeClass}`}>
+      <div
+        className={`modalContainerTeam ${themeClass}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modalTeamHeader">
           <button onClick={onClose}>X</button>
           <h4>
@@ -79,9 +82,9 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
               <div className="gkRow">
                 {Array.from({ length: startingGk.length }).map((_, index) => (
                   <div key={index} className="shirtContainer">
-                    <button className="shirtButton">
+                    <div className="shirtButton">
                       <ShirtSvg className={`gkShirt`} color={gkShirt} />
-                    </button>
+                    </div>
                     <div className="homePageTag">
                       {startingGk[index] && (
                         <>
@@ -101,13 +104,13 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                   {Array.from({ length: startingDef.length }).map(
                     (_, index) => (
                       <div key={index} className="shirtContainer">
-                        <button className="shirtButton">
+                        <div className="shirtButton">
                           <ShirtSvg
                             className={`shirt`}
                             color={playerShirt}
                             size={70}
                           />
-                        </button>
+                        </div>
                         <div className="homePageTag">
                           {startingDef[index] && (
                             <>
@@ -132,13 +135,13 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                   {Array.from({ length: startingMid.length }).map(
                     (_, index) => (
                       <div key={index} className="shirtContainer">
-                        <button className="shirtButton">
+                        <div className="shirtButton">
                           <ShirtSvg
                             className={`shirt`}
                             color={playerShirt}
                             size={70}
                           />
-                        </button>
+                        </div>
                         <div className="homePageTag">
                           {startingMid[index] && (
                             <>
@@ -163,13 +166,13 @@ const TeamModal = ({ squad, fixtureDetails, fixtureGw, game, onClose }) => {
                   {Array.from({ length: startingFwd.length }).map(
                     (_, index) => (
                       <div key={index} className="shirtContainer">
-                        <button className="shirtButton">
+                        <div className="shirtButton">
                           <ShirtSvg
                             className={`shirt`}
                             color={playerShirt}
                             size={70}
                           />
-                        </button>
+                        </div>
                         <div className="homePageTag">
                           {startingFwd[index] && (
                             <>

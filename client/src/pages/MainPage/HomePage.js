@@ -138,7 +138,9 @@ function HomePage() {
       const gwTemp = pointsAndDataTeam.reduce((total, player) => {
         if (!player?.isStarting) return total;
 
-        return total + (Number(player.gwPoints) || 0);
+        const points = Number(player?.gwPoints);
+
+        return total + (Number.isFinite(points) ? points : 0);
       }, 0);
 
       if (user?.currentGW === 1) {
@@ -146,6 +148,7 @@ function HomePage() {
       } else {
         setMinusPts(allTeam?.[`gw${user?.currentGW - 1}`].minusPoints);
       }
+
       setTotalGwPoints(gwTemp + minusPts);
 
       const totalSeasonPoints = Object.values(allTeam)
@@ -279,6 +282,7 @@ function HomePage() {
           </div>
           <div className="ptsShow">
             <div className="gwPoints">
+              {/* <h5>{Number.isFinite(totalGwPoints) ? totalGwPoints : 0}pts</h5> */}
               <h5>{totalGwPoints}pts</h5>
             </div>
             <div className="totalPoints">

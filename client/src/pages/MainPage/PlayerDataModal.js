@@ -39,6 +39,7 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
   let totalReds = 0;
   let totalPenSaves = 0;
   let totalStarts = 0;
+  let totalSubbed = 0;
 
   for (const gw in player.gameweeks) {
     const week = player.gameweeks[gw];
@@ -54,6 +55,11 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
         totalStarts += 1;
       } else {
         totalStarts += 0;
+      }
+      if (week.subbedOn) {
+        totalSubbed += 1;
+      } else {
+        totalSubbed += 0;
       }
       if (week.redCard) {
         totalReds += 1;
@@ -71,6 +77,11 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
       } else {
         totalStarts += 0;
       }
+      if (week.subbedOn) {
+        totalSubbed += 1;
+      } else {
+        totalSubbed += 0;
+      }
       if (week.redCard) {
         totalReds += 1;
       } else {
@@ -87,6 +98,11 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
       } else {
         totalStarts += 0;
       }
+      if (week.subbedOn) {
+        totalSubbed += 1;
+      } else {
+        totalSubbed += 0;
+      }
       if (week.redCard) {
         totalReds += 1;
       } else {
@@ -101,6 +117,11 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
         totalStarts += 1;
       } else {
         totalStarts += 0;
+      }
+      if (week.subbedOn) {
+        totalSubbed += 1;
+      } else {
+        totalSubbed += 0;
       }
       if (week.redCard) {
         totalReds += 1;
@@ -226,14 +247,14 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
                         <td>Yellow Cards:</td>
                         <td>{player.gameweeks[selectedGW].yellows || 0}</td>
                         <td>
-                          {(player.gameweeks[selectedGW].yellows || 0) * -1} pts
+                          {(player.gameweeks[selectedGW].yellows || 0) * -2} pts
                         </td>
                       </tr>
                       <tr>
                         <td>Red Cards:</td>
                         <td>{player.gameweeks[selectedGW].redCard || 0}</td>
                         <td>
-                          {(player.gameweeks[selectedGW].redCard || 0) * -3} pts
+                          {(player.gameweeks[selectedGW].redCard || 0) * -4} pts
                         </td>
                       </tr>
                       <tr>
@@ -246,20 +267,18 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
                           pts
                         </td>
                       </tr>
-                      {!player.gameweeks[selectedGW]?.started && (
-                        <tr>
-                          <td>Came On:</td>
-                          <td>
-                            {player.gameweeks[selectedGW]?.cameOn
-                              ? "Yes"
-                              : "No"}
-                          </td>
-                          <td>
-                            {(player.gameweeks[selectedGW]?.cameOn ? 1 : 0) * 1}{" "}
-                            pts
-                          </td>
-                        </tr>
-                      )}
+                      <tr>
+                        <td>Subbed On:</td>
+                        <td>
+                          {player.gameweeks[selectedGW]?.subbedOn
+                            ? "Yes"
+                            : "No"}
+                        </td>
+                        <td>
+                          {(player.gameweeks[selectedGW]?.subbedOn ? 1 : 0) * 1}{" "}
+                          pts
+                        </td>
+                      </tr>
 
                       {player.position === "GK" && (
                         <tr>
@@ -327,18 +346,24 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
                 <tr>
                   <td>Yellow Cards:</td>
                   <td>{totalYellows}</td>
-                  <td>{totalYellows * -1} pts</td>
+                  <td>{totalYellows * -2} pts</td>
                 </tr>
                 <tr>
                   <td>Red Cards:</td>
                   <td>{totalReds}</td>
-                  <td>{totalReds * -3} pts</td>
+                  <td>{totalReds * -4} pts</td>
                 </tr>
                 <tr>
                   <td>Starts:</td>
                   <td>{totalStarts}</td>
                   <td>{totalStarts * 2} pts</td>
                 </tr>
+                <tr>
+                  <td>Subbed On:</td>
+                  <td>{totalSubbed}</td>
+                  <td>{totalSubbed * 1} pts</td>
+                </tr>
+
                 {player.position === "GK" && (
                   <tr>
                     <td>Penalty Saves:</td>

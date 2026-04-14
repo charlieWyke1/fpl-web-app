@@ -177,8 +177,17 @@ export async function addGWPoints(playerData, gw) {
     const batch = db.batch();
 
     playerData.forEach((player) => {
-      const { playerId, goals, assists, yellows, reds, cleanSheet, gwPoints } =
-        player;
+      const {
+        playerId,
+        goals,
+        assists,
+        yellows,
+        reds,
+        cleanSheet,
+        gwPoints,
+        started,
+        subbedOn,
+      } = player;
       const playerRef = db.collection("players").doc(playerId);
 
       batch.set(
@@ -190,7 +199,8 @@ export async function addGWPoints(playerData, gw) {
               assists: assists || 0,
               yellows: yellows || 0,
               reds: reds || 0,
-              started: true,
+              started: started,
+              subbedOn: subbedOn,
               cleanSheet: cleanSheet,
               gwPoints: gwPoints || 0,
             },
@@ -243,6 +253,7 @@ export async function saveFirstTeam(userId, teamName, team, gw, budget) {
           [gwKey]: {
             team: team,
             savedAt: new Date(),
+            minusPoints: 0,
           },
         },
       },
