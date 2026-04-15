@@ -340,7 +340,18 @@ const PlayerModal = ({ isOpen, onClose, player }) => {
                 <tr>
                   <td>Clean Sheets:</td>
                   <td>{totalCleanSheets}</td>
-                  <td>{totalCleanSheets * 4} pts</td>
+                  {player.position === "GK" && (
+                    <td>{totalCleanSheets * 5} pts</td>
+                  )}
+                  {player.position === "DEF" && (
+                    <td>{totalCleanSheets * 4} pts</td>
+                  )}
+                  {player.position === "MID" && (
+                    <td>{totalCleanSheets * 2} pts</td>
+                  )}
+                  {player.position === "FWD" && (
+                    <td>{totalCleanSheets * 0} pts</td>
+                  )}
                 </tr>
 
                 <tr>

@@ -63,7 +63,6 @@ function ResultsPage() {
   const SCORING = {
     GOAL: 7,
     ASSIST: 5,
-    CLEAN_SHEET: 4,
     YELLOW: -2,
     RED: -4,
     STARTED: 2,
@@ -113,19 +112,32 @@ function ResultsPage() {
     .map((g) => ({
       value: g.id,
       label: `${g.name} - (${g.team})`,
+      pos: g.position,
     }));
 
   const defOptions = (allDef || [])
     .filter((d) => d.team === currentDataTeamIndex)
-    .map((d) => ({ value: d.id, label: `${d.name} - (${d.team})` }));
+    .map((d) => ({
+      value: d.id,
+      label: `${d.name} - (${d.team})`,
+      pos: d.position,
+    }));
 
   const midOptions = (allMid || [])
     .filter((m) => m.team === currentDataTeamIndex)
-    .map((m) => ({ value: m.id, label: `${m.name} - (${m.team})` }));
+    .map((m) => ({
+      value: m.id,
+      label: `${m.name} - (${m.team})`,
+      pos: m.position,
+    }));
 
   const fwdOptions = (allFwd || [])
     .filter((f) => f.team === currentDataTeamIndex)
-    .map((f) => ({ value: f.id, label: `${f.name} - (${f.team})` }));
+    .map((f) => ({
+      value: f.id,
+      label: `${f.name} - (${f.team})`,
+      pos: f.position,
+    }));
 
   const selectedTeam = [
     selectedGK,
@@ -303,6 +315,7 @@ function ResultsPage() {
           ) => {
             return selectedTeamSheet.map((player) => {
               const playerId = player.value;
+              console.log(player);
 
               const goalsCount = countOccurrences(
                 selectedGoalscorers,
@@ -315,6 +328,15 @@ function ResultsPage() {
               let started = false;
               let subbedOn = false;
               let x = 0;
+              let cleanSheetScore = 0;
+
+              if (player.pos === "GK" && cleanSheet === true) {
+                cleanSheetScore = 5;
+              } else if (player.pos === "DEF" && cleanSheet === true) {
+                cleanSheetScore = 4;
+              } else if (player.pos === "MID" && cleanSheet === true) {
+                cleanSheetScore = 2;
+              }
 
               if (selectedSub.some((p) => p.value === player.value)) {
                 subbedOn = true;
@@ -324,7 +346,7 @@ function ResultsPage() {
                   assistsCount * SCORING.ASSIST +
                   yellowsCount * SCORING.YELLOW +
                   redsCount * SCORING.RED +
-                  (cleanSheet ? SCORING.CLEAN_SHEET : 0) +
+                  cleanSheetScore +
                   SCORING.COMEON;
               } else if (
                 selectedTeamSheet.some((p) => p.value === player.value)
@@ -336,7 +358,7 @@ function ResultsPage() {
                   assistsCount * SCORING.ASSIST +
                   yellowsCount * SCORING.YELLOW +
                   redsCount * SCORING.RED +
-                  (cleanSheet ? SCORING.CLEAN_SHEET : 0) +
+                  cleanSheetScore +
                   SCORING.STARTED;
               }
 
@@ -351,7 +373,7 @@ function ResultsPage() {
                 assists: assistsCount,
                 yellows: yellowsCount,
                 reds: redsCount,
-                cleanSheet: cleanSheet,
+                cleanSheet: cleanSheetScore,
                 gwPoints: x,
                 started: started,
                 subbedOn: subbedOn,

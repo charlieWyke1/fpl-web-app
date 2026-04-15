@@ -37,9 +37,15 @@ export default function PlayerModal({ isOpen, onClose, player }) {
     const pos = player.position;
 
     if (pos === "GK") {
+      console.log(week.cleanSheet);
       totalGoals += week.goals || 0;
       totalAssists += week.assists || 0;
-      totalCleanSheets += week.cleanSheetGK || 0;
+      if (week.cleanSheet !== 0) {
+        totalCleanSheets += 1;
+      } else {
+        totalCleanSheets += 0;
+      }
+      // totalCleanSheets += week.cleanSheetGK || 0;
       totalPenSaves += week.penSave || 0;
       totalYellows += week.yellows || 0;
       if (week.started) {
@@ -60,7 +66,11 @@ export default function PlayerModal({ isOpen, onClose, player }) {
     } else if (pos === "DEF") {
       totalGoals += week.goals || 0;
       totalAssists += week.assists || 0;
-      totalCleanSheets += week.cleanSheetDEF || 0;
+      if (week.cleanSheet !== 0) {
+        totalCleanSheets += 1;
+      } else {
+        totalCleanSheets += 0;
+      }
       totalYellows += week.yellows || 0;
       totalStarts += week.starts || 0;
       if (week.started) {
@@ -81,7 +91,11 @@ export default function PlayerModal({ isOpen, onClose, player }) {
     } else if (pos === "MID") {
       totalGoals += week.goals || 0;
       totalAssists += week.assists || 0;
-      totalCleanSheets += week.cleanSheetMID || 0;
+      if (week.cleanSheet !== 0) {
+        totalCleanSheets += 1;
+      } else {
+        totalCleanSheets += 0;
+      }
       totalYellows += week.yellows || 0;
       totalStarts += week.starts || 0;
       if (week.started) {
@@ -227,8 +241,7 @@ export default function PlayerModal({ isOpen, onClose, player }) {
                             : "No"}
                         </td>
                         <td>
-                          {(player.gameweeks[selectedGW].cleanSheet ? 1 : 0) *
-                            4}{" "}
+                          {player.gameweeks[selectedGW].cleanSheet}
                           pts
                         </td>
                       </tr>
@@ -237,14 +250,14 @@ export default function PlayerModal({ isOpen, onClose, player }) {
                         <td>Yellow Cards:</td>
                         <td>{player.gameweeks[selectedGW].yellows || 0}</td>
                         <td>
-                          {(player.gameweeks[selectedGW].yellows || 0) * -1} pts
+                          {(player.gameweeks[selectedGW].yellows || 0) * -2} pts
                         </td>
                       </tr>
                       <tr>
                         <td>Red Cards:</td>
                         <td>{player.gameweeks[selectedGW].redCard || 0}</td>
                         <td>
-                          {(player.gameweeks[selectedGW].redCard || 0) * -3} pts
+                          {(player.gameweeks[selectedGW].redCard || 0) * -4} pts
                         </td>
                       </tr>
                       <tr>
@@ -330,13 +343,25 @@ export default function PlayerModal({ isOpen, onClose, player }) {
                 <tr>
                   <td>Clean Sheets:</td>
                   <td>{totalCleanSheets}</td>
-                  <td>{totalCleanSheets * 4} pts</td>
+                  {player.position === "GK" && (
+                    <td>{totalCleanSheets * 5} pts</td>
+                  )}
+                  {player.position === "DEF" && (
+                    <td>{totalCleanSheets * 4} pts</td>
+                  )}
+                  {player.position === "MID" && (
+                    <td>{totalCleanSheets * 2} pts</td>
+                  )}
+                  {player.position === "FWD" && (
+                    <td>{totalCleanSheets * 0} pts</td>
+                  )}
+                  {/* <td>{totalCleanSheets * 4} pts</td> */}
                 </tr>
 
                 <tr>
                   <td>Yellow Cards:</td>
                   <td>{totalYellows}</td>
-                  <td>{totalYellows * -1} pts</td>
+                  <td>{totalYellows * -2} pts</td>
                 </tr>
                 <tr>
                   <td>Red Cards:</td>
