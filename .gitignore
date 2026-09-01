@@ -1,3 +1,24 @@
+# Ignore sensitive server and database files
+/server/
+/db/
+*.sql
+*.dump
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Keys and certificates
+*.key
+*.pem
+*.p12
+
+# Node / build / OS
+node_modules/
+dist/
+build/
+.DS_Store
 # Dependencies
 node_modules/
 
