@@ -1,52 +1,8 @@
-# Safe public upload instructions
+README.md
 
-Overview
-- Goal: Make the codebase public while keeping server/database files and secrets private.
+Okay - first full attempt at creating the back and front end of an application running on Google Firebase database
+The version of the code here is just the code base - it is missing all the database side of stuff as that is "private" and i kept getting notificatiosn when it was uploaded. Ultimately it is a show off of the code I have spent the months working on and understanding and building this project without the help of ai.
 
-What is protected
-- Files: server configs, database dumps, private keys, `.env` files.
-- Secrets: API keys, DB credentials, SSH/private keys, service-account credentials.
+So what is it? It's a fantasy football app where you can sign your team up and create your players all within an admin account. It requires the fixtures to be uploaded to the firebase database - but once that is done, players can choose their teams from the players added in by the admin, choose their formation, make weekly transfers, compare teams with other players in their league, and look at live rankings from other teams. It basically models FPL for the premier league but allows you to play it with your own club and your friends who you play with!
 
-What I added
-- `.gitignore`: excludes server, db, env files, keys, and build artifacts.
-- `.env.example`: placeholders so users know required env vars.
-- `.
-pre-commit-config.yaml`: optional pre-commit hooks to detect secrets locally.
-
-Will my local copy still work?
-- Yes. Your local files remain unchanged. Keep your real `.env` and server files on your laptop — do not commit them. To run locally, copy `.env.example` to `.env` and fill values:
-
-```bash
-cp .env.example .env
-# edit .env with your secrets
-```
-
-Preparing the repo for public push
-- Stage and commit the new helper files, then push to GitHub.
-
-```bash
-git add .gitignore .env.example README.md .pre-commit-config.yaml
-git commit -m "Prepare repository for safe public publishing"
-git push origin main
-```
-
-If you already committed sensitive files
-- Remove them from the index and commit:
-
-```bash
-git rm --cached path/to/sensitive.file
-git commit -m "Remove sensitive file"
-git push origin main
-```
-
-- To purge sensitive data from history (disruptive): use `git filter-repo` or the BFG Repo-Cleaner and force-push. Coordinate with collaborators before rewriting history.
-
-CI / Deployment
-- Store production secrets in your CI/CD or secret manager (GitHub Actions Secrets, AWS Secrets Manager, Vault). Never store secrets in the repo.
-
-Prevention and scanning
-- Install `pre-commit` and run `pre-commit install` to enable local checks. Consider adding `detect-secrets` and enabling GitHub secret scanning.
-
-Next steps I can do for you
-- Install and configure `pre-commit` hooks and the `detect-secrets` baseline.
-- Scan the repo for existing leaks and optionally remove them from history.
+I did all the codebase (front and back end) by myself without the help of AI, but when uploading and learning hwo to use Github, I made the most of AI models and the github ahgents to help me learn what I was doing with GitHub as it is quite a daunting task at the start.
