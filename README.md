@@ -1,4 +1,4 @@
-##README.md
+README.md
 
 Okay - first full attempt at creating the back and front end of an application running on Google Firebase database
 The version of the code here is just the code base - it is missing all the database side of stuff as that is "private" and i kept getting notificatiosn when it was uploaded. Ultimately it is a show off of the code I have spent the months working on and understanding and building this project without the help of ai.
